@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ¿Hay un usuario logueado?
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ¿El usuario logueado es el dueño de este documento?
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Perfiles de usuario: el ID del documento es el uid de Authentication
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+
+      // Al registrarse solo puede elegir adoptante o refugio (nunca admin),
+      // y el email debe coincidir con el de su cuenta
+      allow create: if isOwner(userId)
+        && request.resource.data.role in ['adoptante', 'refugio']
+        && request.resource.data.email == request.auth.token.email;
+
+      // Puede editar su perfil, pero no cambiar su rol ni su email
+      allow update: if isOwner(userId)
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.email == resource.data.email;
+
+      allow delete: if false;
+    }
+
+    // Cualquier otra ruta queda denegada: Firestore bloquea
+    // todo lo que no esté permitido explícitamente.
+  }
+}
