@@ -154,6 +154,7 @@ function RegisterPage() {
               <Input
                 label="Sobre el refugio"
                 name="about"
+                multiline
                 value={values.about}
                 onChange={handleChange}
                 error={errors.about}
