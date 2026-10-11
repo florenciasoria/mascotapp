@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import AuthLayout from '../layouts/AuthLayout'
-import Button from '../components/Button'
-import LogoutButton from '../components/LogoutButton'
-import logo from '../assets/logo.png'
-import { useAuth } from '../hooks/useAuth'
-import { getAuthErrorMessage, resendVerificationEmail } from '../services/authService'
+import AuthLayout from '@/layouts/AuthLayout'
+import Button from '@/components/ui/Button'
+import LogoutButton from '@/components/LogoutButton'
+import logo from '@/assets/logo.png'
+import { useAuth } from '@/hooks/useAuth'
+import { getAuthErrorMessage, resendVerificationEmail } from '@/services/authService'
 import styles from './MessagePage.module.css'
 
 // Se muestra hasta que el usuario verifica su email.

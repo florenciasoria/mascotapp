@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router'
-import LogoutButton from '../components/LogoutButton'
-import { useAuth } from '../hooks/useAuth'
+import LogoutButton from '@/components/LogoutButton'
+import { useAuth } from '@/hooks/useAuth'
 import styles from './AdopterHomePage.module.css'
 
 function AdopterHomePage() {

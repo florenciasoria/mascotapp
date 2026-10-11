@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import AuthLayout from '../layouts/AuthLayout'
-import Input from '../components/Input'
-import Button from '../components/Button'
-import logo from '../assets/logo.png'
-import { getAuthErrorMessage, sendPasswordReset } from '../services/authService'
-import { validateForgotPasswordForm } from '../utils/validators'
+import AuthLayout from '@/layouts/AuthLayout'
+import Input from '@/components/ui/Input'
+import Button from '@/components/ui/Button'
+import logo from '@/assets/logo.png'
+import { getAuthErrorMessage, sendPasswordReset } from '@/services/authService'
+import { validateForgotPasswordForm } from '@/utils/validators'
 import styles from './AuthPage.module.css'
 
 function ForgotPasswordPage() {

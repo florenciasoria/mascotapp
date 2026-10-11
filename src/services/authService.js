@@ -11,7 +11,7 @@ import {
 } from 'firebase/auth'
 import { doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore'
 import { auth, db } from './firebase'
-import { ROLES, STATUS } from '../utils/roles'
+import { ROLES, STATUS } from '@/utils/roles'
 // Después de hacer clic en el enlace del email, Firebase ofrece volver al login
 const actionCodeSettings = { url: `${window.location.origin}/login` }
 

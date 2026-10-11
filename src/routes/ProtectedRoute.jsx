@@ -1,9 +1,9 @@
 import { Navigate } from 'react-router'
-import LoadingScreen from '../components/LoadingScreen'
-import PendingApprovalPage from '../pages/PendingApprovalPage'
-import { useAuth } from '../hooks/useAuth'
-import { getHomePath, STATUS } from '../utils/roles'
-import VerifyEmailPage from '../pages/VerifyEmailPage'
+import LoadingScreen from '@/components/ui/LoadingScreen'
+import PendingApprovalPage from '@/pages/auth/PendingApprovalPage'
+import { useAuth } from '@/hooks/useAuth'
+import { getHomePath, STATUS } from '@/utils/roles'
+import VerifyEmailPage from '@/pages/auth/VerifyEmailPage'
 
 
 // Guardia de rutas: solo deja pasar a usuarios logueados, aprobados

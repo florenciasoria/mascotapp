@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import AuthLayout from '../layouts/AuthLayout'
-import Input from '../components/Input'
-import Button from '../components/Button'
-import { getAuthErrorMessage, registerUser } from '../services/authService'
-import { LIMITS, validateRegisterForm } from '../utils/validators'
+import AuthLayout from '@/layouts/AuthLayout'
+import Input from '@/components/ui/Input'
+import Button from '@/components/ui/Button'
+import { getAuthErrorMessage, registerUser } from '@/services/authService'
+import { LIMITS, validateRegisterForm } from '@/utils/validators'
 import styles from './RegisterPage.module.css'
 import { Link, Navigate, useNavigate } from 'react-router'
-import { useAuth } from '../hooks/useAuth'
-import { getHomePath, ROLES } from '../utils/roles'
+import { useAuth } from '@/hooks/useAuth'
+import { getHomePath, ROLES } from '@/utils/roles'
 
 
 const INITIAL_VALUES = {

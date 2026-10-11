@@ -4,7 +4,7 @@ import {
   checkEmailVerified,
   subscribeToAuthChanges,
   subscribeToUserProfile,
-} from '../services/authService'
+} from '@/services/authService'
 
 // Mantiene actualizada la sesión y el perfil del usuario para toda la app.
 export function AuthProvider({ children }) {

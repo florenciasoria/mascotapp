@@ -1,5 +1,5 @@
-import { useAuth } from '../hooks/useAuth'
-import LogoutButton from '../components/LogoutButton'
+import { useAuth } from '@/hooks/useAuth'
+import LogoutButton from '@/components/LogoutButton'
 
 function ShelterHomePage() {
   const { profile } = useAuth()
