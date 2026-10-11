@@ -21,6 +21,7 @@ h3 {
   margin: 0;
   font-family: var(--font-heading);
   line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-light);
 }
 
 a {
@@ -55,4 +56,15 @@ select {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+
+  /* Oculta un elemento a la vista pero lo deja disponible para lectores de pantalla */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 }

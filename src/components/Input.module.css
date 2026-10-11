@@ -32,3 +32,9 @@
   font-size: var(--font-size-sm);
   color: var(--color-error);
 }
+
+.hint {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+}

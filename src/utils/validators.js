@@ -33,7 +33,7 @@ export function validateRegisterForm(values, role) {
   }
 
   if (!hasLength(values.phone, LIMITS.phone) || !PHONE_REGEX.test(values.phone.trim())) {
-    errors.phone = 'Ingresá un teléfono válido (números, espacios, guiones o +)'
+    errors.phone = 'Ingresá un teléfono válido'
   }
 
   const { password } = values

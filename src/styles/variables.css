@@ -7,12 +7,13 @@
   --color-cream: #f7f4ed;
   --color-brown: #6b625e;
   --color-gray: #d9d9d9;
+  --color-gray-warm: #e6e1d9; /* fondo del selector: gris cálido */
   --color-brown-light: #918783;
   --color-white: #ffffff;
 
   /* Ajustes de accesibilidad (contraste WCAG AA) */
   --color-pink-dark: #9a5a69; /* links: 4.7:1 sobre crema */
-  --color-brown-dark: #332c2a; /* texto sobre botón rosa: 5.2:1 */
+  --color-pink-deep: #c0808f; /* botón: blanco en texto grande 3.1:1 */
   --color-red: #b3261e; /* errores: provisional, no está en Figma */
 
   /* ===== Colores por uso ===== */
@@ -20,25 +21,27 @@
   --color-surface: var(--color-white);
   --color-text: var(--color-brown);
   --color-text-muted: var(--color-brown-light); /* solo texto grande */
-  --color-primary: var(--color-pink);
-  --color-on-primary: var(--color-brown-dark);
+  --color-primary: var(--color-pink-deep);
+  --color-on-primary: var(--color-white);
   --color-link: var(--color-pink-dark);
   --color-border: var(--color-gray);
+  --color-toggle-bg: var(--color-gray-warm);
   --color-border-input: var(--color-brown-light);
   --color-focus: var(--color-pink-dark);
   --color-error: var(--color-red);
 
   /* ===== Tipografía ===== */
   --font-heading: 'Nunito', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
 
+  --font-size-xs: 0.8125rem; /* 13px: textos de ayuda */
   --font-size-sm: 0.875rem; /* 14px: labels, notas */
   --font-size-base: 1rem; /* 16px: texto e inputs */
   --font-size-lg: 1.75rem; /* 28px: subtítulos */
   --font-size-xl: 2.5rem; /* 40px: títulos */
 
   --font-weight-regular: 400;
-  --font-weight-medium: 500;
+  --font-weight-light: 300;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
