@@ -65,3 +65,12 @@ export function validateLoginForm(values) {
   return errors
 }
 
+export function validateForgotPasswordForm(values) {
+  const errors = {}
+
+  if (!EMAIL_REGEX.test(values.email.trim())) {
+    errors.email = 'Ingresá un email válido'
+  }
+
+  return errors
+}

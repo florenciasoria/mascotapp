@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/useAuth'
 import { getAuthErrorMessage, loginUser } from '../services/authService'
 import { validateLoginForm } from '../utils/validators'
 import { getHomePath } from '../utils/roles'
-import styles from './LoginPage.module.css'
+import styles from './AuthPage.module.css'
 
 function LoginPage() {
   const { user, profile, isLoading } = useAuth()
@@ -82,6 +82,11 @@ function LoginPage() {
           autoComplete="current-password"
           required
         />
+
+        <Link to="/recuperar-contrasena" className={styles.forgotLink}>
+          ¿Olvidaste tu contraseña?
+        </Link>
+
 
         <div className={styles.actions}>
           {submitError && (

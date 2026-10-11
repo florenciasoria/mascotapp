@@ -9,6 +9,7 @@
   --color-gray: #d9d9d9;
   --color-gray-warm: #e6e1d9; /* fondo del selector: gris cálido */
   --color-brown-light: #918783;
+  --color-brown-soft: #776d68; /* textos de ayuda: 4.6:1 sobre crema */
   --color-white: #ffffff;
 
   /* Ajustes de accesibilidad (contraste WCAG AA) */
@@ -30,6 +31,7 @@
   --color-focus: var(--color-pink-dark);
   --color-error: var(--color-red);
   --color-success: var(--color-sage);
+  --color-text-soft: var(--color-brown-soft); /* ayudas y notas */
 
   /* ===== Tipografía ===== */
   --font-heading: 'Nunito', system-ui, sans-serif;

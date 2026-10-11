@@ -35,8 +35,9 @@
 
 .hint {
   margin: 0;
+  color: var(--color-text-soft);
   font-size: var(--font-size-xs);
-  color: var(--color-text);
+  font-style: italic;
 }
 
 /* Área de texto: se puede agrandar hacia abajo */

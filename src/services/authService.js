@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from 'firebase/auth'
 import { doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore'
 import { auth, db } from './firebase'
@@ -60,6 +61,12 @@ export function logoutUser() {
 
 export function resendVerificationEmail() {
   return sendEmailVerification(auth.currentUser, actionCodeSettings)
+}
+
+// Firebase envía un email con un enlace para crear una contraseña nueva.
+// Por seguridad, no avisa si el email no está registrado.
+export function sendPasswordReset(email) {
+  return sendPasswordResetEmail(auth, email.trim(), actionCodeSettings)
 }
 
 // Vuelve a consultar a Firebase si el usuario ya verificó su email

@@ -102,6 +102,8 @@ function RegisterPage() {
           </label>
         </div>
 
+        <p className={styles.requiredNote}>Todos los campos son obligatorios.</p>
+
         <div className={styles.grid}>
           <Input
             label={isShelter ? 'Nombre del refugio' : 'Nombre y apellido'}

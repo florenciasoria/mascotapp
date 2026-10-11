@@ -8,6 +8,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import { AuthProvider } from './context/AuthProvider'
 import ProtectedRoute from './routes/ProtectedRoute'
 import { ROLES } from './utils/roles'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
+        <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
 
         <Route
           path="/adoptante/*"
