@@ -5,11 +5,13 @@ import AdopterHomePage from './pages/AdopterHomePage'
 import ShelterHomePage from './pages/ShelterHomePage'
 import AdminHomePage from './pages/AdminHomePage'
 import NotFoundPage from './pages/NotFoundPage'
+import { AuthProvider } from './context/AuthProvider'
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
@@ -19,8 +21,9 @@ function App() {
         <Route path="/admin/*" element={<AdminHomePage />} />
 
         <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 

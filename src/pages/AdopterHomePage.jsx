@@ -1,5 +1,14 @@
+import { useAuth } from '../hooks/useAuth'
+
 function AdopterHomePage() {
-  return <h1>Página de inicio para adoptantes</h1>
+  const { profile } = useAuth()
+
+  return (
+    <main>
+      <h1>Área del adoptante</h1>
+      <p>Hola, {profile?.name}</p>
+    </main>
+  )
 }
 
 export default AdopterHomePage

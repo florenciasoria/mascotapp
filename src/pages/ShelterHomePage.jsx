@@ -1,5 +1,14 @@
+import { useAuth } from '../hooks/useAuth'
+
 function ShelterHomePage() {
-  return <h1>Página de inicio para refugios</h1>
+  const { profile } = useAuth()
+
+  return (
+    <main>
+      <h1>Área del refugio</h1>
+      <p>Hola, {profile?.name} (estado: {profile?.status})</p>
+    </main>
+  )
 }
 
 export default ShelterHomePage
