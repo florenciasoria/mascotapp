@@ -30,4 +30,6 @@ if (missingKeys.length > 0) {
 const app = initializeApp(firebaseConfig)
 
 export const auth = getAuth(app)
+// Los emails que envía Firebase (verificación, recuperar contraseña) en español
+auth.languageCode = 'es'
 export const db = getFirestore(app)

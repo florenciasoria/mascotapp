@@ -1,0 +1,66 @@
+/* Design System de MascotApp: valores tomados de Figma.
+   Los componentes usan solo las variables "por uso", nunca colores fijos. */
+:root {
+  /* ===== Paleta base (Figma) ===== */
+  --color-pink: #c98f9d;
+  --color-sage: #a8bfa8;
+  --color-cream: #f7f4ed;
+  --color-brown: #6b625e;
+  --color-gray: #d9d9d9;
+  --color-gray-warm: #e6e1d9; /* fondo del selector: gris cálido */
+  --color-brown-light: #918783;
+  --color-brown-soft: #776d68; /* textos de ayuda: 4.6:1 sobre crema */
+  --color-white: #ffffff;
+
+  /* Ajustes de accesibilidad (contraste WCAG AA) */
+  --color-pink-dark: #9a5a69; /* links: 4.7:1 sobre crema */
+  --color-pink-deep: #c0808f; /* botón: blanco en texto grande 3.1:1 */
+  --color-red: #b3261e; /* errores: provisional, no está en Figma */
+
+  /* ===== Colores por uso ===== */
+  --color-bg: var(--color-cream);
+  --color-surface: var(--color-white);
+  --color-text: var(--color-brown);
+  --color-text-muted: var(--color-brown-light); /* solo texto grande */
+  --color-primary: var(--color-pink-deep);
+  --color-on-primary: var(--color-white);
+  --color-link: var(--color-pink-dark);
+  --color-border: var(--color-gray);
+  --color-toggle-bg: var(--color-gray-warm);
+  --color-border-input: var(--color-brown-light);
+  --color-focus: var(--color-pink-dark);
+  --color-error: var(--color-red);
+  --color-success: var(--color-sage);
+  --color-text-soft: var(--color-brown-soft); /* ayudas y notas */
+
+  /* ===== Tipografía ===== */
+  --font-heading: 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+
+  --font-size-xs: 0.8125rem; /* 13px: textos de ayuda */
+  --font-size-sm: 0.875rem; /* 14px: labels, notas */
+  --font-size-base: 1rem; /* 16px: texto e inputs */
+  --font-size-lg: 1.75rem; /* 28px: subtítulos */
+  --font-size-xl: 2.5rem; /* 40px: títulos */
+
+  --font-weight-regular: 400;
+  --font-weight-light: 300;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+
+  /* ===== Espaciado (escala de 4px) ===== */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-12: 3rem; /* 48px */
+
+  /* ===== Bordes ===== */
+  --radius-md: 0.5rem; /* inputs y botones */
+  --radius-pill: 999px; /* selector Adoptante/Refugio */
+}

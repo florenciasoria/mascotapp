@@ -1,0 +1,15 @@
+.layout {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-8) var(--space-4);
+}
+
+.content {
+  width: 100%;
+  max-width: 24rem; /* login: columna angosta */
+}
+
+.wide {
+  max-width: 48rem; /* registro: dos columnas */
+}
