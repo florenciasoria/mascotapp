@@ -13,20 +13,50 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    // ¿Es un texto con un largo entre min y max?
+    function isText(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+
+    // Campos comunes a todos los perfiles (mismos límites que validators.js)
+    function hasValidCommonFields(data) {
+      return isText(data.name, 2, 80)
+        && isText(data.phone, 6, 20)
+        && isText(data.address, 5, 200);
+    }
+
+    // Perfil de adoptante: entra aprobado directamente
+    function isValidAdopter(data) {
+      return data.role == 'adoptante'
+        && data.status == 'aprobado'
+        && data.keys().hasOnly(['role', 'status', 'name', 'email', 'phone', 'address', 'createdAt']);
+    }
+
+    // Perfil de refugio: arranca pendiente hasta que lo apruebe un admin
+    function isValidShelter(data) {
+      return data.role == 'refugio'
+        && data.status == 'pendiente'
+        && isText(data.about, 10, 500)
+        && data.keys().hasOnly(['role', 'status', 'name', 'email', 'phone', 'address', 'about', 'createdAt']);
+    }
+
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
       allow read: if isOwner(userId);
 
-      // Al registrarse solo puede elegir adoptante o refugio (nunca admin),
-      // y el email debe coincidir con el de su cuenta
+      // Alta: nunca admin, el email debe ser el de la cuenta,
+      // la fecha la pone el servidor y los campos deben ser válidos
       allow create: if isOwner(userId)
-        && request.resource.data.role in ['adoptante', 'refugio']
-        && request.resource.data.email == request.auth.token.email;
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.createdAt == request.time
+        && hasValidCommonFields(request.resource.data)
+        && (isValidAdopter(request.resource.data) || isValidShelter(request.resource.data));
 
-      // Puede editar su perfil, pero no cambiar su rol ni su email
+      // Edición: solo datos de contacto; rol, estado, email y fecha no se tocan
       allow update: if isOwner(userId)
-        && request.resource.data.role == resource.data.role
-        && request.resource.data.email == resource.data.email;
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['name', 'phone', 'address', 'about'])
+        && hasValidCommonFields(request.resource.data);
 
       allow delete: if false;
     }
