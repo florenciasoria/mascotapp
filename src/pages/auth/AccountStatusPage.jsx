@@ -1,0 +1,43 @@
+import AuthLayout from '@/layouts/AuthLayout'
+import LogoutButton from '@/components/LogoutButton'
+import logo from '@/assets/logo.png'
+import { STATUS } from '@/utils/roles'
+import styles from './MessagePage.module.css'
+
+const MESSAGES = {
+  [STATUS.REJECTED]: {
+    title: 'Tu solicitud no fue aprobada',
+    text: 'Un administrador revisó los datos del refugio y no aprobó el registro, por lo que no podés usar las funcionalidades de MascotApp.',
+  },
+  [STATUS.INACTIVE]: {
+    title: 'Tu cuenta está desactivada',
+    text: 'Un administrador desactivó esta cuenta, por lo que no podés usar las funcionalidades de MascotApp.',
+  },
+}
+
+// Para cualquier estado que no esté contemplado
+const DEFAULT_MESSAGE = {
+  title: 'Tu cuenta no está habilitada',
+  text: 'Por el momento no podés usar las funcionalidades de MascotApp.',
+}
+
+// Se muestra a las cuentas bloqueadas (rechazadas, desactivadas o con un estado desconocido)
+function AccountStatusPage({ status }) {
+  const { title, text } = MESSAGES[status] ?? DEFAULT_MESSAGE
+
+  return (
+    <AuthLayout>
+      <div className={styles.content}>
+        <img src={logo} alt="MascotApp" className={styles.logo} />
+        <h1 className={styles.title}>{title}</h1>
+        <p className={styles.text}>{text}</p>
+        <p className={styles.text}>
+          Si creés que se trata de un error, comunicate con un administrador de MascotApp.
+        </p>
+        <LogoutButton />
+      </div>
+    </AuthLayout>
+  )
+}
+
+export default AccountStatusPage

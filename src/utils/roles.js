@@ -9,6 +9,8 @@ export const ROLES = {
 export const STATUS = {
   PENDING: 'pendiente',
   APPROVED: 'aprobado',
+  REJECTED: 'rechazado',
+  INACTIVE: 'inactivo',
 }
 
 // Pantalla de inicio de cada rol
