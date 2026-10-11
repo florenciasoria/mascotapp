@@ -10,3 +10,15 @@ export const STATUS = {
   PENDING: 'pendiente',
   APPROVED: 'aprobado',
 }
+
+// Pantalla de inicio de cada rol
+const HOME_PATHS = {
+  [ROLES.ADOPTER]: '/adoptante',
+  [ROLES.SHELTER]: '/refugio',
+  [ROLES.ADMIN]: '/admin',
+}
+
+// Si el rol no es válido, devuelve una ruta inexistente (muestra la página 404)
+export function getHomePath(role) {
+  return HOME_PATHS[role] ?? '/no-encontrado'
+}

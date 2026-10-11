@@ -51,3 +51,17 @@ export function validateRegisterForm(values, role) {
 
   return errors
 }
+
+export function validateLoginForm(values) {
+  const errors = {}
+
+  if (!EMAIL_REGEX.test(values.email.trim())) {
+    errors.email = 'Ingresá un email válido'
+  }
+  if (!values.password) {
+    errors.password = 'Ingresá tu contraseña'
+  }
+
+  return errors
+}
+

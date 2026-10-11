@@ -1,4 +1,5 @@
 import { useAuth } from '../hooks/useAuth'
+import LogoutButton from '../components/LogoutButton'
 
 function AdopterHomePage() {
   const { profile } = useAuth()
@@ -7,6 +8,7 @@ function AdopterHomePage() {
     <main>
       <h1>Área del adoptante</h1>
       <p>Hola, {profile?.name}</p>
+      <LogoutButton />
     </main>
   )
 }
