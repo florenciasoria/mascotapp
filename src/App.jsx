@@ -6,6 +6,9 @@ import ShelterHomePage from './pages/ShelterHomePage'
 import AdminHomePage from './pages/AdminHomePage'
 import NotFoundPage from './pages/NotFoundPage'
 import { AuthProvider } from './context/AuthProvider'
+import ProtectedRoute from './routes/ProtectedRoute'
+import { ROLES } from './utils/roles'
+
 
 function App() {
   return (
@@ -16,9 +19,30 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
 
-        <Route path="/adoptante/*" element={<AdopterHomePage />} />
-        <Route path="/refugio/*" element={<ShelterHomePage />} />
-        <Route path="/admin/*" element={<AdminHomePage />} />
+        <Route
+          path="/adoptante/*"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADOPTER]}>
+              <AdopterHomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/refugio/*"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.SHELTER]}>
+              <ShelterHomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+              <AdminHomePage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="*" element={<NotFoundPage />} />
         </Routes>

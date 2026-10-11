@@ -6,10 +6,13 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  sendEmailVerification,
 } from 'firebase/auth'
 import { doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore'
 import { auth, db } from './firebase'
 import { ROLES, STATUS } from '../utils/roles'
+// Después de hacer clic en el enlace del email, Firebase ofrece volver al login
+const actionCodeSettings = { url: `${window.location.origin}/login` }
 
 export async function registerUser({ role, name, email, password, phone, address, about }) {
   const { user } = await createUserWithEmailAndPassword(auth, email.trim(), password)
@@ -37,6 +40,13 @@ export async function registerUser({ role, name, email, password, phone, address
     throw error
   }
 
+    // Si falla el envío no cancelamos el registro: se puede reenviar desde la app
+  try {
+    await sendEmailVerification(user, actionCodeSettings)
+  } catch {
+    // El usuario puede pedir el reenvío desde la pantalla de verificación
+  }
+
   return profile
 }
 
@@ -46,6 +56,18 @@ export function loginUser(email, password) {
 
 export function logoutUser() {
   return signOut(auth)
+}
+
+export function resendVerificationEmail() {
+  return sendEmailVerification(auth.currentUser, actionCodeSettings)
+}
+
+// Vuelve a consultar a Firebase si el usuario ya verificó su email
+export async function checkEmailVerified() {
+  await auth.currentUser.reload()
+  // Renovamos el token para que las reglas de Firestore también lo sepan
+  await auth.currentUser.getIdToken(true)
+  return auth.currentUser.emailVerified
 }
 
 // Avisa cada vez que cambia la sesión (login, logout o al recargar la página).

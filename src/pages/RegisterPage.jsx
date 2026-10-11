@@ -1,12 +1,14 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
 import AuthLayout from '../layouts/AuthLayout'
 import Input from '../components/Input'
 import Button from '../components/Button'
 import { getAuthErrorMessage, registerUser } from '../services/authService'
 import { LIMITS, validateRegisterForm } from '../utils/validators'
-import { ROLES } from '../utils/roles'
 import styles from './RegisterPage.module.css'
+import { Link, Navigate, useNavigate } from 'react-router'
+import { useAuth } from '../hooks/useAuth'
+import { getHomePath, ROLES } from '../utils/roles'
+
 
 const INITIAL_VALUES = {
   name: '',
@@ -19,6 +21,7 @@ const INITIAL_VALUES = {
 
 function RegisterPage() {
   const navigate = useNavigate()
+  const { profile } = useAuth()
   const [role, setRole] = useState(ROLES.ADOPTER)
   const [values, setValues] = useState(INITIAL_VALUES)
   const [errors, setErrors] = useState({})
@@ -54,11 +57,16 @@ function RegisterPage() {
     setIsSubmitting(true)
     try {
       await registerUser({ ...values, role })
-      navigate(isShelter ? '/refugio' : '/adoptante', { replace: true })
+      navigate(getHomePath(role), { replace: true, state: { justRegistered: true } })
     } catch (error) {
       setSubmitError(getAuthErrorMessage(error))
       setIsSubmitting(false)
     }
+  }
+
+    // Si ya hay sesión iniciada, no tiene sentido registrarse: va a su área
+  if (profile && !isSubmitting) {
+    return <Navigate to={getHomePath(profile.role)} replace />
   }
 
   return (

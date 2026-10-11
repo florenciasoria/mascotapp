@@ -29,6 +29,7 @@
   --color-border-input: var(--color-brown-light);
   --color-focus: var(--color-pink-dark);
   --color-error: var(--color-red);
+  --color-success: var(--color-sage);
 
   /* ===== Tipografía ===== */
   --font-heading: 'Nunito', system-ui, sans-serif;
