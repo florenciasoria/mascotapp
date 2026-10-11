@@ -28,8 +28,16 @@
 }
 
 .secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-on-secondary);
+  font-size: 1.1875rem; /* 19px en negrita = "texto grande" según WCAG */
+  font-weight: var(--font-weight-bold);
+}
+
+.link {
   background-color: transparent;
   color: var(--color-link);
   font-size: var(--font-size-base);
   text-decoration: underline;
 }
+

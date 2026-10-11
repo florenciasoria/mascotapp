@@ -11,7 +11,7 @@ function LogoutButton() {
   }
 
     return (
-    <Button variant="secondary" onClick={handleLogout}>
+    <Button variant="link" onClick={handleLogout}>
       Cerrar sesión
     </Button>
   )

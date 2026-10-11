@@ -4,6 +4,7 @@
   /* ===== Paleta base (Figma) ===== */
   --color-pink: #c98f9d;
   --color-sage: #a8bfa8;
+  --color-sage-deep: #7e9a7e; /* botón secundario: blanco en texto grande 3.1:1 */
   --color-cream: #f7f4ed;
   --color-brown: #6b625e;
   --color-gray: #d9d9d9;
@@ -24,6 +25,8 @@
   --color-text-muted: var(--color-brown-light); /* solo texto grande */
   --color-primary: var(--color-pink-deep);
   --color-on-primary: var(--color-white);
+  --color-secondary: var(--color-sage-deep);
+  --color-on-secondary: var(--color-white);
   --color-link: var(--color-pink-dark);
   --color-border: var(--color-gray);
   --color-toggle-bg: var(--color-gray-warm);

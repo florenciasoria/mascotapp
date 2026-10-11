@@ -67,7 +67,7 @@ function VerifyEmailPage() {
           <Button onClick={handleCheck} isLoading={isChecking}>
             Ya verifiqué mi email
           </Button>
-          <Button variant="secondary" onClick={handleResend} isLoading={isResending}>
+          <Button variant="link" onClick={handleResend} isLoading={isResending}>
             Reenviar email
           </Button>
           <LogoutButton />
