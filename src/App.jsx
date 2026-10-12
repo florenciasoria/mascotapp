@@ -15,6 +15,7 @@ import ProfilePage from '@/pages/shared/ProfilePage'
 import ShelterPetsPage from '@/pages/shelter/ShelterPetsPage'
 import RegisterPetPage from '@/pages/shelter/RegisterPetPage'
 import EditPetPage from '@/pages/shelter/EditPetPage'
+import SearchPetsPage from '@/pages/adopter/SearchPetsPage'
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         >
           <Route index element={<AdopterHomePage />} />
           <Route path="perfil" element={<ProfilePage />} />
+          <Route path="buscar" element={<SearchPetsPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 
