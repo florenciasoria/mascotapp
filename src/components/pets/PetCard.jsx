@@ -4,11 +4,16 @@ import styles from './PetCard.module.css'
 
 // Tarjeta de mascota reutilizable. Lo que va abajo (estado, botones)
 // lo decide cada pantalla y se pasa como children.
-function PetCard({ pet, children }) {
+// muted: se ve "apagada" (por ejemplo, mascota desactivada o adoptada).
+function PetCard({ pet, muted = false, children }) {
   const titleId = `pet-${pet.id}`
 
   return (
-    <Card as="article" className={styles.card} aria-labelledby={titleId}>
+    <Card
+      as="article"
+      className={muted ? `${styles.card} ${styles.muted}` : styles.card}
+      aria-labelledby={titleId}
+    >
       <img
         src={pet.imageUrl}
         alt={`Foto de ${pet.name}, ${pet.species.toLowerCase()} ${pet.color.toLowerCase()}`}

@@ -101,7 +101,7 @@ function ShelterPetsPage() {
 
             return (
               <li key={pet.id}>
-                <PetCard pet={pet}>
+                <PetCard pet={pet} muted={pet.status === PET_STATUS.UNAVAILABLE}>
                   <StatusBadge tone={STATUS_TONES[pet.status]}>
                     {PET_STATUS_LABELS[pet.status]}
                   </StatusBadge>
