@@ -13,6 +13,8 @@ import AppLayout from '@/layouts/AppLayout'
 import ComingSoonPage from '@/pages/ComingSoonPage'
 import ProfilePage from '@/pages/shared/ProfilePage'
 import ShelterPetsPage from '@/pages/shelter/ShelterPetsPage'
+import RegisterPetPage from '@/pages/shelter/RegisterPetPage'
+import EditPetPage from '@/pages/shelter/EditPetPage'
 
 function App() {
   return (
@@ -48,6 +50,8 @@ function App() {
           <Route index element={<ShelterHomePage />} />
           <Route path="perfil" element={<ProfilePage />} />
           <Route path="mascotas" element={<ShelterPetsPage />} />
+          <Route path="mascotas/nueva" element={<RegisterPetPage />} />
+          <Route path="mascotas/:petId/editar" element={<EditPetPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 

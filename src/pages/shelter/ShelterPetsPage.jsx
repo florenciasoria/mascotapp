@@ -5,6 +5,7 @@ import Button from '@/components/ui/Button'
 import ButtonLink from '@/components/ui/ButtonLink'
 import StatusBadge from '@/components/ui/StatusBadge'
 import ResultDialog from '@/components/ui/ResultDialog'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import PetCard from '@/components/pets/PetCard'
 import { useAuth } from '@/hooks/useAuth'
 import { getShelterPets, setPetStatus } from '@/services/petService'
@@ -24,6 +25,7 @@ function ShelterPetsPage() {
   const [loadError, setLoadError] = useState(false)
   const [updatingId, setUpdatingId] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
+  const [petToDeactivate, setPetToDeactivate] = useState(null)
 
   // Carga las mascotas del refugio al entrar a la pantalla
   useEffect(() => {
@@ -39,10 +41,7 @@ function ShelterPetsPage() {
     }
   }, [user.uid])
 
-  async function handleToggleStatus(pet) {
-    const newStatus =
-      pet.status === PET_STATUS.AVAILABLE ? PET_STATUS.UNAVAILABLE : PET_STATUS.AVAILABLE
-
+  async function changeStatus(pet, newStatus) {
     setUpdatingId(pet.id)
     try {
       await setPetStatus(pet.id, newStatus)
@@ -54,6 +53,20 @@ function ShelterPetsPage() {
     } finally {
       setUpdatingId(null)
     }
+  }
+
+  // Desactivar pide confirmación (la mascota deja de verse); activar no hace falta
+  function handleToggleClick(pet) {
+    if (pet.status === PET_STATUS.AVAILABLE) {
+      setPetToDeactivate(pet)
+    } else {
+      changeStatus(pet, PET_STATUS.AVAILABLE)
+    }
+  }
+
+  async function handleConfirmDeactivate() {
+    await changeStatus(petToDeactivate, PET_STATUS.UNAVAILABLE)
+    setPetToDeactivate(null)
   }
 
   return (
@@ -97,7 +110,7 @@ function ShelterPetsPage() {
                     <div className={styles.actions}>
                       <Button
                         variant="secondary"
-                        onClick={() => handleToggleStatus(pet)}
+                        onClick={() => handleToggleClick(pet)}
                         isLoading={updatingId === pet.id}
                         aria-label={`${toggleLabel} a ${pet.name}`}
                       >
@@ -117,6 +130,16 @@ function ShelterPetsPage() {
           })}
         </ul>
       </section>
+
+      <ConfirmDialog
+        isOpen={petToDeactivate !== null}
+        onClose={() => setPetToDeactivate(null)}
+        onConfirm={handleConfirmDeactivate}
+        title={`¿Desactivar a ${petToDeactivate?.name ?? ''}?`}
+        message="Mientras esté desactivada, no va a aparecer en la búsqueda de los adoptantes ni va a poder recibir solicitudes nuevas. Podés volver a activarla cuando quieras."
+        confirmLabel="Desactivar"
+        isLoading={petToDeactivate !== null && updatingId === petToDeactivate.id}
+      />
 
       <ResultDialog
         isOpen={errorMessage !== ''}

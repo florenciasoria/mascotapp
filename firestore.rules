@@ -87,7 +87,10 @@ service cloud.firestore {
           || (data.ageUnit == 'años' && data.ageInMonths == data.ageValue * 12))
         && data.size in ['Pequeño', 'Mediano', 'Grande']
         && data.color in ['Negro', 'Blanco', 'Gris', 'Marrón', 'Naranja', 'Atigrado', 'Tricolor', 'Mixto']
-        && isText(data.imagePath, 5, 100)
+        && isText(data.imageUrl, 20, 1000)
+        && data.imageUrl.matches('https://firebasestorage[.]googleapis[.]com/.*')
+        && isText(data.imageStoragePath, 10, 200)
+        && data.imageStoragePath.matches('pets/' + request.auth.uid + '/.*')
         && isText(data.description, 10, 500)
         && data.updatedAt == request.time;
     }
@@ -128,7 +131,7 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time
         && isValidPet(request.resource.data)
         && request.resource.data.keys().hasOnly(['name', 'species', 'breed', 'sex', 'ageValue',
-             'ageUnit', 'ageInMonths', 'size', 'color', 'imagePath', 'description',
+             'ageUnit', 'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath', 'description',
              'shelterId', 'shelterName', 'neighborhood', 'status', 'createdAt', 'updatedAt']);
 
       // Edición: solo el refugio dueño, nunca una mascota adoptada,
@@ -138,7 +141,7 @@ service cloud.firestore {
         && resource.data.status != 'adoptada'
         && request.resource.data.status in ['disponible', 'no_disponible']
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'species',
-             'breed', 'sex', 'ageValue', 'ageUnit', 'ageInMonths', 'size', 'color', 'imagePath',
+             'breed', 'sex', 'ageValue', 'ageUnit', 'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath',
              'description', 'status', 'updatedAt'])
         && isValidPet(request.resource.data);
 

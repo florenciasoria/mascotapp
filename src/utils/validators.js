@@ -1,5 +1,6 @@
 import { ROLES } from './roles'
 import { NEIGHBORHOODS } from './neighborhoods'
+import { AGE_UNITS, COLORS, SEXES, SIZES, SPECIES } from './petOptions'
 
 // Límites compartidos con las reglas de Firestore (firestore.rules).
 export const LIMITS = {
@@ -8,6 +9,10 @@ export const LIMITS = {
   address: { min: 5, max: 200 },
   about: { min: 10, max: 500 },
   password: { min: 8 },
+  petName: { min: 2, max: 40 },
+  breed: { min: 2, max: 40 },
+  petDescription: { min: 10, max: 500 },
+  age: { min: 0, max: 30 },
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -83,6 +88,59 @@ export function validateForgotPasswordForm(values) {
 
   if (!EMAIL_REGEX.test(values.email.trim())) {
     errors.email = 'Ingresá un email válido'
+  }
+
+  return errors
+}
+
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_IMAGE_MB = 15
+
+// imageFile: foto nueva elegida (o null). hasCurrentImage: al editar, si ya tiene foto.
+export function validatePetForm(values, imageFile, hasCurrentImage) {
+  const errors = {}
+
+  if (!hasLength(values.name, LIMITS.petName)) {
+    errors.name = 'Ingresá el nombre de la mascota'
+  }
+  if (!SPECIES.includes(values.species)) {
+    errors.species = 'Elegí la especie'
+  }
+  if (!hasLength(values.breed, LIMITS.breed)) {
+    errors.breed = 'Ingresá la raza (si no la sabés, poné "Mestizo")'
+  }
+  if (!SEXES.includes(values.sex)) {
+    errors.sex = 'Elegí el sexo'
+  }
+
+  const age = Number(values.ageValue)
+  if (values.ageValue === '' || !Number.isInteger(age) || age < LIMITS.age.min || age > LIMITS.age.max) {
+    errors.ageValue = 'Ingresá una edad entre 0 y 30'
+  }
+  if (!AGE_UNITS.some((unit) => unit.value === values.ageUnit)) {
+    errors.ageUnit = 'Elegí meses o años'
+  }
+
+  if (!SIZES.includes(values.size)) {
+    errors.size = 'Elegí el tamaño'
+  }
+  if (!COLORS.includes(values.color)) {
+    errors.color = 'Elegí el color'
+  }
+
+  // La foto original puede pesar hasta 15 MB: antes de subirla se achica a ~200 KB
+  if (imageFile) {
+    if (!IMAGE_TYPES.includes(imageFile.type)) {
+      errors.image = 'La foto tiene que ser JPG, PNG o WEBP'
+    } else if (imageFile.size > MAX_IMAGE_MB * 1024 * 1024) {
+      errors.image = `La foto es demasiado grande (máximo ${MAX_IMAGE_MB} MB)`
+    }
+  } else if (!hasCurrentImage) {
+    errors.image = 'Subí una foto de la mascota'
+  }
+
+  if (!hasLength(values.description, LIMITS.petDescription)) {
+    errors.description = 'Contá un poco sobre la mascota (mínimo 10 caracteres)'
   }
 
   return errors

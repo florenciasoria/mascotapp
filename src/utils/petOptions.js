@@ -26,6 +26,19 @@ export function toMonths(value, unit) {
   return unit === 'años' ? value * 12 : value
 }
 
+// Valores iniciales del formulario de mascota (vacío)
+export const EMPTY_PET_VALUES = {
+  name: '',
+  species: '',
+  breed: '',
+  sex: '',
+  ageValue: '',
+  ageUnit: '',
+  size: '',
+  color: '',
+  description: '',
+}
+
 // "1 mes", "3 meses", "1 año", "2 años"
 export function formatAge(value, unit) {
   if (value === 1) {

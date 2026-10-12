@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ¿Usuario logueado con email verificado?
+    function isVerifiedUser() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    // ¿Es un refugio aprobado? (las reglas de Storage pueden leer Firestore)
+    function isApprovedShelter() {
+      let profile = firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+      return profile.role == 'refugio' && profile.status == 'aprobado';
+    }
+
+    // Fotos de mascotas: cada refugio sube a su propia carpeta pets/{uid}/
+    match /pets/{shelterId}/{fileName} {
+      allow read: if isVerifiedUser();
+
+      // Subir: solo el refugio dueño de la carpeta, aprobado, imágenes de hasta 2 MB
+      allow create: if isVerifiedUser()
+        && request.auth.uid == shelterId
+        && isApprovedShelter()
+        && request.resource.size < 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+
+      // Borrar: solo el refugio dueño (al reemplazar una foto)
+      allow delete: if isVerifiedUser() && request.auth.uid == shelterId;
+    }
+  }
+}

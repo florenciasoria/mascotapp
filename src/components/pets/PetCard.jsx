@@ -1,6 +1,5 @@
 import Card from '@/components/ui/Card'
 import { formatAge } from '@/utils/petOptions'
-import { getImageDescription } from '@/utils/petImages'
 import styles from './PetCard.module.css'
 
 // Tarjeta de mascota reutilizable. Lo que va abajo (estado, botones)
@@ -11,8 +10,8 @@ function PetCard({ pet, children }) {
   return (
     <Card as="article" className={styles.card} aria-labelledby={titleId}>
       <img
-        src={pet.imagePath}
-        alt={getImageDescription(pet.imagePath)}
+        src={pet.imageUrl}
+        alt={`Foto de ${pet.name}, ${pet.species.toLowerCase()} ${pet.color.toLowerCase()}`}
         className={styles.image}
         loading="lazy"
       />

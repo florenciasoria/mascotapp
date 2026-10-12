@@ -4,6 +4,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 // Vite expone en import.meta.env solo las variables que empiezan con VITE_
 const firebaseConfig = {
@@ -32,4 +33,8 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 // Los emails que envía Firebase (verificación, recuperar contraseña) en español
 auth.languageCode = 'es'
+
 export const db = getFirestore(app)
+
+export const storage = getStorage(app)
+
