@@ -154,6 +154,7 @@ function ProfilePage() {
               value={values.address}
               onChange={handleChange}
               error={errors.address}
+              hint={isShelter ? 'Calle y número. Si es en GBA, agregá la localidad.' : undefined}
               autoComplete="street-address"
               maxLength={LIMITS.address.max}
               required

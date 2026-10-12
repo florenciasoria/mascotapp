@@ -16,6 +16,7 @@ import ShelterPetsPage from '@/pages/shelter/ShelterPetsPage'
 import RegisterPetPage from '@/pages/shelter/RegisterPetPage'
 import EditPetPage from '@/pages/shelter/EditPetPage'
 import SearchPetsPage from '@/pages/adopter/SearchPetsPage'
+import PetDetailPage from '@/pages/adopter/PetDetailPage'
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route index element={<AdopterHomePage />} />
           <Route path="perfil" element={<ProfilePage />} />
           <Route path="buscar" element={<SearchPetsPage />} />
+          <Route path="mascotas/:petId" element={<PetDetailPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 

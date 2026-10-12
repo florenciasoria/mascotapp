@@ -1,7 +1,7 @@
 .map {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 16rem;
   border: 0;
   border-radius: var(--radius-md);
 }
