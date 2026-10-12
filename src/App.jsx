@@ -9,6 +9,9 @@ import { AuthProvider } from '@/context/AuthProvider'
 import ProtectedRoute from '@/routes/ProtectedRoute'
 import { ROLES } from '@/utils/roles'
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
+import AppLayout from '@/layouts/AppLayout'
+import ComingSoonPage from '@/pages/ComingSoonPage'
+
 
 
 function App() {
@@ -22,29 +25,40 @@ function App() {
         <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
 
         <Route
-          path="/adoptante/*"
+          path="/adoptante"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADOPTER]}>
-              <AdopterHomePage />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdopterHomePage />} />
+          <Route path="*" element={<ComingSoonPage />} />
+        </Route>
+
         <Route
-          path="/refugio/*"
+          path="/refugio"
           element={
             <ProtectedRoute allowedRoles={[ROLES.SHELTER]}>
-              <ShelterHomePage />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<ShelterHomePage />} />
+          <Route path="*" element={<ComingSoonPage />} />
+        </Route>
+
         <Route
-          path="/admin/*"
+          path="/admin"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
-              <AdminHomePage />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdminHomePage />} />
+          <Route path="*" element={<ComingSoonPage />} />
+        </Route>
 
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
