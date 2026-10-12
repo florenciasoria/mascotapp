@@ -1,0 +1,26 @@
+// Galería de fotos fijas (carpeta public/mascotas).
+// La descripción se usa como texto alternativo al elegir la foto.
+export const PET_IMAGES = [
+  { path: '/mascotas/gato-01.jpg', species: 'Gato', description: 'Gato blanco con manchas grises y collar rojo, lamiéndose la pata sobre un libro' },
+  { path: '/mascotas/gato-02.jpg', species: 'Gato', description: 'Gato negro de ojos verdes parado sobre un piso de baldosas' },
+  { path: '/mascotas/gato-03.jpg', species: 'Gato', description: 'Gato gris con patas blancas acostado sobre un piso de madera' },
+  { path: '/mascotas/gato-04.jpg', species: 'Gato', description: 'Gato naranja claro de pelo largo recostado sobre un mueble' },
+  { path: '/mascotas/gato-05.jpg', species: 'Gato', description: 'Gatita tricolor sentada junto a un vaso de agua, lamiéndose la pata' },
+  { path: '/mascotas/gato-06.jpg', species: 'Gato', description: 'Gata tricolor acostada en una cama verde' },
+  { path: '/mascotas/gato-07.jpg', species: 'Gato', description: 'Gato naranja atigrado durmiendo enroscado sobre una silla' },
+  { path: '/mascotas/gato-08.jpg', species: 'Gato', description: 'Gato negro acostado en la vereda junto a una reja' },
+  { path: '/mascotas/gato-09.jpg', species: 'Gato', description: 'Gato gris atigrado acostado sobre una cama' },
+  { path: '/mascotas/gato-10.jpg', species: 'Gato', description: 'Gato blanco y negro de pelo largo acostado en el piso' },
+  { path: '/mascotas/gato-11.jpg', species: 'Gato', description: 'Gatito naranja acostado sobre una manta celeste' },
+  { path: '/mascotas/gato-12.jpg', species: 'Gato', description: 'Gato blanco y negro de pelo largo recostado sobre un acolchado' },
+  { path: '/mascotas/gato-13.jpg', species: 'Gato', description: 'Gata tricolor durmiendo sobre un muro de piedra' },
+  { path: '/mascotas/gato-14.jpg', species: 'Gato', description: 'Gatito naranja claro sentado sobre una cama' },
+  { path: '/mascotas/gato-15.jpg', species: 'Gato', description: 'Gato negro de ojos amarillos sentado sobre una manta celeste' },
+  { path: '/mascotas/gato-16.jpg', species: 'Gato', description: 'Gato naranja atigrado recostado sobre una mesa' },
+  { path: '/mascotas/perro-01.jpg', species: 'Perro', description: 'Perro color crema con collar rojo apoyado en un banco junto al río' },
+  { path: '/mascotas/perro-02.jpg', species: 'Perro', description: 'Cachorro color crema durmiendo en una cucha azul' },
+  { path: '/mascotas/perro-03.jpg', species: 'Perro', description: 'Cachorro blanco y marrón en brazos de una persona' },
+  { path: '/mascotas/perro-04.jpg', species: 'Perro', description: 'Perro blanco y marrón con arnés parado sobre el pasto' },
+  { path: '/mascotas/perro-05.jpg', species: 'Perro', description: 'Perro negro de pelo largo sentado sobre el pasto' },
+  { path: '/mascotas/perro-06.jpg', species: 'Perro', description: 'Bulldog inglés marrón y blanco sentado en una silla' },
+]
