@@ -55,6 +55,62 @@ service cloud.firestore {
       );
     }
 
+    // ¿El usuario verificó su email?
+    function isVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    // Perfil del usuario logueado (se lee de la base para conocer su rol y estado)
+    function currentUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // ¿Usuario logueado, verificado, aprobado y con este rol?
+    function isApprovedRole(role) {
+      return isSignedIn() && isVerified()
+        && currentUser().role == role
+        && currentUser().status == 'aprobado';
+    }
+
+    function isAdmin() {
+      return isApprovedRole('admin');
+    }
+
+    // Datos de una mascota (mismas listas y límites que petOptions.js y validators.js)
+    function isValidPet(data) {
+      return isText(data.name, 2, 40)
+        && data.species in ['Perro', 'Gato']
+        && isText(data.breed, 2, 40)
+        && data.sex in ['Macho', 'Hembra']
+        && data.ageValue is int && data.ageValue >= 0 && data.ageValue <= 30
+        && ((data.ageUnit == 'meses' && data.ageInMonths == data.ageValue)
+          || (data.ageUnit == 'años' && data.ageInMonths == data.ageValue * 12))
+        && data.size in ['Pequeño', 'Mediano', 'Grande']
+        && data.color in ['Negro', 'Blanco', 'Gris', 'Marrón', 'Naranja', 'Atigrado', 'Tricolor', 'Mixto']
+        && isText(data.imageUrl, 20, 1000)
+        && data.imageUrl.matches('https://firebasestorage[.]googleapis[.]com/.*')
+        && isText(data.imageStoragePath, 10, 200)
+        && data.imageStoragePath.matches('pets/' + request.auth.uid + '/.*')
+        && isText(data.description, 10, 500)
+        && data.updatedAt == request.time;
+    }
+
+    // Edición de una mascota por su refugio
+    function isValidPetUpdate() {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      return resource.data.shelterId == request.auth.uid
+        && resource.data.status != 'adoptada'
+        && data.status in ['disponible', 'no_disponible']
+        && changed.hasOnly(['name', 'species', 'breed', 'sex', 'ageValue', 'ageUnit',
+             'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath', 'description',
+             'status', 'shelterName', 'neighborhood', 'shelterAddress', 'updatedAt'])
+        // Los datos del refugio copiados en la mascota solo pueden actualizarse a los de su perfil
+        && (!changed.hasAny(['shelterName']) || data.shelterName == currentUser().name)
+        && (!changed.hasAny(['neighborhood']) || data.neighborhood == currentUser().neighborhood)
+        && (!changed.hasAny(['shelterAddress']) || data.shelterAddress == currentUser().address)
+        && isValidPet(data);
+    }
 
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
@@ -70,6 +126,35 @@ service cloud.firestore {
 
       // Edición: cada rol solo sus datos de contacto; rol, estado, email y fecha no se tocan
       allow update: if isOwner(userId) && isValidProfileUpdate();
+
+      allow delete: if false;
+    }
+
+    // Mascotas
+    match /pets/{petId} {
+      // Adoptantes: solo disponibles. Refugio: las suyas. Admin: todas.
+      allow read: if isSignedIn() && isVerified() && (
+        resource.data.status == 'disponible'
+        || resource.data.shelterId == request.auth.uid
+        || isAdmin()
+      );
+
+      // Alta: solo un refugio aprobado, a su nombre y como disponible
+      allow create: if isApprovedRole('refugio')
+        && request.resource.data.shelterId == request.auth.uid
+        && request.resource.data.shelterName == currentUser().name
+        && request.resource.data.neighborhood == currentUser().neighborhood
+        && request.resource.data.shelterAddress == currentUser().address
+        && request.resource.data.status == 'disponible'
+        && request.resource.data.createdAt == request.time
+        && isValidPet(request.resource.data)
+        && request.resource.data.keys().hasOnly(['name', 'species', 'breed', 'sex', 'ageValue',
+             'ageUnit', 'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath', 'description',
+             'shelterId', 'shelterName', 'neighborhood', 'shelterAddress', 'status', 'createdAt', 'updatedAt']);
+
+      // Edición: solo el refugio dueño, nunca una mascota adoptada
+      allow update: if isApprovedRole('refugio') && isValidPetUpdate();
+
 
       allow delete: if false;
     }

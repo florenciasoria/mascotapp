@@ -7,6 +7,7 @@ import ResultDialog from '@/components/ui/ResultDialog'
 import { useAuth } from '@/hooks/useAuth'
 import { getAuthErrorMessage, sendPasswordReset } from '@/services/authService'
 import { updateUserProfile } from '@/services/userService'
+import { syncShelterInfoInPets } from '@/services/petService'
 import { focusFirstInvalidField } from '@/utils/forms'
 import { NEIGHBORHOODS } from '@/utils/neighborhoods'
 import { ROLE_LABELS, ROLES } from '@/utils/roles'
@@ -67,6 +68,14 @@ function ProfilePage() {
     setIsSaving(true)
     try {
       await updateUserProfile(user.uid, values)
+      // El refugio tiene su nombre y barrio copiados en sus mascotas: los actualizamos
+      if (isShelter) {
+        await syncShelterInfoInPets(user.uid, {
+          name: values.name.trim(),
+          neighborhood: values.neighborhood,
+          address: values.address.trim(),
+        })
+      }
       setDialog({
         type: 'success',
         title: '¡Datos actualizados!',
@@ -145,6 +154,7 @@ function ProfilePage() {
               value={values.address}
               onChange={handleChange}
               error={errors.address}
+              hint={isShelter ? 'Calle y número. Si es en GBA, agregá la localidad.' : undefined}
               autoComplete="street-address"
               maxLength={LIMITS.address.max}
               required
