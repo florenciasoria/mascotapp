@@ -37,7 +37,8 @@ service cloud.firestore {
       return data.role == 'refugio'
         && data.status == 'pendiente'
         && isText(data.about, 10, 500)
-        && data.keys().hasOnly(['role', 'status', 'name', 'email', 'phone', 'address', 'about', 'createdAt']);
+        && isText(data.neighborhood, 2, 40)
+        && data.keys().hasOnly(['role', 'status', 'name', 'email', 'phone', 'address', 'neighborhood', 'about', 'createdAt']);
     }
 
     // Perfiles de usuario: el ID del documento es el uid de Authentication
@@ -55,7 +56,7 @@ service cloud.firestore {
       // Edición: solo datos de contacto; rol, estado, email y fecha no se tocan
       allow update: if isOwner(userId)
         && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['name', 'phone', 'address', 'about'])
+             .hasOnly(['name', 'phone', 'address', 'neighborhood', 'about'])
         && hasValidCommonFields(request.resource.data);
 
       allow delete: if false;

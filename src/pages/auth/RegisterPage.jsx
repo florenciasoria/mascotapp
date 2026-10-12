@@ -8,6 +8,8 @@ import styles from './RegisterPage.module.css'
 import { Link, Navigate, useNavigate } from 'react-router'
 import { useAuth } from '@/hooks/useAuth'
 import { getHomePath, ROLES } from '@/utils/roles'
+import Select from '@/components/ui/Select'
+import { NEIGHBORHOODS } from '@/utils/neighborhoods'
 
 
 const INITIAL_VALUES = {
@@ -17,6 +19,7 @@ const INITIAL_VALUES = {
   password: '',
   address: '',
   about: '',
+  neighborhood: '',
 }
 
 function RegisterPage() {
@@ -147,7 +150,7 @@ function RegisterPage() {
             autoComplete="new-password"
             required
           />
-          <div className={styles.fullWidth}>
+          <div className={isShelter ? undefined : styles.fullWidth}>
             <Input
               label="Dirección"
               name="address"
@@ -159,6 +162,18 @@ function RegisterPage() {
               required
             />
           </div>
+          {isShelter && (
+            <Select
+              label="Barrio"
+              name="neighborhood"
+              value={values.neighborhood}
+              onChange={handleChange}
+              error={errors.neighborhood}
+              options={NEIGHBORHOODS}
+              placeholder="Elegí un barrio"
+              required
+            />
+          )}
           {isShelter && (
             <div className={styles.fullWidth}>
               <Input

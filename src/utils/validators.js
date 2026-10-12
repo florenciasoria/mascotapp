@@ -1,4 +1,5 @@
 import { ROLES } from './roles'
+import { NEIGHBORHOODS } from './neighborhoods'
 
 // Límites compartidos con las reglas de Firestore (firestore.rules).
 export const LIMITS = {
@@ -47,6 +48,10 @@ export function validateRegisterForm(values, role) {
 
   if (role === ROLES.SHELTER && !hasLength(values.about, LIMITS.about)) {
     errors.about = 'Contá brevemente sobre el refugio (mínimo 10 caracteres)'
+  }
+
+  if (role === ROLES.SHELTER && !NEIGHBORHOODS.includes(values.neighborhood)) {
+    errors.neighborhood = 'Elegí el barrio del refugio'
   }
 
   return errors
