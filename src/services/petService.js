@@ -9,6 +9,7 @@ import {
   serverTimestamp,
   updateDoc,
   where,
+  writeBatch,
 } from 'firebase/firestore'
 import { db } from './firebase'
 import { PET_STATUS, toMonths } from '@/utils/petOptions'
@@ -112,4 +113,23 @@ export async function getAvailablePets() {
     query(petsCollection, where('status', '==', PET_STATUS.AVAILABLE)),
   )
   return sortByNewest(snapshot.docs.map(toPet))
+}
+
+// Mantiene actualizados el nombre y el barrio del refugio copiados en sus mascotas.
+// Las adoptadas no se tocan: quedan como registro de dónde estaban.
+export async function syncShelterInfoInPets(shelterId, { name, neighborhood }) {
+  const snapshot = await getDocs(query(petsCollection, where('shelterId', '==', shelterId)))
+  const batch = writeBatch(db)
+
+  snapshot.docs
+    .filter((petDoc) => petDoc.data().status !== PET_STATUS.ADOPTED)
+    .forEach((petDoc) => {
+      batch.update(petDoc.ref, {
+        shelterName: name,
+        neighborhood,
+        updatedAt: serverTimestamp(),
+      })
+    })
+
+  return batch.commit()
 }

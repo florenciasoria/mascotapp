@@ -95,6 +95,22 @@ service cloud.firestore {
         && data.updatedAt == request.time;
     }
 
+    // Edición de una mascota por su refugio
+    function isValidPetUpdate() {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      return resource.data.shelterId == request.auth.uid
+        && resource.data.status != 'adoptada'
+        && data.status in ['disponible', 'no_disponible']
+        && changed.hasOnly(['name', 'species', 'breed', 'sex', 'ageValue', 'ageUnit',
+             'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath', 'description',
+             'status', 'shelterName', 'neighborhood', 'updatedAt'])
+        // Los datos del refugio copiados en la mascota solo pueden actualizarse a los de su perfil
+        && (!changed.hasAny(['shelterName']) || data.shelterName == currentUser().name)
+        && (!changed.hasAny(['neighborhood']) || data.neighborhood == currentUser().neighborhood)
+        && isValidPet(data);
+    }
+
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
       allow read: if isOwner(userId);
@@ -134,16 +150,9 @@ service cloud.firestore {
              'ageUnit', 'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath', 'description',
              'shelterId', 'shelterName', 'neighborhood', 'status', 'createdAt', 'updatedAt']);
 
-      // Edición: solo el refugio dueño, nunca una mascota adoptada,
-      // y el estado solo puede alternar entre disponible y no disponible
-      allow update: if isApprovedRole('refugio')
-        && resource.data.shelterId == request.auth.uid
-        && resource.data.status != 'adoptada'
-        && request.resource.data.status in ['disponible', 'no_disponible']
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'species',
-             'breed', 'sex', 'ageValue', 'ageUnit', 'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath',
-             'description', 'status', 'updatedAt'])
-        && isValidPet(request.resource.data);
+      // Edición: solo el refugio dueño, nunca una mascota adoptada
+      allow update: if isApprovedRole('refugio') && isValidPetUpdate();
+
 
       allow delete: if false;
     }
