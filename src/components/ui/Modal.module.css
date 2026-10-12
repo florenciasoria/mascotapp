@@ -1,0 +1,23 @@
+.modal {
+  width: min(26rem, calc(100% - 2rem));
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 0.2);
+}
+
+.modal::backdrop {
+  background-color: rgb(51 44 42 / 0.4);
+}
+
+.content {
+  padding: var(--space-8) var(--space-6);
+}
+
+.title {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-lg);
+  text-align: center;
+}
