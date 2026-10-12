@@ -16,3 +16,16 @@
 .error {
   color: var(--color-error);
 }
+
+.count {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.empty {
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  text-align: center;
+}

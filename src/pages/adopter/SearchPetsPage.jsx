@@ -31,6 +31,7 @@ function SearchPetsPage() {
 
     // Mascotas que se muestran: las que cumplen los filtros aplicados
   const visiblePets = filterPets(pets, appliedFilters)
+  const isReady = !isLoading && !loadError
 
   // Barrios con mascotas disponibles (sin repetir, en orden alfabético)
   const neighborhoods = [...new Set(pets.map((pet) => pet.neighborhood))].sort((a, b) =>
@@ -88,6 +89,27 @@ function SearchPetsPage() {
         {loadError && (
           <p className={styles.error} role="alert">
             No pudimos cargar las mascotas. Recargá la página para intentar de nuevo.
+          </p>
+        )}
+
+                {isReady && pets.length > 0 && (
+          <p className={styles.count} role="status">
+            {visiblePets.length === 1
+              ? '1 mascota encontrada'
+              : `${visiblePets.length} mascotas encontradas`}
+          </p>
+        )}
+
+        {isReady && pets.length === 0 && (
+          <p className={styles.empty}>
+            Por el momento no hay mascotas disponibles para adopción. ¡Volvé a visitarnos pronto!
+          </p>
+        )}
+
+        {isReady && pets.length > 0 && visiblePets.length === 0 && (
+          <p className={styles.empty}>
+            No encontramos mascotas que coincidan con los filtros elegidos. Probá cambiando o
+            limpiando los filtros.
           </p>
         )}
 
