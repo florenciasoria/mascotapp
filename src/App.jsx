@@ -1,15 +1,17 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import AdopterHomePage from './pages/AdopterHomePage'
-import ShelterHomePage from './pages/ShelterHomePage'
-import AdminHomePage from './pages/AdminHomePage'
-import NotFoundPage from './pages/NotFoundPage'
-import { AuthProvider } from './context/AuthProvider'
-import ProtectedRoute from './routes/ProtectedRoute'
-import { ROLES } from './utils/roles'
-import ForgotPasswordPage from './pages/ForgotPasswordPage'
-
+import LoginPage from '@/pages/auth/LoginPage'
+import RegisterPage from '@/pages/auth/RegisterPage'
+import AdopterHomePage from '@/pages/adopter/AdopterHomePage'
+import ShelterHomePage from '@/pages/shelter/ShelterHomePage'
+import AdminHomePage from '@/pages/admin/AdminHomePage'
+import NotFoundPage from '@/pages/NotFoundPage'
+import { AuthProvider } from '@/context/AuthProvider'
+import ProtectedRoute from '@/routes/ProtectedRoute'
+import { ROLES } from '@/utils/roles'
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
+import AppLayout from '@/layouts/AppLayout'
+import ComingSoonPage from '@/pages/ComingSoonPage'
+import ProfilePage from '@/pages/shared/ProfilePage'
 
 function App() {
   return (
@@ -22,29 +24,43 @@ function App() {
         <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
 
         <Route
-          path="/adoptante/*"
+          path="/adoptante"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADOPTER]}>
-              <AdopterHomePage />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdopterHomePage />} />
+          <Route path="perfil" element={<ProfilePage />} />
+          <Route path="*" element={<ComingSoonPage />} />
+        </Route>
+
         <Route
-          path="/refugio/*"
+          path="/refugio"
           element={
             <ProtectedRoute allowedRoles={[ROLES.SHELTER]}>
-              <ShelterHomePage />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<ShelterHomePage />} />
+          <Route path="perfil" element={<ProfilePage />} />
+          <Route path="*" element={<ComingSoonPage />} />
+        </Route>
+
         <Route
-          path="/admin/*"
+          path="/admin"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
-              <AdminHomePage />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdminHomePage />} />
+          <Route path="perfil" element={<ProfilePage />} />
+         <Route path="*" element={<ComingSoonPage />} />
+        </Route>
 
         <Route path="*" element={<NotFoundPage />} />
         </Routes>

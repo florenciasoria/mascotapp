@@ -1,13 +1,16 @@
 import { useState } from 'react'
-import AuthLayout from '../layouts/AuthLayout'
-import Input from '../components/Input'
-import Button from '../components/Button'
-import { getAuthErrorMessage, registerUser } from '../services/authService'
-import { LIMITS, validateRegisterForm } from '../utils/validators'
+import AuthLayout from '@/layouts/AuthLayout'
+import Input from '@/components/ui/Input'
+import Button from '@/components/ui/Button'
+import { getAuthErrorMessage, registerUser } from '@/services/authService'
+import { LIMITS, validateRegisterForm } from '@/utils/validators'
 import styles from './RegisterPage.module.css'
 import { Link, Navigate, useNavigate } from 'react-router'
-import { useAuth } from '../hooks/useAuth'
-import { getHomePath, ROLES } from '../utils/roles'
+import { useAuth } from '@/hooks/useAuth'
+import { getHomePath, ROLES } from '@/utils/roles'
+import Select from '@/components/ui/Select'
+import { NEIGHBORHOODS } from '@/utils/neighborhoods'
+import { focusFirstInvalidField } from '@/utils/forms'
 
 
 const INITIAL_VALUES = {
@@ -17,6 +20,7 @@ const INITIAL_VALUES = {
   password: '',
   address: '',
   about: '',
+  neighborhood: '',
 }
 
 function RegisterPage() {
@@ -48,9 +52,7 @@ function RegisterPage() {
     setErrors(validationErrors)
 
     // Si hay errores, llevamos el foco al primer campo inválido
-    const firstInvalidField = Object.keys(validationErrors)[0]
-    if (firstInvalidField) {
-      event.target.elements[firstInvalidField].focus()
+    if (focusFirstInvalidField(event.target, validationErrors)) {
       return
     }
 
@@ -147,7 +149,7 @@ function RegisterPage() {
             autoComplete="new-password"
             required
           />
-          <div className={styles.fullWidth}>
+          <div className={isShelter ? undefined : styles.fullWidth}>
             <Input
               label="Dirección"
               name="address"
@@ -159,6 +161,18 @@ function RegisterPage() {
               required
             />
           </div>
+          {isShelter && (
+            <Select
+              label="Barrio"
+              name="neighborhood"
+              value={values.neighborhood}
+              onChange={handleChange}
+              error={errors.neighborhood}
+              options={NEIGHBORHOODS}
+              placeholder="Elegí un barrio"
+              required
+            />
+          )}
           {isShelter && (
             <div className={styles.fullWidth}>
               <Input

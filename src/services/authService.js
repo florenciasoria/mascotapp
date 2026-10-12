@@ -11,11 +11,11 @@ import {
 } from 'firebase/auth'
 import { doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore'
 import { auth, db } from './firebase'
-import { ROLES, STATUS } from '../utils/roles'
+import { ROLES, STATUS } from '@/utils/roles'
 // Después de hacer clic en el enlace del email, Firebase ofrece volver al login
 const actionCodeSettings = { url: `${window.location.origin}/login` }
 
-export async function registerUser({ role, name, email, password, phone, address, about }) {
+export async function registerUser({ role, name, email, password, phone, address, neighborhood, about }) {
   const { user } = await createUserWithEmailAndPassword(auth, email.trim(), password)
 
   const profile = {
@@ -29,6 +29,7 @@ export async function registerUser({ role, name, email, password, phone, address
     createdAt: serverTimestamp(),
   }
   if (role === ROLES.SHELTER) {
+    profile.neighborhood = neighborhood
     profile.about = about.trim()
   }
 

@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { AuthContext } from '../context/AuthContext'
+import { AuthContext } from '@/context/AuthContext'
 
 // Acceso a la sesión desde cualquier componente:
 // const { user, profile, isLoading } = useAuth()

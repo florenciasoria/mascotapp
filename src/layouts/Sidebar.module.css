@@ -1,0 +1,91 @@
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg);
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+/* El <dialog> es el panel que entra desde la izquierda */
+.drawer {
+  width: min(18rem, 85vw);
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: var(--color-surface);
+  box-shadow: 4px 0 16px rgb(0 0 0 / 0.15);
+}
+
+.drawer::backdrop {
+  background-color: rgb(51 44 42 / 0.4);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--space-3) 0 var(--space-6);
+}
+
+.closeButton {
+  margin: 0 var(--space-4) var(--space-12);
+}
+
+.nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  background-color: transparent;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-light);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link:hover {
+  background-color: var(--color-bg);
+}
+
+/* Opción actual: en negrita para cumplir contraste (texto grande) y no depender solo del color */
+.active,
+.active:hover {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: var(--font-weight-bold);
+}

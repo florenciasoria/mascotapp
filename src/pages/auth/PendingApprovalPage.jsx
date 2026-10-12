@@ -1,7 +1,7 @@
-import AuthLayout from '../layouts/AuthLayout'
-import LogoutButton from '../components/LogoutButton'
-import logo from '../assets/logo.png'
-import { useAuth } from '../hooks/useAuth'
+import AuthLayout from '@/layouts/AuthLayout'
+import LogoutButton from '@/components/LogoutButton'
+import logo from '@/assets/logo.png'
+import { useAuth } from '@/hooks/useAuth'
 import styles from './MessagePage.module.css'
 
 // Se muestra a los refugios hasta que un administrador apruebe su cuenta.

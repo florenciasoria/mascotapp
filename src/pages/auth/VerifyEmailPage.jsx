@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import AuthLayout from '../layouts/AuthLayout'
-import Button from '../components/Button'
-import LogoutButton from '../components/LogoutButton'
-import logo from '../assets/logo.png'
-import { useAuth } from '../hooks/useAuth'
-import { getAuthErrorMessage, resendVerificationEmail } from '../services/authService'
+import AuthLayout from '@/layouts/AuthLayout'
+import Button from '@/components/ui/Button'
+import LogoutButton from '@/components/LogoutButton'
+import logo from '@/assets/logo.png'
+import { useAuth } from '@/hooks/useAuth'
+import { getAuthErrorMessage, resendVerificationEmail } from '@/services/authService'
 import styles from './MessagePage.module.css'
 
 // Se muestra hasta que el usuario verifica su email.
@@ -67,7 +67,7 @@ function VerifyEmailPage() {
           <Button onClick={handleCheck} isLoading={isChecking}>
             Ya verifiqué mi email
           </Button>
-          <Button variant="secondary" onClick={handleResend} isLoading={isResending}>
+          <Button variant="link" onClick={handleResend} isLoading={isResending}>
             Reenviar email
           </Button>
           <LogoutButton />

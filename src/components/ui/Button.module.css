@@ -9,6 +9,7 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: filter 0.15s ease;
+  text-decoration: none; /* para cuando se usa en un link (ButtonLink) */
 }
 
 .button:hover:not(:disabled) {
@@ -28,8 +29,16 @@
 }
 
 .secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-on-secondary);
+  font-size: 1.1875rem; /* 19px en negrita = "texto grande" según WCAG */
+  font-weight: var(--font-weight-bold);
+}
+
+.link {
   background-color: transparent;
   color: var(--color-link);
   font-size: var(--font-size-base);
   text-decoration: underline;
 }
+

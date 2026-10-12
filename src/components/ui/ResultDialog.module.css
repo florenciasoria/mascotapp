@@ -1,0 +1,25 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
+}
+
+/* El ícono va arriba del título: lo ubicamos con "order" sin cambiar el HTML */
+.successIcon,
+.errorIcon {
+  display: flex;
+}
+
+.successIcon {
+  color: var(--color-secondary);
+}
+
+.errorIcon {
+  color: var(--color-error);
+}
+
+.message {
+  margin: 0;
+}

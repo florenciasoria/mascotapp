@@ -1,4 +1,5 @@
 import { ROLES } from './roles'
+import { NEIGHBORHOODS } from './neighborhoods'
 
 // Límites compartidos con las reglas de Firestore (firestore.rules).
 export const LIMITS = {
@@ -17,8 +18,8 @@ function hasLength(value, { min, max }) {
   return length >= min && length <= max
 }
 
-// Devuelve un objeto { campo: 'mensaje de error' }. Vacío = formulario válido.
-export function validateRegisterForm(values, role) {
+// Datos de perfil: se validan igual en el registro y al editar el perfil
+export function validateProfileForm(values, role) {
   const errors = {}
 
   if (!hasLength(values.name, LIMITS.name)) {
@@ -28,21 +29,16 @@ export function validateRegisterForm(values, role) {
         : 'Ingresá tu nombre y apellido'
   }
 
-  if (!EMAIL_REGEX.test(values.email.trim())) {
-    errors.email = 'Ingresá un email válido'
-  }
-
   if (!hasLength(values.phone, LIMITS.phone) || !PHONE_REGEX.test(values.phone.trim())) {
     errors.phone = 'Ingresá un teléfono válido'
   }
 
-  const { password } = values
-  if (password.length < LIMITS.password.min || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
-    errors.password = 'La contraseña debe tener al menos 8 caracteres, con letras y números'
-  }
-
   if (!hasLength(values.address, LIMITS.address)) {
     errors.address = 'Ingresá una dirección'
+  }
+
+  if (role === ROLES.SHELTER && !NEIGHBORHOODS.includes(values.neighborhood)) {
+    errors.neighborhood = 'Elegí el barrio del refugio'
   }
 
   if (role === ROLES.SHELTER && !hasLength(values.about, LIMITS.about)) {
@@ -51,6 +47,23 @@ export function validateRegisterForm(values, role) {
 
   return errors
 }
+
+// Registro = datos de perfil + email y contraseña
+export function validateRegisterForm(values, role) {
+  const errors = validateProfileForm(values, role)
+
+  if (!EMAIL_REGEX.test(values.email.trim())) {
+    errors.email = 'Ingresá un email válido'
+  }
+
+  const { password } = values
+  if (password.length < LIMITS.password.min || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+    errors.password = 'La contraseña debe tener al menos 8 caracteres, con letras y números'
+  }
+
+  return errors
+}
+
 
 export function validateLoginForm(values) {
   const errors = {}
