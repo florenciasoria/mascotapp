@@ -24,3 +24,8 @@ export const PET_IMAGES = [
   { path: '/mascotas/perro-05.jpg', species: 'Perro', description: 'Perro negro de pelo largo sentado sobre el pasto' },
   { path: '/mascotas/perro-06.jpg', species: 'Perro', description: 'Bulldog inglés marrón y blanco sentado en una silla' },
 ]
+
+// Descripción de una foto de la galería (texto alternativo de la imagen)
+export function getImageDescription(path) {
+  return PET_IMAGES.find((image) => image.path === path)?.description ?? ''
+}
