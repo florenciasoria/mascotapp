@@ -73,6 +73,7 @@ function ProfilePage() {
         await syncShelterInfoInPets(user.uid, {
           name: values.name.trim(),
           neighborhood: values.neighborhood,
+          address: values.address.trim(),
         })
       }
       setDialog({

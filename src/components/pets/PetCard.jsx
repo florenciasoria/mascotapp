@@ -23,7 +23,7 @@ function PetCard({ pet, children }) {
           <li>
             {pet.species} · {pet.sex}
           </li>
-          <li>{formatAge(pet.ageValue, pet.ageUnit)}</li>
+          <li>{formatAge(pet.ageValue, pet.ageUnit)} · {pet.size}</li>
           <li>{pet.neighborhood}</li>
         </ul>
       </div>

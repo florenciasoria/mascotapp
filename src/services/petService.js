@@ -58,6 +58,7 @@ export async function createPet(shelterId, shelterProfile, petData, imageFile) {
       shelterId,
       shelterName: shelterProfile.name,
       neighborhood: shelterProfile.neighborhood,
+      shelterAddress: shelterProfile.address,
       status: PET_STATUS.AVAILABLE,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
@@ -115,9 +116,9 @@ export async function getAvailablePets() {
   return sortByNewest(snapshot.docs.map(toPet))
 }
 
-// Mantiene actualizados el nombre y el barrio del refugio copiados en sus mascotas.
+// Mantiene actualizados el nombre, el barrio y la dirección del refugio
 // Las adoptadas no se tocan: quedan como registro de dónde estaban.
-export async function syncShelterInfoInPets(shelterId, { name, neighborhood }) {
+export async function syncShelterInfoInPets(shelterId, { name, neighborhood, address }) {
   const snapshot = await getDocs(query(petsCollection, where('shelterId', '==', shelterId)))
   const batch = writeBatch(db)
 
@@ -127,6 +128,7 @@ export async function syncShelterInfoInPets(shelterId, { name, neighborhood }) {
       batch.update(petDoc.ref, {
         shelterName: name,
         neighborhood,
+        shelterAddress: address,
         updatedAt: serverTimestamp(),
       })
     })

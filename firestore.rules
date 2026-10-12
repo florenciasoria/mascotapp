@@ -104,10 +104,11 @@ service cloud.firestore {
         && data.status in ['disponible', 'no_disponible']
         && changed.hasOnly(['name', 'species', 'breed', 'sex', 'ageValue', 'ageUnit',
              'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath', 'description',
-             'status', 'shelterName', 'neighborhood', 'updatedAt'])
+             'status', 'shelterName', 'neighborhood', 'shelterAddress', 'updatedAt'])
         // Los datos del refugio copiados en la mascota solo pueden actualizarse a los de su perfil
         && (!changed.hasAny(['shelterName']) || data.shelterName == currentUser().name)
         && (!changed.hasAny(['neighborhood']) || data.neighborhood == currentUser().neighborhood)
+        && (!changed.hasAny(['shelterAddress']) || data.shelterAddress == currentUser().address)
         && isValidPet(data);
     }
 
@@ -143,12 +144,13 @@ service cloud.firestore {
         && request.resource.data.shelterId == request.auth.uid
         && request.resource.data.shelterName == currentUser().name
         && request.resource.data.neighborhood == currentUser().neighborhood
+        && request.resource.data.shelterAddress == currentUser().address
         && request.resource.data.status == 'disponible'
         && request.resource.data.createdAt == request.time
         && isValidPet(request.resource.data)
         && request.resource.data.keys().hasOnly(['name', 'species', 'breed', 'sex', 'ageValue',
              'ageUnit', 'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath', 'description',
-             'shelterId', 'shelterName', 'neighborhood', 'status', 'createdAt', 'updatedAt']);
+             'shelterId', 'shelterName', 'neighborhood', 'shelterAddress', 'status', 'createdAt', 'updatedAt']);
 
       // Edición: solo el refugio dueño, nunca una mascota adoptada
       allow update: if isApprovedRole('refugio') && isValidPetUpdate();
