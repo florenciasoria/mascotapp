@@ -11,8 +11,7 @@ import { ROLES } from '@/utils/roles'
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
 import AppLayout from '@/layouts/AppLayout'
 import ComingSoonPage from '@/pages/ComingSoonPage'
-
-
+import ProfilePage from '@/pages/shared/ProfilePage'
 
 function App() {
   return (
@@ -33,6 +32,7 @@ function App() {
           }
         >
           <Route index element={<AdopterHomePage />} />
+          <Route path="perfil" element={<ProfilePage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 
@@ -45,6 +45,7 @@ function App() {
           }
         >
           <Route index element={<ShelterHomePage />} />
+          <Route path="perfil" element={<ProfilePage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 
@@ -57,7 +58,8 @@ function App() {
           }
         >
           <Route index element={<AdminHomePage />} />
-          <Route path="*" element={<ComingSoonPage />} />
+          <Route path="perfil" element={<ProfilePage />} />
+         <Route path="*" element={<ComingSoonPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

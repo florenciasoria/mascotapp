@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { getHomePath, ROLES } from '@/utils/roles'
 import Select from '@/components/ui/Select'
 import { NEIGHBORHOODS } from '@/utils/neighborhoods'
+import { focusFirstInvalidField } from '@/utils/forms'
 
 
 const INITIAL_VALUES = {
@@ -51,9 +52,7 @@ function RegisterPage() {
     setErrors(validationErrors)
 
     // Si hay errores, llevamos el foco al primer campo inválido
-    const firstInvalidField = Object.keys(validationErrors)[0]
-    if (firstInvalidField) {
-      event.target.elements[firstInvalidField].focus()
+    if (focusFirstInvalidField(event.target, validationErrors)) {
       return
     }
 

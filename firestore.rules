@@ -41,6 +41,21 @@ service cloud.firestore {
         && data.keys().hasOnly(['role', 'status', 'name', 'email', 'phone', 'address', 'neighborhood', 'about', 'createdAt']);
     }
 
+    // Edición del perfil: cada rol solo puede modificar sus propios campos
+    function isValidProfileUpdate() {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      return hasValidCommonFields(data) && (
+        (resource.data.role == 'refugio'
+          && changed.hasOnly(['name', 'phone', 'address', 'neighborhood', 'about'])
+          && isText(data.neighborhood, 2, 40)
+          && isText(data.about, 10, 500))
+        || (resource.data.role != 'refugio'
+          && changed.hasOnly(['name', 'phone', 'address']))
+      );
+    }
+
+
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
       allow read: if isOwner(userId);
@@ -53,11 +68,8 @@ service cloud.firestore {
         && hasValidCommonFields(request.resource.data)
         && (isValidAdopter(request.resource.data) || isValidShelter(request.resource.data));
 
-      // Edición: solo datos de contacto; rol, estado, email y fecha no se tocan
-      allow update: if isOwner(userId)
-        && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['name', 'phone', 'address', 'neighborhood', 'about'])
-        && hasValidCommonFields(request.resource.data);
+      // Edición: cada rol solo sus datos de contacto; rol, estado, email y fecha no se tocan
+      allow update: if isOwner(userId) && isValidProfileUpdate();
 
       allow delete: if false;
     }

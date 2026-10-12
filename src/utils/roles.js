@@ -24,3 +24,10 @@ const HOME_PATHS = {
 export function getHomePath(role) {
   return HOME_PATHS[role] ?? '/no-encontrado'
 }
+
+// Nombre de cada rol para mostrar en pantalla
+export const ROLE_LABELS = {
+  [ROLES.ADOPTER]: 'Adoptante',
+  [ROLES.SHELTER]: 'Refugio',
+  [ROLES.ADMIN]: 'Administrador',
+}
