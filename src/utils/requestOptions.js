@@ -1,0 +1,29 @@
+// Opciones fijas del formulario de solicitud. Las reglas de Firestore validan las mismas listas.
+export const HOUSING_TYPES = ['Departamento', 'Casa', 'PH']
+
+export const HOURS_ALONE = [
+  'Menos de 2 horas',
+  '2 a 4 horas',
+  '4 a 6 horas',
+  '6 a 8 horas',
+  'Más de 8 horas',
+]
+
+export const REQUEST_STATUS = {
+  PENDING: 'pendiente',
+  ACCEPTED: 'aceptada',
+  REJECTED: 'rechazada',
+}
+
+export const REQUEST_STATUS_LABELS = {
+  [REQUEST_STATUS.PENDING]: 'Pendiente',
+  [REQUEST_STATUS.ACCEPTED]: 'Aceptada',
+  [REQUEST_STATUS.REJECTED]: 'Rechazada',
+}
+
+// Color del punto de estado (StatusBadge), como en el diseño
+export const REQUEST_STATUS_TONES = {
+  [REQUEST_STATUS.PENDING]: 'warning',
+  [REQUEST_STATUS.ACCEPTED]: 'success',
+  [REQUEST_STATUS.REJECTED]: 'danger',
+}

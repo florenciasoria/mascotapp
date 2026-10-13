@@ -146,6 +146,46 @@ service cloud.firestore {
         && data.updatedAt == request.time;
     }
 
+    // Respuestas del formulario de solicitud (mismas listas que requestOptions.js)
+    function isValidRequestAnswers(answers) {
+      return answers.keys().hasOnly(['housingType', 'hoursAlone', 'householdMembers',
+             'hasYard', 'hasOtherPets', 'hasExperience', 'aboutAdopter', 'motivation'])
+        && answers.housingType in ['Departamento', 'Casa', 'PH']
+        && answers.hoursAlone in ['Menos de 2 horas', '2 a 4 horas', '4 a 6 horas',
+             '6 a 8 horas', 'Más de 8 horas']
+        && isText(answers.householdMembers, 2, 200)
+        && answers.hasYard is bool
+        && answers.hasOtherPets is bool
+        && answers.hasExperience is bool
+        && isText(answers.aboutAdopter, 10, 1000)
+        && isText(answers.motivation, 10, 1000);
+    }
+
+    // Alta de una solicitud: la mascota tiene que estar disponible y los datos
+    // copiados tienen que coincidir con los reales
+    function isValidNewRequest(requestId) {
+      let data = request.resource.data;
+      let pet = get(/databases/$(database)/documents/pets/$(data.petId)).data;
+      return requestId == data.petId + '_' + request.auth.uid
+        && data.adopterId == request.auth.uid
+        && data.adopterName == currentUser().name
+        && pet.status == 'disponible'
+        && data.shelterId == pet.shelterId
+        && data.pet == {
+             'name': pet.name,
+             'species': pet.species,
+             'breed': pet.breed,
+             'ageValue': pet.ageValue,
+             'ageUnit': pet.ageUnit,
+             'imageUrl': pet.imageUrl
+           }
+        && isValidRequestAnswers(data.answers)
+        && data.status == 'pendiente'
+        && data.createdAt == request.time
+        && data.keys().hasOnly(['petId', 'shelterId', 'adopterId', 'adopterName',
+             'pet', 'answers', 'status', 'createdAt']);
+    }
+
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
       // Cada usuario lee su perfil; el admin, todos
@@ -192,6 +232,23 @@ service cloud.firestore {
       allow update: if (isApprovedRole('refugio') && isValidPetUpdate())
         || (isAdmin() && isAdminPetPause());
 
+      allow delete: if false;
+    }
+
+        // Solicitudes de adopción. ID = {petId}_{adopterId} (impide duplicadas)
+    match /adoptionRequests/{requestId} {
+      // Adoptante: las suyas. Refugio: las que recibió. Admin: todas.
+      allow read: if isSignedIn() && isVerified() && (
+        resource.data.adopterId == request.auth.uid
+        || resource.data.shelterId == request.auth.uid
+        || isAdmin()
+      );
+
+      // Alta: solo un adoptante aprobado, a su nombre, para una mascota disponible
+      allow create: if isApprovedRole('adoptante') && isValidNewRequest(requestId);
+
+      // Aceptar o rechazar: lo agregamos en la parte 5
+      allow update: if false;
       allow delete: if false;
     }
 

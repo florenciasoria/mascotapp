@@ -1,6 +1,7 @@
 import { ROLES } from './roles'
 import { NEIGHBORHOODS } from './neighborhoods'
 import { AGE_UNITS, COLORS, SEXES, SIZES, SPECIES } from './petOptions'
+import { HOURS_ALONE, HOUSING_TYPES } from './requestOptions'
 
 // Límites compartidos con las reglas de Firestore (firestore.rules).
 export const LIMITS = {
@@ -13,6 +14,8 @@ export const LIMITS = {
   breed: { min: 2, max: 40 },
   petDescription: { min: 10, max: 500 },
   age: { min: 0, max: 30 },
+  householdMembers: { min: 2, max: 200 },
+  requestText: { min: 10, max: 1000 },
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -141,6 +144,39 @@ export function validatePetForm(values, imageFile, hasCurrentImage) {
 
   if (!hasLength(values.description, LIMITS.petDescription)) {
     errors.description = 'Contá un poco sobre la mascota (mínimo 10 caracteres)'
+  }
+
+  return errors
+}
+
+// Formulario de solicitud de adopción
+export function validateRequestForm(values) {
+  const errors = {}
+  const chooseOption = 'Elegí una opción'
+
+  if (!HOUSING_TYPES.includes(values.housingType)) {
+    errors.housingType = 'Elegí el tipo de vivienda'
+  }
+  if (!HOURS_ALONE.includes(values.hoursAlone)) {
+    errors.hoursAlone = 'Elegí cuántas horas pasaría solo'
+  }
+  if (!hasLength(values.householdMembers, LIMITS.householdMembers)) {
+    errors.householdMembers = 'Contanos quiénes viven en tu hogar'
+  }
+  if (!['si', 'no'].includes(values.hasYard)) {
+    errors.hasYard = chooseOption
+  }
+  if (!['si', 'no'].includes(values.hasOtherPets)) {
+    errors.hasOtherPets = chooseOption
+  }
+  if (!['si', 'no'].includes(values.hasExperience)) {
+    errors.hasExperience = chooseOption
+  }
+  if (!hasLength(values.aboutAdopter, LIMITS.requestText)) {
+    errors.aboutAdopter = 'Contanos un poco sobre vos (mínimo 10 caracteres)'
+  }
+  if (!hasLength(values.motivation, LIMITS.requestText)) {
+    errors.motivation = 'Contanos qué te motivó a adoptar (mínimo 10 caracteres)'
   }
 
   return errors
