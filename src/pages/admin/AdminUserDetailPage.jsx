@@ -8,7 +8,7 @@ import StatusBadge from '@/components/ui/StatusBadge'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
 import { useAuth } from '@/hooks/useAuth'
-import { getUser, updateUserStatus } from '@/services/userService'
+import { getUser, updateUserStatus, deactivateAccount  } from '@/services/userService'
 import { ROLE_LABELS, ROLES, STATUS, STATUS_LABELS, STATUS_TONES } from '@/utils/roles'
 import styles from './AdminUserDetailPage.module.css'
 
@@ -36,7 +36,7 @@ const ACTIONS = {
     newStatus: STATUS.INACTIVE,
     confirm: {
       title: '¿Desactivar esta cuenta?',
-      message: 'Mientras esté desactivada, no va a poder usar MascotApp. Podés reactivarla cuando quieras.',
+      message: 'Mientras esté desactivada, no va a poder usar MascotApp. Si es un refugio, sus mascotas publicadas dejan de mostrarse. Podés reactivarla cuando quieras.',
     },
     successTitle: 'Cuenta desactivada',
     successMessage: 'La cuenta ya no puede usar MascotApp.',
@@ -87,7 +87,11 @@ function AdminUserDetailPage() {
     const action = ACTIONS[actionKey]
     setIsSaving(true)
     try {
-      await updateUserStatus(account.id, action.newStatus)
+      if (action.newStatus === STATUS.INACTIVE) {
+        await deactivateAccount(account)
+      } else {
+        await updateUserStatus(account.id, action.newStatus)
+      }
       setAccount((current) => ({ ...current, status: action.newStatus }))
       setDialog({ type: 'success', title: action.successTitle, message: action.successMessage })
     } catch {
@@ -125,6 +129,11 @@ function AdminUserDetailPage() {
   const actions = ACTIONS_BY_STATUS[account.status] ?? []
   const confirmAction = actionToConfirm ? ACTIONS[actionToConfirm] : null
 
+  // No se puede aprobar ni reactivar (pasar a "aprobado") una cuenta sin el email verificado
+  const isBlockedAction = (key) =>
+    ACTIONS[key].newStatus === STATUS.APPROVED && !account.emailVerified
+  const isApproveBlocked = actions.some(isBlockedAction)
+
   return (
     <>
       <PageHeader
@@ -144,7 +153,10 @@ function AdminUserDetailPage() {
           </div>
           <div>
             <dt>Correo electrónico</dt>
-            <dd>{account.email}</dd>
+            <dd>
+              {account.email}
+              {!account.emailVerified && <span className={styles.unverified}>Email sin verificar</span>}
+            </dd>
           </div>
           <div>
             <dt>Teléfono</dt>
@@ -185,6 +197,12 @@ function AdminUserDetailPage() {
 
       {/* En la solicitud (dos decisiones), Volver es un link aparte a la izquierda.
           En los demás casos, botón verde como en el resto de la app. */}
+      {isApproveBlocked && (
+        <p id="approve-blocked-note" className={styles.note}>
+          Esta cuenta todavía no verificó su email, por eso no se puede aprobar ni reactivar.
+        </p>
+      )}
+
       <div className={isPending ? styles.actionsSplit : styles.actions}>
         {isPending ? (
           <ButtonLink to="/admin/usuarios" variant="back">
@@ -201,7 +219,8 @@ function AdminUserDetailPage() {
               key={key}
               variant={ACTIONS[key].variant ?? 'primary'}
               onClick={() => handleActionClick(key)}
-              disabled={isSaving}
+              disabled={isSaving || isBlockedAction(key)}
+              aria-describedby={isBlockedAction(key) ? 'approve-blocked-note' : undefined}
             >
               {ACTIONS[key].label}
             </Button>

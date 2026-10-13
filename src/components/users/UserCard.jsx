@@ -24,6 +24,7 @@ function UserCard({ user, onDeactivate, onReactivate, isUpdating = false }) {
         {user.name}
       </h3>
       <p className={styles.text}>{user.email}</p>
+      {!user.emailVerified && <p className={styles.unverified}>Email sin verificar</p>}
       <p className={styles.text}>{ROLE_LABELS[user.role]}</p>
       <StatusBadge tone={STATUS_TONES[user.status]}>{STATUS_LABELS[user.status]}</StatusBadge>
 
@@ -44,6 +45,8 @@ function UserCard({ user, onDeactivate, onReactivate, isUpdating = false }) {
             variant="secondary"
             onClick={() => onReactivate(user)}
             isLoading={isUpdating}
+            disabled={!user.emailVerified}
+            title={user.emailVerified ? undefined : 'No se puede reactivar: el email no está verificado'}
             aria-label={`Reactivar a ${user.name}`}
             size="sm"
           >

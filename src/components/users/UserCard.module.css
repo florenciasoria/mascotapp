@@ -34,3 +34,14 @@
   border: 1px dashed var(--color-brown-light);
   background-color: #efedea;
 }
+
+/* Etiqueta "Email sin verificar": borde punteado, sin color de alerta
+   (es información, no un error) */
+.unverified {
+  align-self: flex-start;
+  margin: 0;
+  padding: 0 var(--space-2);
+  border: 1px dashed var(--color-brown-light);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+}

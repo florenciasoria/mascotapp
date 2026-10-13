@@ -54,3 +54,21 @@
 .error {
   color: var(--color-error);
 }
+
+/* Aviso de refugios pendientes: mismo amarillo que el borde de las tarjetas */
+.pendingAlert {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  border-left: 4px solid #d9b44a;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.pendingText {
+  margin: 0;
+}

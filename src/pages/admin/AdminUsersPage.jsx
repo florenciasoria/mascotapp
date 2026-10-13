@@ -6,18 +6,17 @@ import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
 import UserCard from '@/components/users/UserCard'
 import { useAuth } from '@/hooks/useAuth'
-import { EMPTY_USER_FILTERS, filterUsers } from '@/utils/userFilters'
 import styles from './AdminUsersPage.module.css'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
-import { getAllUsers, updateUserStatus } from '@/services/userService'
-import { ROLE_LABELS, STATUS, STATUS_LABELS } from '@/utils/roles'
+import { getAllUsers, updateUserStatus, deactivateAccount } from '@/services/userService'
+import { ROLE_LABELS, ROLES, STATUS } from '@/utils/roles'
+import { EMPTY_USER_FILTERS, filterUsers, getStatusOptions, sortPendingFirst } from '@/utils/userFilters'
 
 
 // Opciones de los filtros, armadas a partir de los textos de roles y estados
 const toOptions = (labels) => Object.entries(labels).map(([value, label]) => ({ value, label }))
 const ROLE_OPTIONS = [{ value: '', label: 'Todos' }, ...toOptions(ROLE_LABELS)]
-const STATUS_OPTIONS = [{ value: '', label: 'Todos' }, ...toOptions(STATUS_LABELS)]
 
 function AdminUsersPage() {
   const { user } = useAuth()
@@ -44,7 +43,8 @@ function AdminUsersPage() {
     }
   }, [user.uid])
 
-  const visibleUsers = filterUsers(users, appliedFilters)
+  const visibleUsers = sortPendingFirst(filterUsers(users, appliedFilters))
+  const pendingCount = users.filter((item) => item.status === STATUS.PENDING).length
   const isReady = !isLoading && !loadError
 
   const canApply = Object.keys(EMPTY_USER_FILTERS).some(
@@ -56,7 +56,14 @@ function AdminUsersPage() {
 
   function handleFilterChange(event) {
     const { name, value } = event.target
-    setDraftFilters((previous) => ({ ...previous, [name]: value }))
+    setDraftFilters((previous) => {
+      const next = { ...previous, [name]: value }
+      // Si el estado elegido no existe para el rol nuevo, vuelve a "Todos"
+      if (name === 'role' && !getStatusOptions(value).some((option) => option.value === next.status)) {
+        next.status = ''
+      }
+      return next
+    })
   }
 
   function handleApply(event) {
@@ -69,10 +76,22 @@ function AdminUsersPage() {
     setAppliedFilters(EMPTY_USER_FILTERS)
   }
 
+  // Atajo del aviso: muestra solo los refugios pendientes
+  function handleShowPending() {
+    const pendingFilters = { ...EMPTY_USER_FILTERS, role: ROLES.SHELTER, status: STATUS.PENDING }
+    setDraftFilters(pendingFilters)
+    setAppliedFilters(pendingFilters)
+  }
+
     async function changeStatus(account, newStatus) {
     setUpdatingId(account.id)
     try {
-      await updateUserStatus(account.id, newStatus)
+      if (newStatus === STATUS.INACTIVE) {
+        await deactivateAccount(account)
+      } else {
+        await updateUserStatus(account.id, newStatus)
+      }
+
       setUsers((current) =>
         current.map((item) => (item.id === account.id ? { ...item, status: newStatus } : item)),
       )
@@ -95,6 +114,19 @@ function AdminUsersPage() {
         subtitle="Consultá y administrá los usuarios registrados en la plataforma."
       />
 
+      {pendingCount > 0 && (
+        <div className={styles.pendingAlert}>
+          <p className={styles.pendingText}>
+            {pendingCount === 1
+              ? 'Tenés 1 refugio esperando aprobación.'
+              : `Tenés ${pendingCount} refugios esperando aprobación.`}
+          </p>
+          <Button size="sm" onClick={handleShowPending}>
+            Ver pendientes
+          </Button>
+        </div>
+      )}
+
       <Card
         as="form"
         role="search"
@@ -113,7 +145,7 @@ function AdminUsersPage() {
             hint="Por nombre o email"
           />
           <Select label="Rol" name="role" value={draftFilters.role} onChange={handleFilterChange} options={ROLE_OPTIONS} />
-          <Select label="Estado" name="status" value={draftFilters.status} onChange={handleFilterChange} options={STATUS_OPTIONS} />
+          <Select label="Estado" name="status" value={draftFilters.status} onChange={handleFilterChange} options={getStatusOptions(draftFilters.role)}/>
         </div>
         <div className={styles.filterActions}>
           <Button variant="secondary" onClick={handleClear} disabled={!canClear}>

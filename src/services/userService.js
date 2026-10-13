@@ -1,6 +1,8 @@
 // Servicio de perfiles de usuario en Firestore
 import { collection, doc, getDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
+import { pauseShelterPets } from './petService'
+import { ROLES, STATUS } from '@/utils/roles'
 
 // Actualiza los datos editables del perfil (las reglas validan qué campos puede tocar cada rol)
 export function updateUserProfile(uid, changes) {
@@ -36,5 +38,19 @@ export function updateUserStatus(uid, status) {
     status,
     statusUpdatedAt: serverTimestamp(),
   })
+}
+
+// Guarda en el perfil que el usuario verificó su email
+// (el admin no puede consultar Authentication, pero sí el perfil)
+export function markEmailVerified(uid) {
+  return updateDoc(doc(db, 'users', uid), { emailVerified: true })
+}
+
+// Desactivar una cuenta. Si es un refugio, además se pausan sus mascotas publicadas.
+export async function deactivateAccount(account) {
+  await updateUserStatus(account.id, STATUS.INACTIVE)
+  if (account.role === ROLES.SHELTER) {
+    await pauseShelterPets(account.id)
+  }
 }
 

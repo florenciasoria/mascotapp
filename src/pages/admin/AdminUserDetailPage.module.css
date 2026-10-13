@@ -57,3 +57,18 @@
   gap: var(--space-3);
 }
 
+
+.unverified {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 0 var(--space-2);
+  border: 1px dashed var(--color-brown-light);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+}
+
+.note {
+  max-width: 48rem;
+  margin: var(--space-6) 0 0;
+  font-style: italic;
+}
