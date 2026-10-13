@@ -1,0 +1,74 @@
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.filterGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 48rem) {
+  .filterGrid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.filterActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  margin: var(--space-8) 0 var(--space-4);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+.count {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.empty {
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.error {
+  color: var(--color-error);
+}
+
+/* Aviso de refugios pendientes: mismo amarillo que el borde de las tarjetas */
+.pendingAlert {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  border-left: 4px solid #d9b44a;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.pendingText {
+  margin: 0;
+}

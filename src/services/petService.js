@@ -135,3 +135,19 @@ export async function syncShelterInfoInPets(shelterId, { name, neighborhood, add
 
   return batch.commit()
 }
+
+// Pausa todas las mascotas disponibles de un refugio (lo usa el admin al desactivarlo)
+export async function pauseShelterPets(shelterId) {
+  const snapshot = await getDocs(
+    query(
+      petsCollection,
+      where('shelterId', '==', shelterId),
+      where('status', '==', PET_STATUS.AVAILABLE),
+    ),
+  )
+  const batch = writeBatch(db)
+  snapshot.docs.forEach((petDoc) => {
+    batch.update(petDoc.ref, { status: PET_STATUS.UNAVAILABLE, updatedAt: serverTimestamp() })
+  })
+  return batch.commit()
+}

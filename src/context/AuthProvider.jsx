@@ -5,6 +5,7 @@ import {
   subscribeToAuthChanges,
   subscribeToUserProfile,
 } from '@/services/authService'
+import { markEmailVerified } from '../services/userService'
 
 // Mantiene actualizada la sesión y el perfil del usuario para toda la app.
 export function AuthProvider({ children }) {
@@ -43,6 +44,15 @@ export function AuthProvider({ children }) {
       unsubscribeAuth()
     }
   }, [])
+
+  // Si el email está verificado pero el perfil todavía no lo dice, lo guardamos.
+  // Pasa al verificar o, para cuentas ya verificadas, en el próximo inicio de sesión.
+  useEffect(() => {
+    if (user && isEmailVerified && profile && !profile.emailVerified) {
+      markEmailVerified(user.uid).catch(() => {})
+    }
+  }, [user, isEmailVerified, profile])
+
 
   // Se llama desde la pantalla "Verificá tu email"
   async function refreshEmailVerification() {
