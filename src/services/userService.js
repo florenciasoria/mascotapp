@@ -1,5 +1,5 @@
 // Servicio de perfiles de usuario en Firestore
-import { doc, updateDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
 
 // Actualiza los datos editables del perfil (las reglas validan qué campos puede tocar cada rol)
@@ -9,3 +9,32 @@ export function updateUserProfile(uid, changes) {
   )
   return updateDoc(doc(db, 'users', uid), data)
 }
+
+const usersCollection = collection(db, 'users')
+
+// Pasa un documento a un objeto con su id
+function toUser(snapshot) {
+  return { id: snapshot.id, ...snapshot.data() }
+}
+
+// Todos los usuarios, del más nuevo al más viejo (solo el admin tiene permiso)
+export async function getAllUsers() {
+  const snapshot = await getDocs(usersCollection)
+  return snapshot.docs
+    .map(toUser)
+    .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+}
+
+export async function getUser(uid) {
+  const snapshot = await getDoc(doc(db, 'users', uid))
+  return snapshot.exists() ? toUser(snapshot) : null
+}
+
+// Cambio de estado hecho por el admin (aprobar, rechazar, desactivar, reactivar)
+export function updateUserStatus(uid, status) {
+  return updateDoc(doc(db, 'users', uid), {
+    status,
+    statusUpdatedAt: serverTimestamp(),
+  })
+}
+

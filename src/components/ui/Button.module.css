@@ -42,3 +42,23 @@
   text-decoration: underline;
 }
 
+/* Tamaño chico (por ejemplo, en tarjetas): menos relleno, mismo texto */
+.sm {
+  padding: var(--space-2) var(--space-4);
+}
+
+/* Link de navegación "← Volver": verde oscuro, sin fondo */
+.back {
+  padding-inline: 0;
+  background-color: transparent;
+  color: var(--color-sage-dark);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+
+

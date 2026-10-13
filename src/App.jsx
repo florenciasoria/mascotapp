@@ -17,6 +17,9 @@ import RegisterPetPage from '@/pages/shelter/RegisterPetPage'
 import EditPetPage from '@/pages/shelter/EditPetPage'
 import SearchPetsPage from '@/pages/adopter/SearchPetsPage'
 import PetDetailPage from '@/pages/adopter/PetDetailPage'
+import AdminUsersPage from '@/pages/admin/AdminUsersPage'
+import AdminUserDetailPage from '@/pages/admin/AdminUserDetailPage'
+
 
 function App() {
   return (
@@ -69,6 +72,8 @@ function App() {
         >
           <Route index element={<AdminHomePage />} />
           <Route path="perfil" element={<ProfilePage />} />
+          <Route path="usuarios" element={<AdminUsersPage />} />
+          <Route path="usuarios/:userId" element={<AdminUserDetailPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 

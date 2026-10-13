@@ -1,0 +1,59 @@
+.card {
+  max-width: 48rem;
+}
+
+/* Datos en grilla de 2 columnas: etiqueta arriba, valor abajo */
+.facts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4) var(--space-6);
+  margin: 0;
+}
+
+@media (min-width: 40rem) {
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fullWidth {
+    grid-column: 1 / -1;
+  }
+}
+
+.facts dt {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.facts dd {
+  margin: 0;
+  font-size: 1.125rem;
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+  max-width: 48rem;
+  margin-top: var(--space-6);
+}
+
+/* Solicitud de registro: Volver a la izquierda, las decisiones a la derecha */
+.actionsSplit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 48rem;
+  margin-top: var(--space-6);
+}
+
+.mainActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+

@@ -76,6 +76,17 @@ service cloud.firestore {
       return isApprovedRole('admin');
     }
 
+    // Cambio de estado hecho por el admin: solo el estado (y su fecha),
+    // a un valor válido, y nunca sobre su propia cuenta
+    function isValidStatusChange(userId) {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      return request.auth.uid != userId
+        && changed.hasOnly(['status', 'statusUpdatedAt'])
+        && data.status in ['aprobado', 'rechazado', 'inactivo']
+        && data.statusUpdatedAt == request.time;
+    }
+  
     // Datos de una mascota (mismas listas y límites que petOptions.js y validators.js)
     function isValidPet(data) {
       return isText(data.name, 2, 40)
@@ -114,7 +125,8 @@ service cloud.firestore {
 
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
-      allow read: if isOwner(userId);
+      // Cada usuario lee su perfil; el admin, todos
+      allow read: if isOwner(userId) || isAdmin();
 
       // Alta: nunca admin, el email debe ser el de la cuenta,
       // la fecha la pone el servidor y los campos deben ser válidos
@@ -124,8 +136,10 @@ service cloud.firestore {
         && hasValidCommonFields(request.resource.data)
         && (isValidAdopter(request.resource.data) || isValidShelter(request.resource.data));
 
-      // Edición: cada rol solo sus datos de contacto; rol, estado, email y fecha no se tocan
-      allow update: if isOwner(userId) && isValidProfileUpdate();
+      // Edición: el usuario, sus datos de contacto; el admin, solo el estado
+      allow update: if (isOwner(userId) && isValidProfileUpdate())
+        || (isAdmin() && isValidStatusChange(userId));
+
 
       allow delete: if false;
     }

@@ -31,3 +31,19 @@ export const ROLE_LABELS = {
   [ROLES.SHELTER]: 'Refugio',
   [ROLES.ADMIN]: 'Administrador',
 }
+
+// Cómo se muestra cada estado en pantalla
+export const STATUS_LABELS = {
+  [STATUS.PENDING]: 'Pendiente de aprobación',
+  [STATUS.APPROVED]: 'Activo',
+  [STATUS.REJECTED]: 'Rechazado',
+  [STATUS.INACTIVE]: 'Desactivado',
+}
+
+// Color del punto de estado (StatusBadge) para cada estado de usuario
+export const STATUS_TONES = {
+  [STATUS.PENDING]: 'warning',
+  [STATUS.APPROVED]: 'success',
+  [STATUS.REJECTED]: 'danger',
+  [STATUS.INACTIVE]: 'neutral',
+}
