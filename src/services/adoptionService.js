@@ -1,5 +1,5 @@
 // Servicio de solicitudes de adopción: el único lugar que usa la colección "adoptionRequests"
-import { collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import { db } from './firebase'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 
@@ -73,4 +73,10 @@ export function cancelAdoptionRequest(requestId) {
     status: REQUEST_STATUS.CANCELLED,
     resolvedAt: serverTimestamp(),
   })
+}
+
+// Una solicitud por su ID. Si no existe o no es del usuario, las reglas no dejan leerla.
+export async function getRequest(requestId) {
+  const snapshot = await getDoc(doc(db, 'adoptionRequests', requestId))
+  return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null
 }

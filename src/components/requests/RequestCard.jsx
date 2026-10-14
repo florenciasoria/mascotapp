@@ -2,7 +2,7 @@ import Card from '@/components/ui/Card'
 import StatusBadge from '@/components/ui/StatusBadge'
 import { formatAge } from '@/utils/petOptions'
 import { formatDate } from '@/utils/dates'
-import { REQUEST_STATUS_LABELS, REQUEST_STATUS_TONES } from '@/utils/requestOptions'
+import { REQUEST_STATUS, REQUEST_STATUS_LABELS, REQUEST_STATUS_TONES } from '@/utils/requestOptions'
 import styles from './RequestCard.module.css'
 
 // Tarjeta de solicitud de adopción. La usan el adoptante y el refugio:
@@ -11,9 +11,15 @@ import styles from './RequestCard.module.css'
 function RequestCard({ request, subtitle, children }) {
   const titleId = `request-${request.id}`
   const { pet } = request
+  // Cancelada: la foto se ve en blanco y negro (el texto no se aclara, para no perder contraste)
+  const isCancelled = request.status === REQUEST_STATUS.CANCELLED
 
   return (
-    <Card as="article" className={styles.card} aria-labelledby={titleId}>
+    <Card
+      as="article"
+      className={isCancelled ? `${styles.card} ${styles.muted}` : styles.card}
+      aria-labelledby={titleId}
+    >
       <img
         src={pet.imageUrl}
         alt={`Foto de ${pet.name}, ${pet.species.toLowerCase()}`}
