@@ -10,15 +10,17 @@ function getRequestId(petId, adopterId) {
   return `${petId}_${adopterId}`
 }
 
-// ¿El adoptante ya envió una solicitud para esta mascota?
+// ¿El adoptante tiene una solicitud vigente (no cancelada) para esta mascota?
+// Si la canceló, puede volver a solicitarla: la nueva reemplaza a la cancelada.
 // (Se consulta con where y no leyendo el documento por ID: las reglas no dejan leer
 // un documento que todavía no existe, pero una consulta vacía sí es válida.)
-export async function hasRequestForPet(petId, adopterId) {
+export async function hasActiveRequestForPet(petId, adopterId) {
   const snapshot = await getDocs(
     query(requestsCollection, where('adopterId', '==', adopterId), where('petId', '==', petId)),
   )
-  return !snapshot.empty
+  return snapshot.docs.some((requestDoc) => requestDoc.data().status !== REQUEST_STATUS.CANCELLED)
 }
+
 
 export function createAdoptionRequest(pet, adopter, answers) {
   return setDoc(doc(db, 'adoptionRequests', getRequestId(pet.id, adopter.uid)), {

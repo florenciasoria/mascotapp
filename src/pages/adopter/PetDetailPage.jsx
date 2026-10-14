@@ -7,7 +7,7 @@ import { getPet } from '@/services/petService'
 import { formatAge, PET_STATUS } from '@/utils/petOptions'
 import styles from './PetDetailPage.module.css'
 import { useAuth } from '@/hooks/useAuth'
-import { hasRequestForPet } from '@/services/adoptionService'
+import { hasActiveRequestForPet } from '@/services/adoptionService'
 
 function PetDetailPage() {
   const { petId } = useParams()
@@ -20,7 +20,7 @@ function PetDetailPage() {
   useEffect(() => {
     let isActive = true
 
-    Promise.all([getPet(petId), hasRequestForPet(petId, user.uid)])
+    Promise.all([getPet(petId), hasActiveRequestForPet(petId, user.uid)])
       .then(([result, requested]) => {
         if (!isActive) return
         setPet(result)

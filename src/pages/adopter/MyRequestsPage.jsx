@@ -3,14 +3,22 @@ import { Link } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
 import RequestCard from '@/components/requests/RequestCard'
 import { useAuth } from '@/hooks/useAuth'
-import { getAdopterRequests } from '@/services/adoptionService'
 import styles from './MyRequestsPage.module.css'
+import Button from '@/components/ui/Button'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import ResultDialog from '@/components/ui/ResultDialog'
+import { cancelAdoptionRequest, getAdopterRequests } from '@/services/adoptionService'
+import { REQUEST_STATUS } from '@/utils/requestOptions'
+
 
 function MyRequestsPage() {
   const { user } = useAuth()
   const [requests, setRequests] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  const [requestToCancel, setRequestToCancel] = useState(null)
+  const [isCancelling, setIsCancelling] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   // Carga las solicitudes del adoptante al entrar a la pantalla
   useEffect(() => {
@@ -25,6 +33,24 @@ function MyRequestsPage() {
       isActive = false
     }
   }, [user.uid])
+
+  async function handleConfirmCancel() {
+    setIsCancelling(true)
+    try {
+      await cancelAdoptionRequest(requestToCancel.id)
+      // Se actualiza la tarjeta en pantalla sin volver a cargar toda la lista
+      setRequests((current) =>
+        current.map((item) =>
+          item.id === requestToCancel.id ? { ...item, status: REQUEST_STATUS.CANCELLED } : item,
+        ),
+      )
+    } catch {
+      setErrorMessage(`No pudimos cancelar tu solicitud para ${requestToCancel.pet.name}. Intentá nuevamente.`)
+    } finally {
+      setIsCancelling(false)
+      setRequestToCancel(null)
+    }
+  }
 
   return (
     <>
@@ -52,11 +78,42 @@ function MyRequestsPage() {
         <ul className={styles.grid}>
           {requests.map((request) => (
             <li key={request.id}>
-              <RequestCard request={request} subtitle={request.shelterName} />
+              <RequestCard request={request} subtitle={request.shelterName}>
+                {/* Solo se puede cancelar mientras el refugio no decidió */}
+                {request.status === REQUEST_STATUS.PENDING && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setRequestToCancel(request)}
+                    aria-label={`Cancelar solicitud para ${request.pet.name}`}
+                  >
+                    Cancelar solicitud
+                  </Button>
+                )}
+              </RequestCard>
             </li>
           ))}
         </ul>
       )}
+      <ConfirmDialog
+        isOpen={requestToCancel !== null}
+        onClose={() => setRequestToCancel(null)}
+        onConfirm={handleConfirmCancel}
+        title={`¿Cancelar tu solicitud para adoptar a ${requestToCancel?.pet.name ?? ''}?`}
+        message="El refugio ya no la va a revisar. Si cambiás de opinión, podés volver a solicitarla."
+        confirmLabel="Cancelar solicitud"
+        cancelLabel="Volver"
+        isLoading={isCancelling}
+      />
+
+      <ResultDialog
+        isOpen={errorMessage !== ''}
+        onClose={() => setErrorMessage('')}
+        type="error"
+        title="¡Error!"
+        message={errorMessage}
+      />
+
     </>
   )
 }

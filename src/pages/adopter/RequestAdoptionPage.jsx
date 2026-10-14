@@ -8,7 +8,7 @@ import Button from '@/components/ui/Button'
 import ResultDialog from '@/components/ui/ResultDialog'
 import { useAuth } from '@/hooks/useAuth'
 import { getPet } from '@/services/petService'
-import { createAdoptionRequest, hasRequestForPet } from '@/services/adoptionService'
+import { createAdoptionRequest, hasActiveRequestForPet } from '@/services/adoptionService'
 import { PET_STATUS } from '@/utils/petOptions'
 import { EXPERIENCE_RANGES, HOURS_ALONE, HOUSING_TYPES } from '@/utils/requestOptions'
 import { LIMITS, validateRequestForm } from '@/utils/validators'
@@ -53,7 +53,7 @@ function RequestAdoptionPage() {
   useEffect(() => {
     let isActive = true
 
-    Promise.all([getPet(petId), hasRequestForPet(petId, user.uid)])
+    Promise.all([getPet(petId), hasActiveRequestForPet(petId, user.uid)])
       .then(([petResult, requested]) => {
         if (!isActive) return
         setPet(petResult)

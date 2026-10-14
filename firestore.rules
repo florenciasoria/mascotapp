@@ -256,7 +256,7 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-        // Solicitudes de adopción. ID = {petId}_{adopterId} (impide duplicadas)
+    // Solicitudes de adopción. ID = {petId}_{adopterId} (impide duplicadas)
     match /adoptionRequests/{requestId} {
       // Adoptante: las suyas. Refugio: las que recibió. Admin: todas.
       allow read: if isSignedIn() && isVerified() && (
@@ -268,13 +268,17 @@ service cloud.firestore {
       // Alta: solo un adoptante aprobado, a su nombre, para una mascota disponible
       allow create: if isApprovedRole('adoptante') && isValidNewRequest(requestId);
 
-      // Aceptar o rechazar: lo agregamos en la parte 5
-      allow update: if false;
+      // Edición del adoptante dueño: cancelar una pendiente, o volver a solicitar
+      // una cancelada (la nueva reemplaza a la vieja y se valida igual que un alta).
+      // (Aceptar o rechazar se suma en la parte 5)
+      allow update: if isApprovedRole('adoptante') && (
+        isAdopterCancel()
+        || (resource.data.adopterId == request.auth.uid
+          && resource.data.status == 'cancelada'
+          && isValidNewRequest(requestId))
+      );
+
       allow delete: if false;
-
-      // Cancelar: solo el adoptante dueño, una pendiente. (Aceptar o rechazar se suma en la parte 5)
-      allow update: if isApprovedRole('adoptante') && isAdopterCancel();
-
     }
 
     // Cualquier otra ruta queda denegada: Firestore bloquea
