@@ -180,6 +180,7 @@ service cloud.firestore {
         && data.adopterName == currentUser().name
         && pet.status == 'disponible'
         && data.shelterId == pet.shelterId
+        && data.shelterName == pet.shelterName
         && data.pet == {
              'name': pet.name,
              'species': pet.species,
@@ -191,7 +192,7 @@ service cloud.firestore {
         && isValidRequestAnswers(data.answers)
         && data.status == 'pendiente'
         && data.createdAt == request.time
-        && data.keys().hasOnly(['petId', 'shelterId', 'adopterId', 'adopterName',
+        && data.keys().hasOnly(['petId', 'shelterId', 'shelterName', 'adopterId', 'adopterName',
              'pet', 'answers', 'status', 'createdAt']);
     }
 

@@ -24,6 +24,7 @@ export function createAdoptionRequest(pet, adopter, answers) {
   return setDoc(doc(db, 'adoptionRequests', getRequestId(pet.id, adopter.uid)), {
     petId: pet.id,
     shelterId: pet.shelterId,
+    shelterName: pet.shelterName,
     adopterId: adopter.uid,
     adopterName: adopter.name,
     // Foto de la mascota al momento de pedirla (sigue visible aunque después se adopte)
@@ -53,3 +54,13 @@ export function createAdoptionRequest(pet, adopter, answers) {
     createdAt: serverTimestamp(),
   })
 }
+
+// Solicitudes que envió un adoptante, de la más nueva a la más vieja.
+// Se ordena acá (y no con orderBy) para no necesitar un índice compuesto, igual que en petService.
+export async function getAdopterRequests(adopterId) {
+  const snapshot = await getDocs(query(requestsCollection, where('adopterId', '==', adopterId)))
+  return snapshot.docs
+    .map((requestDoc) => ({ id: requestDoc.id, ...requestDoc.data() }))
+    .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+}
+
