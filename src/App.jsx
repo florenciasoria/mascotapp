@@ -20,8 +20,7 @@ import PetDetailPage from '@/pages/adopter/PetDetailPage'
 import AdminUsersPage from '@/pages/admin/AdminUsersPage'
 import AdminUserDetailPage from '@/pages/admin/AdminUserDetailPage'
 import RequestAdoptionPage from '@/pages/adopter/RequestAdoptionPage'
-
-
+import MyRequestsPage from '@/pages/adopter/MyRequestsPage'
 
 function App() {
   return (
@@ -46,6 +45,7 @@ function App() {
           <Route path="buscar" element={<SearchPetsPage />} />
           <Route path="mascotas/:petId" element={<PetDetailPage />} />
           <Route path="mascotas/:petId/solicitar" element={<RequestAdoptionPage />} />
+          <Route path="solicitudes" element={<MyRequestsPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 
