@@ -196,6 +196,17 @@ service cloud.firestore {
              'pet', 'answers', 'status', 'createdAt']);
     }
 
+    // El adoptante cancela su solicitud: solo una pendiente, y solo cambia el estado (y su fecha)
+    function isAdopterCancel() {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      return resource.data.adopterId == request.auth.uid
+        && resource.data.status == 'pendiente'
+        && data.status == 'cancelada'
+        && changed.hasOnly(['status', 'resolvedAt'])
+        && data.resolvedAt == request.time;
+    }
+
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
       // Cada usuario lee su perfil; el admin, todos
@@ -260,6 +271,10 @@ service cloud.firestore {
       // Aceptar o rechazar: lo agregamos en la parte 5
       allow update: if false;
       allow delete: if false;
+
+      // Cancelar: solo el adoptante dueño, una pendiente. (Aceptar o rechazar se suma en la parte 5)
+      allow update: if isApprovedRole('adoptante') && isAdopterCancel();
+
     }
 
     // Cualquier otra ruta queda denegada: Firestore bloquea

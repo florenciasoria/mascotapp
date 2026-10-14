@@ -1,5 +1,5 @@
 // Servicio de solicitudes de adopción: el único lugar que usa la colección "adoptionRequests"
-import { collection, doc, getDocs, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
+import { collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import { db } from './firebase'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 
@@ -64,3 +64,11 @@ export async function getAdopterRequests(adopterId) {
     .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
 }
 
+// El adoptante cancela una solicitud pendiente. No se borra: queda guardada como
+// "cancelada" (igual que la baja lógica de usuarios), así el refugio sabe que desistió.
+export function cancelAdoptionRequest(requestId) {
+  return updateDoc(doc(db, 'adoptionRequests', requestId), {
+    status: REQUEST_STATUS.CANCELLED,
+    resolvedAt: serverTimestamp(),
+  })
+}

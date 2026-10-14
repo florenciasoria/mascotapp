@@ -15,12 +15,14 @@ export const REQUEST_STATUS = {
   PENDING: 'pendiente',
   ACCEPTED: 'aceptada',
   REJECTED: 'rechazada',
+  CANCELLED: 'cancelada',
 }
 
 export const REQUEST_STATUS_LABELS = {
   [REQUEST_STATUS.PENDING]: 'Pendiente',
   [REQUEST_STATUS.ACCEPTED]: 'Aceptada',
   [REQUEST_STATUS.REJECTED]: 'Rechazada',
+  [REQUEST_STATUS.CANCELLED]: 'Cancelada',
 }
 
 // Color del punto de estado (StatusBadge), como en el diseño
@@ -28,4 +30,6 @@ export const REQUEST_STATUS_TONES = {
   [REQUEST_STATUS.PENDING]: 'warning',
   [REQUEST_STATUS.ACCEPTED]: 'success',
   [REQUEST_STATUS.REJECTED]: 'danger',
+  [REQUEST_STATUS.CANCELLED]: 'neutral',
 }
+
