@@ -1,7 +1,7 @@
 import { ROLES } from './roles'
 import { NEIGHBORHOODS } from './neighborhoods'
 import { AGE_UNITS, COLORS, SEXES, SIZES, SPECIES } from './petOptions'
-import { HOURS_ALONE, HOUSING_TYPES } from './requestOptions'
+import { EXPERIENCE_RANGES, HOURS_ALONE, HOUSING_TYPES } from './requestOptions'
 
 // Límites compartidos con las reglas de Firestore (firestore.rules).
 export const LIMITS = {
@@ -15,6 +15,7 @@ export const LIMITS = {
   petDescription: { min: 10, max: 500 },
   age: { min: 0, max: 30 },
   householdMembers: { min: 2, max: 200 },
+  otherPets: { min: 2, max: 100 },
   requestText: { min: 10, max: 1000 },
 }
 
@@ -166,11 +167,20 @@ export function validateRequestForm(values) {
   if (!['si', 'no'].includes(values.hasYard)) {
     errors.hasYard = chooseOption
   }
+  if (values.hasYard === 'si' && !['si', 'no'].includes(values.hasSafetyNet)) {
+    errors.hasSafetyNet = chooseOption
+  }
   if (!['si', 'no'].includes(values.hasOtherPets)) {
     errors.hasOtherPets = chooseOption
   }
+  if (values.hasOtherPets === 'si' && !hasLength(values.otherPetsDetail, LIMITS.otherPets)) {
+    errors.otherPetsDetail = 'Contanos qué mascotas tenés'
+  }
   if (!['si', 'no'].includes(values.hasExperience)) {
     errors.hasExperience = chooseOption
+  }
+  if (values.hasExperience === 'si' && !EXPERIENCE_RANGES.includes(values.experienceYears)) {
+    errors.experienceYears = 'Elegí cuánta experiencia tenés'
   }
   if (!hasLength(values.aboutAdopter, LIMITS.requestText)) {
     errors.aboutAdopter = 'Contanos un poco sobre vos (mínimo 10 caracteres)'

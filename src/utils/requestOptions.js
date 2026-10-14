@@ -9,6 +9,8 @@ export const HOURS_ALONE = [
   'Más de 8 horas',
 ]
 
+export const EXPERIENCE_RANGES = ['Menos de 1 año', '1 a 5 años', 'Más de 5 años']
+
 export const REQUEST_STATUS = {
   PENDING: 'pendiente',
   ACCEPTED: 'aceptada',
