@@ -146,10 +146,11 @@ service cloud.firestore {
         && data.updatedAt == request.time;
     }
 
-    // Respuestas del formulario de solicitud (mismas listas que requestOptions.js)
+    // Respuestas del formulario de solicitud (mismas listas y límites que requestOptions.js y validators.js)
     function isValidRequestAnswers(answers) {
       return answers.keys().hasOnly(['housingType', 'hoursAlone', 'householdMembers',
-             'hasYard', 'hasOtherPets', 'hasExperience', 'aboutAdopter', 'motivation'])
+             'hasYard', 'hasSafetyNet', 'hasOtherPets', 'otherPetsDetail',
+             'hasExperience', 'experienceYears', 'aboutAdopter', 'motivation'])
         && answers.housingType in ['Departamento', 'Casa', 'PH']
         && answers.hoursAlone in ['Menos de 2 horas', '2 a 4 horas', '4 a 6 horas',
              '6 a 8 horas', 'Más de 8 horas']
@@ -157,6 +158,14 @@ service cloud.firestore {
         && answers.hasYard is bool
         && answers.hasOtherPets is bool
         && answers.hasExperience is bool
+        // Preguntas de seguimiento: obligatorias si respondió "Sí", prohibidas si respondió "No"
+        && ((answers.hasYard && answers.get('hasSafetyNet', null) is bool)
+          || (!answers.hasYard && !('hasSafetyNet' in answers)))
+        && ((answers.hasOtherPets && isText(answers.get('otherPetsDetail', null), 2, 100))
+          || (!answers.hasOtherPets && !('otherPetsDetail' in answers)))
+        && ((answers.hasExperience
+             && answers.get('experienceYears', null) in ['Menos de 1 año', '1 a 5 años', 'Más de 5 años'])
+          || (!answers.hasExperience && !('experienceYears' in answers)))
         && isText(answers.aboutAdopter, 10, 1000)
         && isText(answers.motivation, 10, 1000);
     }

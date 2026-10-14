@@ -42,6 +42,10 @@ export function createAdoptionRequest(pet, adopter, answers) {
       hasYard: answers.hasYard === 'si',
       hasOtherPets: answers.hasOtherPets === 'si',
       hasExperience: answers.hasExperience === 'si',
+      // Las preguntas de seguimiento solo se guardan si respondió "Sí"
+      ...(answers.hasYard === 'si' && { hasSafetyNet: answers.hasSafetyNet === 'si' }),
+      ...(answers.hasOtherPets === 'si' && { otherPetsDetail: answers.otherPetsDetail.trim() }),
+      ...(answers.hasExperience === 'si' && { experienceYears: answers.experienceYears }),
       aboutAdopter: answers.aboutAdopter.trim(),
       motivation: answers.motivation.trim(),
     },
