@@ -9,6 +9,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
 import { cancelAdoptionRequest, getAdopterRequests } from '@/services/adoptionService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
+import ButtonLink from '@/components/ui/ButtonLink'
 
 
 function MyRequestsPage() {
@@ -87,9 +88,16 @@ function MyRequestsPage() {
                     onClick={() => setRequestToCancel(request)}
                     aria-label={`Cancelar solicitud para ${request.pet.name}`}
                   >
-                    Cancelar solicitud
-                  </Button>
+                    Cancelar 
+                  </Button>                 
                 )}
+                <ButtonLink
+                  to={`/adoptante/solicitudes/${request.id}`}
+                  size="sm"
+                  aria-label={`Ver solicitud para ${request.pet.name}`}
+                >
+                  Ver solicitud
+                </ButtonLink>
               </RequestCard>
             </li>
           ))}

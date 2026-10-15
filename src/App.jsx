@@ -21,6 +21,8 @@ import AdminUsersPage from '@/pages/admin/AdminUsersPage'
 import AdminUserDetailPage from '@/pages/admin/AdminUserDetailPage'
 import RequestAdoptionPage from '@/pages/adopter/RequestAdoptionPage'
 import MyRequestsPage from '@/pages/adopter/MyRequestsPage'
+import AdopterRequestDetailPage from '@/pages/adopter/AdopterRequestDetailPage'
+
 
 function App() {
   return (
@@ -46,6 +48,7 @@ function App() {
           <Route path="mascotas/:petId" element={<PetDetailPage />} />
           <Route path="mascotas/:petId/solicitar" element={<RequestAdoptionPage />} />
           <Route path="solicitudes" element={<MyRequestsPage />} />
+          <Route path="solicitudes/:requestId" element={<AdopterRequestDetailPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 
