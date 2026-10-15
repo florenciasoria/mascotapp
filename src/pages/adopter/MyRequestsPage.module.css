@@ -11,3 +11,12 @@
 .error {
   color: var(--color-error);
 }
+
+.filter {
+  max-width: 16rem;
+}
+
+.count {
+  margin: var(--space-4) 0;
+  color: var(--color-text-soft);
+}

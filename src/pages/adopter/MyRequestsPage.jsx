@@ -10,7 +10,8 @@ import ResultDialog from '@/components/ui/ResultDialog'
 import { cancelAdoptionRequest, getAdopterRequests } from '@/services/adoptionService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import ButtonLink from '@/components/ui/ButtonLink'
-
+import Select from '@/components/ui/Select'
+import { filterRequestsByStatus, REQUEST_STATUS_OPTIONS } from '@/utils/requestFilters'
 
 function MyRequestsPage() {
   const { user } = useAuth()
@@ -20,6 +21,10 @@ function MyRequestsPage() {
   const [requestToCancel, setRequestToCancel] = useState(null)
   const [isCancelling, setIsCancelling] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const visibleRequests = filterRequestsByStatus(requests, statusFilter)
+
+
 
   // Carga las solicitudes del adoptante al entrar a la pantalla
   useEffect(() => {
@@ -76,33 +81,54 @@ function MyRequestsPage() {
       )}
 
       {requests.length > 0 && (
-        <ul className={styles.grid}>
-          {requests.map((request) => (
-            <li key={request.id}>
-              <RequestCard request={request} subtitle={request.shelterName}>
-                {/* Solo se puede cancelar mientras el refugio no decidió */}
-                {request.status === REQUEST_STATUS.PENDING && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => setRequestToCancel(request)}
-                    aria-label={`Cancelar solicitud para ${request.pet.name}`}
-                  >
-                    Cancelar 
-                  </Button>                 
-                )}
-                <ButtonLink
-                  to={`/adoptante/solicitudes/${request.id}`}
-                  size="sm"
-                  aria-label={`Ver solicitud para ${request.pet.name}`}
-                >
-                  Ver solicitud
-                </ButtonLink>
-              </RequestCard>
-            </li>
-          ))}
-        </ul>
+        <>
+          <div className={styles.filter}>
+            <Select
+              label="Estado"
+              name="status"
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+              options={REQUEST_STATUS_OPTIONS}
+            />
+          </div>
+
+          <p role="status" className={styles.count}>
+            {visibleRequests.length === 1 ? '1 solicitud' : `${visibleRequests.length} solicitudes`}
+          </p>
+
+          {visibleRequests.length === 0 ? (
+            <p>No tenés solicitudes con ese estado.</p>
+          ) : (
+            <ul className={styles.grid}>
+              {visibleRequests.map((request) => (
+                <li key={request.id}>
+                  <RequestCard request={request} subtitle={request.shelterName}>
+                    {/* Solo se puede cancelar mientras el refugio no decidió */}
+                    {request.status === REQUEST_STATUS.PENDING && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setRequestToCancel(request)}
+                        aria-label={`Cancelar solicitud para ${request.pet.name}`}
+                      >
+                        Cancelar
+                      </Button>
+                    )}
+                    <ButtonLink
+                      to={`/adoptante/solicitudes/${request.id}`}
+                      size="sm"
+                      aria-label={`Ver solicitud para ${request.pet.name}`}
+                    >
+                      Ver solicitud
+                    </ButtonLink>
+                  </RequestCard>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
+
       <ConfirmDialog
         isOpen={requestToCancel !== null}
         onClose={() => setRequestToCancel(null)}
