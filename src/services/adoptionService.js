@@ -66,6 +66,14 @@ export async function getAdopterRequests(adopterId) {
     .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
 }
 
+// Solicitudes que recibió un refugio, de la más nueva a la más vieja
+export async function getShelterRequests(shelterId) {
+  const snapshot = await getDocs(query(requestsCollection, where('shelterId', '==', shelterId)))
+  return snapshot.docs
+    .map((requestDoc) => ({ id: requestDoc.id, ...requestDoc.data() }))
+    .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+}
+
 // El adoptante cancela una solicitud pendiente. No se borra: queda guardada como
 // "cancelada" (igual que la baja lógica de usuarios), así el refugio sabe que desistió.
 export function cancelAdoptionRequest(requestId) {
