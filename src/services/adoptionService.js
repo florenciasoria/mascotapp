@@ -1,7 +1,9 @@
 // Servicio de solicitudes de adopción: el único lugar que usa la colección "adoptionRequests"
-import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import { db } from './firebase'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
+import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
+import { PET_STATUS } from '@/utils/petOptions'
+
 
 const requestsCollection = collection(db, 'adoptionRequests')
 
@@ -88,3 +90,63 @@ export async function getRequest(requestId) {
   const snapshot = await getDoc(doc(db, 'adoptionRequests', requestId))
   return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null
 }
+
+// El refugio acepta una solicitud. Todo junto o nada (transacción):
+// la solicitud queda aceptada, la mascota adoptada y las otras pendientes de esa
+// mascota se rechazan solas, con el motivo (autoRejected). Cada adoptante lo ve como novedad.
+export async function acceptAdoptionRequest(request) {
+  // Las otras pendientes se buscan antes: dentro de una transacción no se pueden hacer consultas.
+  // (El filtro por shelterId es el que permite la regla de lectura.)
+  const pendingSnapshot = await getDocs(
+    query(
+      requestsCollection,
+      where('shelterId', '==', request.shelterId),
+      where('petId', '==', request.petId),
+      where('status', '==', REQUEST_STATUS.PENDING),
+    ),
+  )
+  const otherRefs = pendingSnapshot.docs
+    .map((requestDoc) => requestDoc.ref)
+    .filter((ref) => ref.id !== request.id)
+
+  const requestRef = doc(db, 'adoptionRequests', request.id)
+  const petRef = doc(db, 'pets', request.petId)
+
+  await runTransaction(db, async (transaction) => {
+    // Firestore exige hacer todas las lecturas antes de las escrituras
+    const requestSnapshot = await transaction.get(requestRef)
+    const otherSnapshots = await Promise.all(otherRefs.map((ref) => transaction.get(ref)))
+
+    if (requestSnapshot.data().status !== REQUEST_STATUS.PENDING) {
+      throw new Error('La solicitud ya no está pendiente')
+    }
+
+    const resolved = { resolvedAt: serverTimestamp(), seenByAdopter: false }
+
+    transaction.update(requestRef, { status: REQUEST_STATUS.ACCEPTED, ...resolved })
+    transaction.update(petRef, {
+      status: PET_STATUS.ADOPTED,
+      adoptionRequestId: request.id,
+      updatedAt: serverTimestamp(),
+    })
+    otherSnapshots
+      .filter((snapshot) => snapshot.data().status === REQUEST_STATUS.PENDING)
+      .forEach((snapshot) =>
+        transaction.update(snapshot.ref, {
+          status: REQUEST_STATUS.REJECTED,
+          autoRejected: true,
+          ...resolved,
+        }),
+      )
+  })
+}
+
+// El refugio rechaza una solicitud. La mascota sigue disponible para otros adoptantes.
+export function rejectAdoptionRequest(requestId) {
+  return updateDoc(doc(db, 'adoptionRequests', requestId), {
+    status: REQUEST_STATUS.REJECTED,
+    resolvedAt: serverTimestamp(),
+    seenByAdopter: false,
+  })
+}
+
