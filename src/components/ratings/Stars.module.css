@@ -65,6 +65,25 @@
   font-size: 1.25rem;
 }
 
+.displayStars {
+  display: inline-flex;
+}
+
+/* Cada estrella: la vacía (☆) de fondo y la llena (★) encima, recortada
+   al ancho que corresponda (100% llena, 50% media estrella) */
+.slot {
+  position: relative;
+  display: inline-block;
+}
+
+.fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 /* Texto solo para lectores de pantalla: no se ve, pero se lee */
 .srOnly {
   position: absolute;
