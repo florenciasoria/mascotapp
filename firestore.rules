@@ -193,6 +193,10 @@ service cloud.firestore {
       return requestId == data.petId + '_' + request.auth.uid
         && data.adopterId == request.auth.uid
         && data.adopterName == currentUser().name
+        && data.adopterContact == {
+             'email': currentUser().email,
+             'phone': currentUser().phone
+           }
         && pet.status == 'disponible'
         && data.shelterId == pet.shelterId
         && data.shelterName == pet.shelterName
@@ -208,7 +212,7 @@ service cloud.firestore {
         && data.status == 'pendiente'
         && data.createdAt == request.time
         && data.keys().hasOnly(['petId', 'shelterId', 'shelterName', 'adopterId', 'adopterName',
-             'pet', 'answers', 'status', 'createdAt']);
+             'adopterContact', 'pet', 'answers', 'status', 'createdAt']);
     }
 
     // El adoptante cancela su solicitud: solo una pendiente, y solo cambia el estado (y su fecha)

@@ -90,7 +90,11 @@ function RequestAdoptionPage() {
 
     setIsSubmitting(true)
     try {
-      await createAdoptionRequest(pet, { uid: user.uid, name: profile.name }, values)
+      await createAdoptionRequest(
+        pet,
+        { uid: user.uid, name: profile.name, email: profile.email, phone: profile.phone },
+        values,
+      )
       setDialog({
         type: 'success',
         title: '¡Solicitud enviada!',
@@ -148,7 +152,7 @@ function RequestAdoptionPage() {
         subtitle={`Contanos sobre vos y tu hogar para adoptar a ${pet.name}.`}
       />
 
-      <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      <form className={styles.form} onSubmit={handleSubmit} noValidate>       
         <div className={styles.grid}>
           <Select
             label="Tipo de vivienda"
@@ -264,6 +268,10 @@ function RequestAdoptionPage() {
         </div>
 
         <div className={styles.actions}>
+        <p className={styles.privacyNote}>
+          Al enviar la solicitud, {pet.shelterName} va a poder ver tu email y teléfono para
+          contactarte.
+        </p>
           <Button
             variant="secondary"
             onClick={() => navigate(`/adoptante/mascotas/${pet.id}`)}

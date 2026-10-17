@@ -38,3 +38,12 @@
   flex-direction: column;
   gap: var(--space-4);
 }
+
+/* Aviso de qué datos personales se comparten con el refugio */
+.privacyNote {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-style: italic;
+  text-align: center;
+}
+

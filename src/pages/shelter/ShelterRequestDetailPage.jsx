@@ -85,6 +85,11 @@ function ShelterRequestDetailPage() {
   }
 
   const isPending = request.status === REQUEST_STATUS.PENDING
+  // El contacto se muestra mientras sirve: para consultar antes de decidir, o para coordinar la adopción
+  const showContact =
+    request.adopterContact &&
+    [REQUEST_STATUS.PENDING, REQUEST_STATUS.ACCEPTED].includes(request.status)
+
 
   return (
     <>
@@ -109,7 +114,27 @@ function ShelterRequestDetailPage() {
           </h2>
           <RequestAnswers answers={request.answers} />
         </Card>
-
+        {showContact && (
+          <Card as="section" aria-labelledby="contact-title">
+            <h2 id="contact-title" className={styles.sectionTitle}>
+              Datos de contacto
+            </h2>
+            <dl className={styles.contact}>
+              <div>
+                <dt>Email</dt>
+                <dd>
+                  <a href={`mailto:${request.adopterContact.email}`}>{request.adopterContact.email}</a>
+                </dd>
+              </div>
+              <div>
+                <dt>Teléfono</dt>
+                <dd>
+                  <a href={`tel:${request.adopterContact.phone}`}>{request.adopterContact.phone}</a>
+                </dd>
+              </div>
+            </dl>
+          </Card>
+        )}
         {/* Pendiente: Volver como link a la izquierda y las decisiones a la derecha
             (como la solicitud de registro del admin). Resuelta: solo Volver. */}
         {isPending ? (

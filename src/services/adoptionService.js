@@ -31,6 +31,11 @@ export function createAdoptionRequest(pet, adopter, answers) {
     shelterName: pet.shelterName,
     adopterId: adopter.uid,
     adopterName: adopter.name,
+    // Para que el refugio pueda contactarlo (se le avisa al adoptante antes de enviar)
+    adopterContact: {
+      email: adopter.email,
+      phone: adopter.phone,
+    },
     // Foto de la mascota al momento de pedirla (sigue visible aunque después se adopte)
     pet: {
       name: pet.name,
