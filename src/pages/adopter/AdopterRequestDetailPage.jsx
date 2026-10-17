@@ -11,6 +11,8 @@ import RequestAnswers from '@/components/requests/RequestAnswers'
 import { cancelAdoptionRequest, getRequest } from '@/services/adoptionService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './AdopterRequestDetailPage.module.css'
+import RequestResultBanner from '@/components/requests/RequestResultBanner'
+
 
 function AdopterRequestDetailPage() {
   const { requestId } = useParams()
@@ -79,6 +81,7 @@ function AdopterRequestDetailPage() {
       />
 
       <div className={styles.content}>
+        <RequestResultBanner request={request} viewer="adopter" />
         <section aria-labelledby="pet-title">
           <h2 id="pet-title" className={styles.sectionTitle}>
             Mascota solicitada

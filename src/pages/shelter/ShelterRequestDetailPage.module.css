@@ -11,30 +11,6 @@
   color: var(--color-text-muted);
 }
 
-/* Cartel de resultado: borde de color a la izquierda; el texto siempre marrón (contraste) */
-.banner {
-  margin: 0;
-  padding: var(--space-3) var(--space-4);
-  border-left: 4px solid;
-  border-radius: var(--radius-md);
-  color: var(--color-text);
-}
-
-.success {
-  border-color: var(--color-secondary);
-  background-color: #eef3ee;
-}
-
-.danger {
-  border-color: var(--color-primary);
-  background-color: #f8eef0;
-}
-
-.neutral {
-  border-color: var(--color-border-input);
-  background-color: #efedea;
-}
-
 .actions {
   display: flex;
   justify-content: center;

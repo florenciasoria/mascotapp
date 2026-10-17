@@ -9,29 +9,10 @@ import ResultDialog from '@/components/ui/ResultDialog'
 import RequestCard from '@/components/requests/RequestCard'
 import RequestAnswers from '@/components/requests/RequestAnswers'
 import { acceptAdoptionRequest, getRequest, rejectAdoptionRequest } from '@/services/adoptionService'
-import { formatDate } from '@/utils/dates'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './ShelterRequestDetailPage.module.css'
+import RequestResultBanner from '@/components/requests/RequestResultBanner'
 
-// Cartel con el resultado de una solicitud que ya no está pendiente
-function getResultBanner(request) {
-  const date = formatDate(request.resolvedAt)
-  switch (request.status) {
-    case REQUEST_STATUS.ACCEPTED:
-      return { tone: 'success', text: `Aceptaste esta solicitud el ${date}.` }
-    case REQUEST_STATUS.REJECTED:
-      return {
-        tone: 'danger',
-        text: request.autoRejected
-          ? `Se rechazó automáticamente el ${date} porque ${request.pet.name} fue adoptada por otra persona.`
-          : `Rechazaste esta solicitud el ${date}.`,
-      }
-    case REQUEST_STATUS.CANCELLED:
-      return { tone: 'neutral', text: `El adoptante canceló esta solicitud el ${date}.` }
-    default:
-      return null
-  }
-}
 
 function ShelterRequestDetailPage() {
   const { requestId } = useParams()
@@ -104,7 +85,6 @@ function ShelterRequestDetailPage() {
   }
 
   const isPending = request.status === REQUEST_STATUS.PENDING
-  const banner = getResultBanner(request)
 
   return (
     <>
@@ -114,7 +94,7 @@ function ShelterRequestDetailPage() {
       />
 
       <div className={styles.content}>
-        {banner && <p className={`${styles.banner} ${styles[banner.tone]}`}>{banner.text}</p>}
+        <RequestResultBanner request={request} viewer="shelter" />
 
         <section aria-labelledby="pet-title">
           <h2 id="pet-title" className={styles.sectionTitle}>
