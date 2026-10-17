@@ -8,11 +8,10 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
 import RequestCard from '@/components/requests/RequestCard'
 import RequestAnswers from '@/components/requests/RequestAnswers'
-import { cancelAdoptionRequest, getRequest } from '@/services/adoptionService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './AdopterRequestDetailPage.module.css'
 import RequestResultBanner from '@/components/requests/RequestResultBanner'
-
+import { cancelAdoptionRequest, getRequest, markRequestSeen } from '@/services/adoptionService'
 
 function AdopterRequestDetailPage() {
   const { requestId } = useParams()
@@ -27,7 +26,15 @@ function AdopterRequestDetailPage() {
     let isActive = true
 
     getRequest(requestId)
-      .then((result) => isActive && setRequest(result))
+      .then((result) => {
+        if (!isActive) return
+        setRequest(result)
+        // Al abrirla, la respuesta deja de ser novedad.
+        // Si falla no pasa nada: sigue marcada y se vuelve a intentar la próxima vez.
+        if (result?.seenByAdopter === false) {
+          markRequestSeen(result.id).catch(() => {})
+        }
+      })
       .catch(() => isActive && setRequest(null))
       .finally(() => isActive && setIsLoading(false))
 

@@ -102,7 +102,7 @@ function MyRequestsPage() {
             <ul className={styles.grid}>
               {visibleRequests.map((request) => (
                 <li key={request.id}>
-                  <RequestCard request={request} subtitle={request.shelterName}>
+                  <RequestCard request={request} subtitle={request.shelterName} highlightNew>
                     {/* Solo se puede cancelar mientras el refugio no decidió */}
                     {request.status === REQUEST_STATUS.PENDING && (
                       <Button

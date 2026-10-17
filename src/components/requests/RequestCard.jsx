@@ -11,17 +11,20 @@ const STATUS_ICONS = {
   [REQUEST_STATUS.REJECTED]: '✕',
 }
 
-// Tarjeta de solicitud de adopción. La usan el adoptante y el refugio:
-// cada pantalla decide qué línea mostrar (subtitle) y qué botones (children).
-// Los datos de la mascota son la "foto" guardada al enviar la solicitud.
 // highlightPending: borde amarillo en las pendientes (para el refugio, que tiene que revisarlas).
-function RequestCard({ request, subtitle, highlightPending = false, children }) {
+// highlightNew: borde de color y "Nueva respuesta" si el adoptante todavía no vio la respuesta.
+function RequestCard({ request, subtitle, highlightPending = false, highlightNew = false, children }) {
   const titleId = `request-${request.id}`
   const { pet } = request
   const isCancelled = request.status === REQUEST_STATUS.CANCELLED
   const isHighlighted = highlightPending && request.status === REQUEST_STATUS.PENDING
-
-  const className = [styles.card, isCancelled && styles.muted, isHighlighted && styles.pending]
+  const isNew = highlightNew && request.seenByAdopter === false
+  const className = [
+    styles.card,
+    isCancelled && styles.muted,
+    isHighlighted && styles.pending,
+    isNew && (request.status === REQUEST_STATUS.ACCEPTED ? styles.newAccepted : styles.newRejected),
+  ]
     .filter(Boolean)
     .join(' ')
 
@@ -34,6 +37,7 @@ function RequestCard({ request, subtitle, highlightPending = false, children }) 
         loading="lazy"
       />
       <div className={styles.info}>
+        {isNew && <p className={styles.newTag}>Nueva respuesta</p>}
         <h3 id={titleId} className={styles.name}>
           {pet.name}
         </h3>

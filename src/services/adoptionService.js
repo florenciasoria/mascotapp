@@ -155,3 +155,8 @@ export function rejectAdoptionRequest(requestId) {
   })
 }
 
+// El adoptante abrió una solicitud que el refugio ya respondió: deja de ser novedad
+export function markRequestSeen(requestId) {
+  return updateDoc(doc(db, 'adoptionRequests', requestId), { seenByAdopter: true })
+}
+

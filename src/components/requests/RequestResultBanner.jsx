@@ -15,7 +15,7 @@ function getContent(request, viewer) {
         title: isShelter ? 'Solicitud aceptada' : '¡Tu solicitud fue aceptada!',
         text: isShelter
           ? `Aceptaste esta solicitud el ${date}. ${petName} ya figura como adoptada.`
-          : `${request.shelterName} aceptó tu solicitud para adoptar a ${petName} el ${date}.`,
+          : `${request.shelterName} aceptó tu solicitud para adoptar a ${petName} el ${date}. El refugio se va a comunicar con vos.`,
       }
     case REQUEST_STATUS.REJECTED:
       if (request.autoRejected) {

@@ -226,6 +226,16 @@ service cloud.firestore {
         && data.resolvedAt == request.time;
     }
 
+    // El adoptante marca como vista la respuesta del refugio (deja de ser novedad)
+    function isAdopterSeen() {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      return resource.data.adopterId == request.auth.uid
+        && resource.data.seenByAdopter == false
+        && data.seenByAdopter == true
+        && changed.hasOnly(['seenByAdopter']);
+    }
+
     // El refugio acepta o rechaza una solicitud pendiente de una de sus mascotas.
     // Queda como novedad para el adoptante (seenByAdopter = false).
     function isShelterDecision(requestId) {
@@ -309,10 +319,11 @@ service cloud.firestore {
       // Alta: solo un adoptante aprobado, a su nombre, para una mascota disponible
       allow create: if isApprovedRole('adoptante') && isValidNewRequest(requestId);
 
-      // Adoptante dueño: cancelar una pendiente o volver a solicitar una cancelada.
-      // Refugio dueño: aceptar o rechazar una pendiente.
+      // Adoptante dueño: cancelar una pendiente, marcar una respuesta como vista
+      // o volver a solicitar una cancelada. Refugio dueño: aceptar o rechazar una pendiente.
       allow update: if (isApprovedRole('adoptante') && (
           isAdopterCancel()
+          || isAdopterSeen()
           || (resource.data.adopterId == request.auth.uid
             && resource.data.status == 'cancelada'
             && isValidNewRequest(requestId))

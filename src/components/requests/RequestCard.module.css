@@ -58,3 +58,19 @@
   font-size: var(--font-size-sm);
   font-style: italic;
 }
+
+/* Respuesta del refugio que el adoptante todavía no vio: borde del color del resultado */
+.newAccepted {
+  border: 2px solid var(--color-secondary);
+}
+
+.newRejected {
+  border: 2px solid var(--color-primary);
+}
+
+.newTag {
+  margin: 0;
+  color: var(--color-link); /* rosa oscuro: 4.7:1 sobre blanco */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
