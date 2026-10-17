@@ -17,6 +17,7 @@ export const LIMITS = {
   householdMembers: { min: 2, max: 200 },
   otherPets: { min: 2, max: 100 },
   requestText: { min: 10, max: 1000 },
+  ratingComment: { max: 500 },
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -187,6 +188,24 @@ export function validateRequestForm(values) {
   }
   if (!hasLength(values.motivation, LIMITS.requestText)) {
     errors.motivation = 'Contanos qué te motivó a adoptar (mínimo 10 caracteres)'
+  }
+
+  return errors
+}
+
+// Formulario de calificación: los dos puntajes son obligatorios; el comentario, opcional
+export function validateRatingForm(values) {
+  const errors = {}
+  const isValidScore = (value) => ['1', '2', '3', '4', '5'].includes(value)
+
+  if (!isValidScore(values.shelterScore)) {
+    errors.shelterScore = 'Elegí de 1 a 5 estrellas'
+  }
+  if (!isValidScore(values.processScore)) {
+    errors.processScore = 'Elegí de 1 a 5 estrellas'
+  }
+  if (values.comment.trim().length > LIMITS.ratingComment.max) {
+    errors.comment = `El comentario puede tener hasta ${LIMITS.ratingComment.max} caracteres`
   }
 
   return errors

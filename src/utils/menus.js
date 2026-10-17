@@ -19,6 +19,7 @@ export const MENUS = {
       { to: '/refugio/mascotas', label: 'Mis mascotas' },
       { to: '/refugio/solicitudes', label: 'Solicitudes de adopción' },
       { to: '/refugio/historial', label: 'Historial de adopciones' },
+      { to: '/refugio/calificaciones', label: 'Calificaciones' },
     ],
     profile: { to: '/refugio/perfil', label: 'Mi refugio' },
   },

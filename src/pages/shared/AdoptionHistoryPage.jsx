@@ -7,6 +7,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { getAdopterAdoptions, getShelterAdoptions } from '@/services/adoptionService'
 import { ROLES } from '@/utils/roles'
 import styles from './AdoptionHistoryPage.module.css'
+import StarDisplay from '@/components/ratings/StarDisplay'
+import { getAdopterRatings } from '@/services/ratingService'
 
 // Lo que cambia según quién mira el historial
 const HISTORY_BY_ROLE = {
@@ -17,6 +19,7 @@ const HISTORY_BY_ROLE = {
     detailPath: '/adoptante/solicitudes',
     empty: 'Todavía no tenés adopciones aceptadas.',
     emptyLink: { to: '/adoptante/buscar', label: 'Buscá una mascota para adoptar' },
+    canRate: true,    
   },
   [ROLES.SHELTER]: {
     subtitle: 'Las adopciones que aceptaste.',
@@ -25,6 +28,7 @@ const HISTORY_BY_ROLE = {
     detailPath: '/refugio/solicitudes',
     empty: 'Todavía no aceptaste solicitudes de adopción.',
     emptyLink: { to: '/refugio/solicitudes', label: 'Revisá las solicitudes recibidas' },
+    canRate: false,
   },
 }
 
@@ -35,13 +39,18 @@ function AdoptionHistoryPage() {
   const [adoptions, setAdoptions] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  const [ratingsById, setRatingsById] = useState({})
 
   useEffect(() => {
     let isActive = true
 
-    config
-      .load(user.uid)
-      .then((result) => isActive && setAdoptions(result))
+    // El adoptante también trae sus calificaciones, para saber cuáles ya calificó
+    Promise.all([config.load(user.uid), config.canRate ? getAdopterRatings(user.uid) : []])
+      .then(([result, ratings]) => {
+        if (!isActive) return
+        setAdoptions(result)
+        setRatingsById(Object.fromEntries(ratings.map((rating) => [rating.id, rating])))
+      })
       .catch(() => isActive && setLoadError(true))
       .finally(() => isActive && setIsLoading(false))
 
@@ -77,14 +86,36 @@ function AdoptionHistoryPage() {
                 subtitle={config.getCardSubtitle(request)}
                 statusLabel="Adopción aceptada"
               >
+                {ratingsById[request.id] && (
+                  <div className={styles.myRating}>
+                    <p className={styles.myRatingTitle}>Tu calificación</p>
+                    <p className={styles.scoreRow}>
+                      Atención del refugio <StarDisplay value={ratingsById[request.id].shelterScore} />
+                    </p>
+                    <p className={styles.scoreRow}>
+                      Proceso de adopción <StarDisplay value={ratingsById[request.id].processScore} />
+                    </p>
+                  </div>
+                )}
+                {/* Si todavía puede calificar, Calificar es la acción principal (rosa, a la derecha) */}
                 <ButtonLink
                   to={`${config.detailPath}/${request.id}`}
                   state={{ backTo: location.pathname }}
+                  variant={config.canRate && !ratingsById[request.id] ? 'secondary' : 'primary'}
                   size="sm"
                   aria-label={`Ver solicitud de adopción de ${request.pet.name}`}
                 >
                   Ver solicitud
                 </ButtonLink>
+                {config.canRate && !ratingsById[request.id] && (
+                  <ButtonLink
+                    to={`/adoptante/historial/${request.id}/calificar`}
+                    size="sm"
+                    aria-label={`Calificar la adopción de ${request.pet.name}`}
+                  >
+                    Calificar
+                  </ButtonLink>
+                )}
               </RequestCard>
             </li>
           ))}

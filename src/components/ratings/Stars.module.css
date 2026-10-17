@@ -1,0 +1,95 @@
+/* fieldset sin borde: se ve como cualquier otro campo (igual que ToggleGroup) */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.label {
+  padding: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.stars {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.star {
+  position: relative;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* El radio real queda invisible encima de la estrella: se puede clickear y enfocar */
+.star input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.star input:focus-visible + span {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* Dorado oscuro: 3.3:1 sobre blanco (WCAG pide 3:1 para elementos gráficos) */
+.filled {
+  color: #b8860b;
+}
+
+.empty {
+  color: var(--color-border-input);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+/* Estrellas de solo lectura, con el número al lado */
+.display {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 1.25rem;
+}
+
+.displayStars {
+  display: inline-flex;
+}
+
+/* Cada estrella: la vacía (☆) de fondo y la llena (★) encima, recortada
+   al ancho que corresponda (100% llena, 50% media estrella) */
+.slot {
+  position: relative;
+  display: inline-block;
+}
+
+.fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Texto solo para lectores de pantalla: no se ve, pero se lee */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -7,21 +7,36 @@ import styles from '@/pages/shared/HomeCards.module.css'
 import { useEffect, useState } from 'react'
 import Notice from '@/components/ui/Notice'
 import { countPendingRequests } from '@/services/adoptionService'
+import StarDisplay from '@/components/ratings/StarDisplay'
+import { getShelterRatingSummary } from '@/services/ratingService'
 
 function ShelterHomePage() {
   const { user, profile } = useAuth()
   const [pendingCount, setPendingCount] = useState(0)
+  const [ratingSummary, setRatingSummary] = useState(null)
 
-  // El aviso es secundario: si falla el conteo, simplemente no se muestra
+  // Los avisos y el resumen son secundarios: si fallan, simplemente no se muestran
   useEffect(() => {
     let isActive = true
     countPendingRequests(user.uid)
       .then((count) => isActive && setPendingCount(count))
-      .catch(() => {})
+      .catch((error) => {
+        console.error(error) // temporal, para diagnosticar
+        if (isActive) setLoadError(true)
+      })
+
+    getShelterRatingSummary(user.uid)
+      .then((summary) => isActive && setRatingSummary(summary))
+      .catch((error) => {
+        console.error(error) // temporal, para diagnosticar
+        if (isActive) setLoadError(true)
+      })
+
     return () => {
       isActive = false
     }
   }, [user.uid])
+
 
   return (
     <>
@@ -52,8 +67,27 @@ function ShelterHomePage() {
 
           <Card as="section" aria-labelledby="rating-title">
             <h2 id="rating-title" className={styles.cardTitle}>Calificación</h2>
-            <p className={styles.statValue}>Sin calificaciones</p>
-            <p className={styles.statDetail}>Todavía no recibiste calificaciones</p>
+            {ratingSummary?.total > 0 ? (
+              <>
+                {/* Promedio general: el promedio de los dos puntajes */}
+                <p className={styles.statValue}>
+                  <StarDisplay
+                    value={(ratingSummary.shelterAverage + ratingSummary.processAverage) / 2}
+                    showValue
+                  />
+                </p>
+                <p className={styles.statDetail}>
+                  {ratingSummary.total === 1
+                    ? 'Basado en 1 calificación'
+                    : `Basado en ${ratingSummary.total} calificaciones`}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className={styles.statValue}>Sin calificaciones</p>
+                <p className={styles.statDetail}>Todavía no recibiste calificaciones</p>
+              </>
+            )}
             <Link to="/refugio/calificaciones" className={styles.statLink}>
               Ver más <span aria-hidden="true">→</span>
             </Link>

@@ -257,6 +257,25 @@ service cloud.firestore {
             && petAfter.status == 'adoptada' && petAfter.adoptionRequestId != requestId));
     }
 
+    // Calificación de una adopción: solo el adoptante de una solicitud aceptada,
+    // una sola vez (el ID es el de la solicitud) y con los datos copiados correctos
+    function isValidNewRating(ratingId) {
+      let data = request.resource.data;
+      let adoption = get(/databases/$(database)/documents/adoptionRequests/$(ratingId)).data;
+      return adoption.adopterId == request.auth.uid
+        && adoption.status == 'aceptada'
+        && data.adopterId == request.auth.uid
+        && data.adopterName == adoption.adopterName
+        && data.shelterId == adoption.shelterId
+        && data.petName == adoption.pet.name
+        && data.shelterScore is int && data.shelterScore >= 1 && data.shelterScore <= 5
+        && data.processScore is int && data.processScore >= 1 && data.processScore <= 5
+        && isText(data.comment, 0, 500)
+        && data.createdAt == request.time
+        && data.keys().hasOnly(['adopterId', 'adopterName', 'shelterId', 'petName',
+             'shelterScore', 'processScore', 'comment', 'createdAt']);
+    }
+
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
       // Cada usuario lee su perfil; el admin, todos
@@ -275,6 +294,22 @@ service cloud.firestore {
         || (isAdmin() && isValidStatusChange(userId));
 
       allow delete: if false;
+    }
+
+    // Calificaciones. ID = ID de la solicitud aceptada (una sola por adopción)
+    match /ratings/{ratingId} {
+      // Adoptante: las suyas. Refugio: las que recibió. Admin: todas.
+      allow read: if isSignedIn() && isVerified() && (
+        resource.data.adopterId == request.auth.uid
+        || resource.data.shelterId == request.auth.uid
+        || isAdmin()
+      );
+
+      // Alta: solo el adoptante de una adopción aceptada
+      allow create: if isApprovedRole('adoptante') && isValidNewRating(ratingId);
+
+      // Una vez enviada, no se edita ni se borra
+      allow update, delete: if false;
     }
 
     // Mascotas
