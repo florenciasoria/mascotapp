@@ -13,7 +13,7 @@ const STATUS_ICONS = {
 
 // highlightPending: borde amarillo en las pendientes (para el refugio, que tiene que revisarlas).
 // highlightNew: borde de color y "Nueva respuesta" si el adoptante todavía no vio la respuesta.
-function RequestCard({ request, subtitle, highlightPending = false, highlightNew = false, children }) {
+function RequestCard({ request, subtitle, highlightPending = false, highlightNew = false, statusLabel, children }) {
   const titleId = `request-${request.id}`
   const { pet } = request
   const isCancelled = request.status === REQUEST_STATUS.CANCELLED
@@ -47,9 +47,12 @@ function RequestCard({ request, subtitle, highlightPending = false, highlightNew
             {pet.species} · {formatAge(pet.ageValue, pet.ageUnit)}
           </li>
           <li>Enviada el {formatDate(request.createdAt)}</li>
+          {request.status === REQUEST_STATUS.ACCEPTED && (
+            <li>Aceptada el {formatDate(request.resolvedAt)}</li>
+          )}
         </ul>
         <StatusBadge tone={REQUEST_STATUS_TONES[request.status]} icon={STATUS_ICONS[request.status]}>
-          {REQUEST_STATUS_LABELS[request.status]}
+          {statusLabel ?? REQUEST_STATUS_LABELS[request.status]}
         </StatusBadge>
         {request.autoRejected && (
           <p className={styles.reason}>{pet.name} fue adoptada por otra persona.</p>

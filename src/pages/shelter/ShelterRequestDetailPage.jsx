@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -12,10 +11,14 @@ import { acceptAdoptionRequest, getRequest, rejectAdoptionRequest } from '@/serv
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './ShelterRequestDetailPage.module.css'
 import RequestResultBanner from '@/components/requests/RequestResultBanner'
+import { Link, useLocation, useParams } from 'react-router'
 
 
 function ShelterRequestDetailPage() {
   const { requestId } = useParams()
+  // Volver a la pantalla de la que vino (Historial o Solicitudes); por defecto, Solicitudes
+  const location = useLocation()
+  const backTo = location.state?.backTo ?? '/refugio/solicitudes'
   const [request, setRequest] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [actionToConfirm, setActionToConfirm] = useState(null) // 'accept' | 'reject'
@@ -79,7 +82,7 @@ function ShelterRequestDetailPage() {
     return (
       <>
         <PageHeader title="Solicitud no encontrada" />
-        <Link to="/refugio/solicitudes">Volver a Solicitudes de adopción</Link>
+        <Link to={backTo}>Volver a Solicitudes de adopción</Link>
       </>
     )
   }
@@ -139,7 +142,7 @@ function ShelterRequestDetailPage() {
             (como la solicitud de registro del admin). Resuelta: solo Volver. */}
         {isPending ? (
           <div className={styles.actionsSplit}>
-            <ButtonLink to="/refugio/solicitudes" variant="back">
+            <ButtonLink to={backTo} variant="back">
               <span aria-hidden="true">←</span> Volver
             </ButtonLink>
             <div className={styles.mainActions}>
@@ -153,7 +156,7 @@ function ShelterRequestDetailPage() {
           </div>
         ) : (
           <div className={styles.actions}>
-            <ButtonLink to="/refugio/solicitudes" variant="secondary">
+            <ButtonLink to={backTo} variant="secondary">
               Volver
             </ButtonLink>
           </div>

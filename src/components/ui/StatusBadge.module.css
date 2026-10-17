@@ -10,6 +10,8 @@
   border-radius: var(--radius-pill);
   color: var(--color-text);
   font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  white-space: nowrap; /* la pastilla nunca se parte en dos líneas */
 }
 
 .success {

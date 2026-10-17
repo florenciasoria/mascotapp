@@ -24,6 +24,7 @@ import MyRequestsPage from '@/pages/adopter/MyRequestsPage'
 import AdopterRequestDetailPage from '@/pages/adopter/AdopterRequestDetailPage'
 import ShelterRequestsPage from '@/pages/shelter/ShelterRequestsPage'
 import ShelterRequestDetailPage from '@/pages/shelter/ShelterRequestDetailPage'
+import AdoptionHistoryPage from '@/pages/shared/AdoptionHistoryPage'
 
 
 
@@ -52,6 +53,7 @@ function App() {
           <Route path="mascotas/:petId/solicitar" element={<RequestAdoptionPage />} />
           <Route path="solicitudes" element={<MyRequestsPage />} />
           <Route path="solicitudes/:requestId" element={<AdopterRequestDetailPage />} />
+          <Route path="historial" element={<AdoptionHistoryPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 
@@ -70,6 +72,7 @@ function App() {
           <Route path="mascotas/:petId/editar" element={<EditPetPage />} />
           <Route path="solicitudes" element={<ShelterRequestsPage />} />
           <Route path="solicitudes/:requestId" element={<ShelterRequestDetailPage />} />
+          <Route path="historial" element={<AdoptionHistoryPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 

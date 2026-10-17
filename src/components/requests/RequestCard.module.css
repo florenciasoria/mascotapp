@@ -1,7 +1,7 @@
 /* Misma estructura que PetCard: foto a la izquierda, datos a la derecha */
 .card {
   display: grid;
-  grid-template-columns: 7rem 1fr;
+  grid-template-columns: 6rem 1fr;
   grid-template-rows: 1fr auto; /* el espacio que sobra queda arriba: los botones van al fondo */
   gap: var(--space-4);
   align-items: start;

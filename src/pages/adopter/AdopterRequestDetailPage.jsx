@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -12,9 +11,14 @@ import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './AdopterRequestDetailPage.module.css'
 import RequestResultBanner from '@/components/requests/RequestResultBanner'
 import { cancelAdoptionRequest, getRequest, markRequestSeen } from '@/services/adoptionService'
+import { Link, useLocation, useParams } from 'react-router'
+
 
 function AdopterRequestDetailPage() {
   const { requestId } = useParams()
+  // Volver a la pantalla de la que vino (Historial o Mis solicitudes); por defecto, Mis solicitudes
+  const location = useLocation()
+  const backTo = location.state?.backTo ?? '/adoptante/solicitudes'
   const [request, setRequest] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -73,7 +77,7 @@ function AdopterRequestDetailPage() {
     return (
       <>
         <PageHeader title="Solicitud no encontrada" />
-        <Link to="/adoptante/solicitudes">Volver a Mis solicitudes</Link>
+        <Link to={backTo} >Volver a Mis solicitudes</Link>
       </>
     )
   }
@@ -105,7 +109,7 @@ function AdopterRequestDetailPage() {
 
         {/* Volver verde a la izquierda; la acción principal (rosa) a la derecha */}
         <div className={styles.actions}>
-          <ButtonLink to="/adoptante/solicitudes" variant="secondary">
+          <ButtonLink to={backTo} variant="secondary">
             Volver
           </ButtonLink>
           {isPending && <Button onClick={() => setIsConfirmOpen(true)}>Cancelar solicitud</Button>}

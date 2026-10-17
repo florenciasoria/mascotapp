@@ -180,3 +180,22 @@ export async function countPendingRequests(shelterId) {
   )
   return snapshot.data().count
 }
+
+// Adopciones (solicitudes aceptadas), de la más reciente a la más vieja.
+// field: 'adopterId' o 'shelterId' (las reglas solo dejan leer las propias).
+async function getAdoptions(field, uid) {
+  const snapshot = await getDocs(
+    query(requestsCollection, where(field, '==', uid), where('status', '==', REQUEST_STATUS.ACCEPTED)),
+  )
+  return snapshot.docs
+    .map((requestDoc) => ({ id: requestDoc.id, ...requestDoc.data() }))
+    .sort((a, b) => (b.resolvedAt?.toMillis() ?? 0) - (a.resolvedAt?.toMillis() ?? 0))
+}
+
+export function getAdopterAdoptions(adopterId) {
+  return getAdoptions('adopterId', adopterId)
+}
+
+export function getShelterAdoptions(shelterId) {
+  return getAdoptions('shelterId', shelterId)
+}
