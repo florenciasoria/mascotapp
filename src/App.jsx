@@ -23,6 +23,8 @@ import RequestAdoptionPage from '@/pages/adopter/RequestAdoptionPage'
 import MyRequestsPage from '@/pages/adopter/MyRequestsPage'
 import AdopterRequestDetailPage from '@/pages/adopter/AdopterRequestDetailPage'
 import ShelterRequestsPage from '@/pages/shelter/ShelterRequestsPage'
+import ShelterRequestDetailPage from '@/pages/shelter/ShelterRequestDetailPage'
+
 
 
 function App() {
@@ -67,6 +69,7 @@ function App() {
           <Route path="mascotas/nueva" element={<RegisterPetPage />} />
           <Route path="mascotas/:petId/editar" element={<EditPetPage />} />
           <Route path="solicitudes" element={<ShelterRequestsPage />} />
+          <Route path="solicitudes/:requestId" element={<ShelterRequestDetailPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 

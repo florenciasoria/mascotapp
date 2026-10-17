@@ -1,8 +1,10 @@
 .card {
   display: grid;
   grid-template-columns: 7rem 1fr;
+  grid-template-rows: auto 1fr; /* el pie (estado y botones) ocupa el espacio que sobra */
   gap: var(--space-4);
   align-items: start;
+  height: 100%; /* todas las tarjetas de una fila miden lo mismo */
 }
 
 .image {
@@ -27,6 +29,7 @@
   flex-direction: column;
   gap: var(--space-3);
   grid-column: 1 / -1;
+  align-self: stretch;
 }
 
 /* Mascota no disponible: foto en blanco y negro. El texto no se aclara, para no perder contraste. */

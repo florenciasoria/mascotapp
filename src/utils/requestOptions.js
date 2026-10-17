@@ -25,7 +25,7 @@ export const REQUEST_STATUS_LABELS = {
   [REQUEST_STATUS.CANCELLED]: 'Cancelada',
 }
 
-// Color del punto de estado (StatusBadge), como en el diseño
+// Color de la pastilla de estado (StatusBadge), como en el diseño
 export const REQUEST_STATUS_TONES = {
   [REQUEST_STATUS.PENDING]: 'warning',
   [REQUEST_STATUS.ACCEPTED]: 'success',

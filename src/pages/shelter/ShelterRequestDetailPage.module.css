@@ -1,0 +1,56 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 48rem;
+}
+
+.sectionTitle {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+/* Cartel de resultado: borde de color a la izquierda; el texto siempre marrón (contraste) */
+.banner {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 4px solid;
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+}
+
+.success {
+  border-color: var(--color-secondary);
+  background-color: #eef3ee;
+}
+
+.danger {
+  border-color: var(--color-primary);
+  background-color: #f8eef0;
+}
+
+.neutral {
+  border-color: var(--color-border-input);
+  background-color: #efedea;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Pendiente: Volver a la izquierda, las decisiones a la derecha */
+.actionsSplit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.mainActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}

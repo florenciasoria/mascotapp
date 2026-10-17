@@ -77,7 +77,11 @@ function ShelterRequestsPage() {
             <ul className={styles.grid}>
               {visibleRequests.map((request) => (
                 <li key={request.id}>
-                  <RequestCard request={request} subtitle={`Solicitada por ${request.adopterName}`}>
+                  <RequestCard
+                    request={request}
+                    subtitle={`Solicitada por ${request.adopterName}`}
+                    highlightPending
+                  >
                     <ButtonLink
                       to={`/refugio/solicitudes/${request.id}`}
                       size="sm"

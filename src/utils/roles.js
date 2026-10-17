@@ -40,7 +40,7 @@ export const STATUS_LABELS = {
   [STATUS.INACTIVE]: 'Desactivado',
 }
 
-// Color del punto de estado (StatusBadge) para cada estado de usuario
+// Color de la pastilla de estado (StatusBadge) para cada estado de usuario
 export const STATUS_TONES = {
   [STATUS.PENDING]: 'warning',
   [STATUS.APPROVED]: 'success',
