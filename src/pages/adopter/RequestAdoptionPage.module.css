@@ -1,0 +1,49 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: 60rem;
+}
+
+/* Una columna en celular, tres en pantallas anchas (como el form de mascotas) */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 48rem) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--space-8);
+  }
+}
+
+.texts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+/* Una pregunta Sí/No con su pregunta de seguimiento debajo */
+.question {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Aviso de qué datos personales se comparten con el refugio */
+.privacyNote {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-style: italic;
+  text-align: center;
+}
+

@@ -98,3 +98,17 @@
   justify-content: center;
   gap: var(--space-4);
 }
+
+/* Aviso "Ya enviaste una solicitud": recuadro verde salvia suave */
+.requested {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 4px solid var(--color-secondary);
+  border-radius: var(--radius-md);
+  background-color: #eef3ee; /* salvia muy claro: el texto marrón tiene 5.5:1 de contraste */
+  color: var(--color-text);
+}
+

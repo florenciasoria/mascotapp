@@ -1,0 +1,57 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 48rem;
+}
+
+.sectionTitle {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Pendiente: Volver a la izquierda, las decisiones a la derecha */
+.actionsSplit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.mainActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Datos de contacto: etiqueta arriba, valor abajo (como las respuestas) */
+.contact {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4) var(--space-6);
+  margin: 0;
+}
+
+@media (min-width: 40rem) {
+  .contact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.contact dt {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.contact dd {
+  margin: 0;
+  font-size: 1.125rem;
+  overflow-wrap: anywhere;
+}

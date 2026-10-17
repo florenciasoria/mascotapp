@@ -6,24 +6,33 @@ import LocationMap from '@/components/ui/LocationMap'
 import { getPet } from '@/services/petService'
 import { formatAge, PET_STATUS } from '@/utils/petOptions'
 import styles from './PetDetailPage.module.css'
+import { useAuth } from '@/hooks/useAuth'
+import { hasActiveRequestForPet } from '@/services/adoptionService'
 
 function PetDetailPage() {
   const { petId } = useParams()
+  const { user } = useAuth()
   const [pet, setPet] = useState(null)
+  const [alreadyRequested, setAlreadyRequested] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
+  // La mascota y si ya la pidió se buscan a la vez
   useEffect(() => {
     let isActive = true
 
-    getPet(petId)
-      .then((result) => isActive && setPet(result))
+    Promise.all([getPet(petId), hasActiveRequestForPet(petId, user.uid)])
+      .then(([result, requested]) => {
+        if (!isActive) return
+        setPet(result)
+        setAlreadyRequested(requested)
+      })
       .catch(() => isActive && setPet(null))
       .finally(() => isActive && setIsLoading(false))
 
     return () => {
       isActive = false
     }
-  }, [petId])
+  }, [petId, user.uid])
 
   if (isLoading) {
     return <p role="status">Cargando mascota…</p>
@@ -109,11 +118,23 @@ function PetDetailPage() {
         <LocationMap address={mapAddress} title={`Mapa de la ubicación de ${pet.shelterName}`} />
       </section>
 
+      {alreadyRequested && (
+        <p className={styles.requested}>
+          <span aria-hidden="true">✓</span>
+          Ya enviaste una solicitud para {pet.name}
+        </p>
+      )}
+
       <div className={styles.actions}>
         <ButtonLink to="/adoptante/buscar" variant="secondary">
           Volver
         </ButtonLink>
-        <ButtonLink to={`/adoptante/mascotas/${pet.id}/solicitar`}>Solicitar adopción</ButtonLink>
+        {/* Si ya la pidió, la acción principal pasa a ser ver sus solicitudes */}
+        {alreadyRequested ? (
+          <ButtonLink to="/adoptante/solicitudes">Ver mis solicitudes</ButtonLink>
+        ) : (
+          <ButtonLink to={`/adoptante/mascotas/${pet.id}/solicitar`}>Solicitar adopción</ButtonLink>
+        )}
       </div>
     </Card>
   )

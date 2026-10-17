@@ -146,6 +146,117 @@ service cloud.firestore {
         && data.updatedAt == request.time;
     }
 
+    // El refugio marca su mascota como adoptada al aceptar una solicitud (aunque esté pausada).
+    // La solicitud indicada tiene que ser de esta mascota y quedar aceptada en la misma operación.
+    function isPetAdoption(petId) {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      let acceptedRequest = getAfter(/databases/$(database)/documents/adoptionRequests/$(data.adoptionRequestId)).data;
+      return resource.data.shelterId == request.auth.uid
+        && resource.data.status in ['disponible', 'no_disponible']
+        && data.status == 'adoptada'
+        && changed.hasOnly(['status', 'adoptionRequestId', 'updatedAt'])
+        && data.updatedAt == request.time
+        && acceptedRequest.petId == petId
+        && acceptedRequest.status == 'aceptada';
+    }
+
+    // Respuestas del formulario de solicitud (mismas listas y límites que requestOptions.js y validators.js)
+    function isValidRequestAnswers(answers) {
+      return answers.keys().hasOnly(['housingType', 'hoursAlone', 'householdMembers',
+             'hasYard', 'hasSafetyNet', 'hasOtherPets', 'otherPetsDetail',
+             'hasExperience', 'experienceYears', 'aboutAdopter', 'motivation'])
+        && answers.housingType in ['Departamento', 'Casa', 'PH']
+        && answers.hoursAlone in ['Menos de 2 horas', '2 a 4 horas', '4 a 6 horas',
+             '6 a 8 horas', 'Más de 8 horas']
+        && isText(answers.householdMembers, 2, 200)
+        && answers.hasYard is bool
+        && answers.hasOtherPets is bool
+        && answers.hasExperience is bool
+        // Preguntas de seguimiento: obligatorias si respondió "Sí", prohibidas si respondió "No"
+        && ((answers.hasYard && answers.get('hasSafetyNet', null) is bool)
+          || (!answers.hasYard && !('hasSafetyNet' in answers)))
+        && ((answers.hasOtherPets && isText(answers.get('otherPetsDetail', null), 2, 100))
+          || (!answers.hasOtherPets && !('otherPetsDetail' in answers)))
+        && ((answers.hasExperience
+             && answers.get('experienceYears', null) in ['Menos de 1 año', '1 a 5 años', 'Más de 5 años'])
+          || (!answers.hasExperience && !('experienceYears' in answers)))
+        && isText(answers.aboutAdopter, 10, 1000)
+        && isText(answers.motivation, 10, 1000);
+    }
+
+    // Alta de una solicitud: la mascota tiene que estar disponible y los datos
+    // copiados tienen que coincidir con los reales
+    function isValidNewRequest(requestId) {
+      let data = request.resource.data;
+      let pet = get(/databases/$(database)/documents/pets/$(data.petId)).data;
+      return requestId == data.petId + '_' + request.auth.uid
+        && data.adopterId == request.auth.uid
+        && data.adopterName == currentUser().name
+        && data.adopterContact == {
+             'email': currentUser().email,
+             'phone': currentUser().phone
+           }
+        && pet.status == 'disponible'
+        && data.shelterId == pet.shelterId
+        && data.shelterName == pet.shelterName
+        && data.pet == {
+             'name': pet.name,
+             'species': pet.species,
+             'breed': pet.breed,
+             'ageValue': pet.ageValue,
+             'ageUnit': pet.ageUnit,
+             'imageUrl': pet.imageUrl
+           }
+        && isValidRequestAnswers(data.answers)
+        && data.status == 'pendiente'
+        && data.createdAt == request.time
+        && data.keys().hasOnly(['petId', 'shelterId', 'shelterName', 'adopterId', 'adopterName',
+             'adopterContact', 'pet', 'answers', 'status', 'createdAt']);
+    }
+
+    // El adoptante cancela su solicitud: solo una pendiente, y solo cambia el estado (y su fecha)
+    function isAdopterCancel() {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      return resource.data.adopterId == request.auth.uid
+        && resource.data.status == 'pendiente'
+        && data.status == 'cancelada'
+        && changed.hasOnly(['status', 'resolvedAt'])
+        && data.resolvedAt == request.time;
+    }
+
+    // El adoptante marca como vista la respuesta del refugio (deja de ser novedad)
+    function isAdopterSeen() {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      return resource.data.adopterId == request.auth.uid
+        && resource.data.seenByAdopter == false
+        && data.seenByAdopter == true
+        && changed.hasOnly(['seenByAdopter']);
+    }
+
+    // El refugio acepta o rechaza una solicitud pendiente de una de sus mascotas.
+    // Queda como novedad para el adoptante (seenByAdopter = false).
+    function isShelterDecision(requestId) {
+      let data = request.resource.data;
+      let changed = data.diff(resource.data).affectedKeys();
+      let petAfter = getAfter(/databases/$(database)/documents/pets/$(resource.data.petId)).data;
+      return resource.data.shelterId == request.auth.uid
+        && resource.data.status == 'pendiente'
+        && data.status in ['aceptada', 'rechazada']
+        && changed.hasOnly(['status', 'resolvedAt', 'seenByAdopter', 'autoRejected'])
+        && data.resolvedAt == request.time
+        && data.seenByAdopter == false
+        // Aceptar: la mascota tiene que quedar adoptada por ESTA solicitud
+        && (data.status == 'rechazada'
+          || (petAfter.status == 'adoptada' && petAfter.adoptionRequestId == requestId))
+        // Rechazo automático: solo si la mascota quedó adoptada por OTRA solicitud
+        && (!('autoRejected' in data)
+          || (data.status == 'rechazada' && data.autoRejected == true
+            && petAfter.status == 'adoptada' && petAfter.adoptionRequestId != requestId));
+    }
+
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
       // Cada usuario lee su perfil; el admin, todos
@@ -188,9 +299,36 @@ service cloud.firestore {
              'ageUnit', 'ageInMonths', 'size', 'color', 'imageUrl', 'imageStoragePath', 'description',
              'shelterId', 'shelterName', 'neighborhood', 'shelterAddress', 'status', 'createdAt', 'updatedAt']);
 
-      // Edición: el refugio dueño (nunca una adoptada); el admin, solo pausar
-      allow update: if (isApprovedRole('refugio') && isValidPetUpdate())
+      // Edición: el refugio dueño (nunca una adoptada) o marcarla adoptada al aceptar
+      // una solicitud; el admin, solo pausar
+      allow update: if (isApprovedRole('refugio') && (isValidPetUpdate() || isPetAdoption(petId)))
         || (isAdmin() && isAdminPetPause());
+
+      allow delete: if false;
+    }
+
+    // Solicitudes de adopción. ID = {petId}_{adopterId} (impide duplicadas)
+    match /adoptionRequests/{requestId} {
+      // Adoptante: las suyas. Refugio: las que recibió. Admin: todas.
+      allow read: if isSignedIn() && isVerified() && (
+        resource.data.adopterId == request.auth.uid
+        || resource.data.shelterId == request.auth.uid
+        || isAdmin()
+      );
+
+      // Alta: solo un adoptante aprobado, a su nombre, para una mascota disponible
+      allow create: if isApprovedRole('adoptante') && isValidNewRequest(requestId);
+
+      // Adoptante dueño: cancelar una pendiente, marcar una respuesta como vista
+      // o volver a solicitar una cancelada. Refugio dueño: aceptar o rechazar una pendiente.
+      allow update: if (isApprovedRole('adoptante') && (
+          isAdopterCancel()
+          || isAdopterSeen()
+          || (resource.data.adopterId == request.auth.uid
+            && resource.data.status == 'cancelada'
+            && isValidNewRequest(requestId))
+        ))
+        || (isApprovedRole('refugio') && isShelterDecision(requestId));
 
       allow delete: if false;
     }

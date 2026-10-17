@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
+import Notice from '@/components/ui/Notice'
+import { countUnseenResponses } from '@/services/adoptionService'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import ButtonLink from '@/components/ui/ButtonLink'
@@ -6,7 +9,19 @@ import { useAuth } from '@/hooks/useAuth'
 import styles from '@/pages/shared/HomeCards.module.css'
 
 function AdopterHomePage() {
-  const { profile } = useAuth()
+  const { user, profile } = useAuth()
+  const [unseenCount, setUnseenCount] = useState(0)
+
+  // El aviso es secundario: si falla el conteo, simplemente no se muestra
+  useEffect(() => {
+    let isActive = true
+    countUnseenResponses(user.uid)
+      .then((count) => isActive && setUnseenCount(count))
+      .catch(() => {})
+    return () => {
+      isActive = false
+    }
+  }, [user.uid])
   const location = useLocation()
   const justRegistered = location.state?.justRegistered
   const firstName = profile.name.split(' ')[0]
@@ -23,7 +38,15 @@ function AdopterHomePage() {
         title={<>¡Hola, {firstName}! <span aria-hidden="true">👋</span></>}
         subtitle="Todo lo que necesitás para adoptar y ayudar está acá."
       />
-
+      
+      {unseenCount > 0 && (
+        <Notice to="/adoptante/solicitudes" actionLabel="Ver mis solicitudes">
+          {unseenCount === 1
+            ? 'Tenés 1 solicitud con respuesta nueva.'
+            : `Tenés ${unseenCount} solicitudes con respuesta nueva.`}
+        </Notice>
+      )}
+      
       <div className={styles.cards}>
         <Card as="section" aria-labelledby="find-pet-title">
           <h2 id="find-pet-title" className={styles.cardTitle}>Encontrá a tu próximo compañero</h2>

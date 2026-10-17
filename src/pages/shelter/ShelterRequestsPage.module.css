@@ -1,0 +1,21 @@
+.filter {
+  max-width: 16rem;
+}
+
+.count {
+  margin: var(--space-4) 0;
+  color: var(--color-text-soft);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.error {
+  color: var(--color-error);
+}

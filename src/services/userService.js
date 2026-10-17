@@ -1,5 +1,5 @@
 // Servicio de perfiles de usuario en Firestore
-import { collection, doc, getDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { collection, doc, getCountFromServer, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db } from './firebase'
 import { pauseShelterPets } from './petService'
 import { ROLES, STATUS } from '@/utils/roles'
@@ -54,3 +54,14 @@ export async function deactivateAccount(account) {
   }
 }
 
+// Cuántos refugios esperan la aprobación del admin
+export async function countPendingShelters() {
+  const snapshot = await getCountFromServer(
+    query(
+      collection(db, 'users'),
+      where('role', '==', ROLES.SHELTER),
+      where('status', '==', STATUS.PENDING),
+    ),
+  )
+  return snapshot.data().count
+}
