@@ -16,6 +16,7 @@ function LoginPage() {
   const [errors, setErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
 
   // Cuenta sin perfil en Firestore (por ejemplo, si el perfil se borró)
   const hasMissingProfile = user && !isLoading && !profile
@@ -41,7 +42,7 @@ function LoginPage() {
     setIsSubmitting(true)
     try {
       // No navegamos acá: cuando llega el perfil, se redirige según el rol
-      await loginUser(values.email, values.password)
+      await loginUser(values.email, values.password, rememberMe)
     } catch (error) {
       setSubmitError(getAuthErrorMessage(error))
       setIsSubmitting(false)
@@ -87,6 +88,14 @@ function LoginPage() {
           ¿Olvidaste tu contraseña?
         </Link>
 
+        <label className={styles.remember}>
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(event) => setRememberMe(event.target.checked)}
+          />
+          Mantener la sesión iniciada
+        </label>
 
         <div className={styles.actions}>
           {submitError && (

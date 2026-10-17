@@ -1,9 +1,12 @@
 // Servicio de autenticación: el único lugar de la app que usa
 // Firebase Auth y que escribe perfiles de usuario en Firestore.
 import {
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
   deleteUser,
   onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
   sendEmailVerification,
@@ -52,7 +55,10 @@ export async function registerUser({ role, name, email, password, phone, address
   return profile
 }
 
-export function loginUser(email, password) {
+// rememberMe: true = la sesión queda abierta aunque se cierre el navegador.
+// false = se cierra al cerrar la pestaña (más seguro en una computadora compartida).
+export async function loginUser(email, password, rememberMe = false) {
+  await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
   return signInWithEmailAndPassword(auth, email.trim(), password)
 }
 

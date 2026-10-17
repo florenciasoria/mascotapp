@@ -64,3 +64,19 @@
   border-radius: var(--radius-md);
   background-color: var(--color-surface);
 }
+
+/* "Mantener la sesión iniciada": casilla nativa (se usa con teclado y lector de pantalla) */
+.remember {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.remember input {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--color-primary); /* la casilla marcada toma el rosa de la app */
+  cursor: pointer;
+}
