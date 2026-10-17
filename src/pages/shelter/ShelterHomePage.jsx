@@ -4,9 +4,24 @@ import Card from '@/components/ui/Card'
 import ButtonLink from '@/components/ui/ButtonLink'
 import { useAuth } from '@/hooks/useAuth'
 import styles from '@/pages/shared/HomeCards.module.css'
+import { useEffect, useState } from 'react'
+import Notice from '@/components/ui/Notice'
+import { countPendingRequests } from '@/services/adoptionService'
 
 function ShelterHomePage() {
-  const { profile } = useAuth()
+  const { user, profile } = useAuth()
+  const [pendingCount, setPendingCount] = useState(0)
+
+  // El aviso es secundario: si falla el conteo, simplemente no se muestra
+  useEffect(() => {
+    let isActive = true
+    countPendingRequests(user.uid)
+      .then((count) => isActive && setPendingCount(count))
+      .catch(() => {})
+    return () => {
+      isActive = false
+    }
+  }, [user.uid])
 
   return (
     <>
@@ -14,6 +29,14 @@ function ShelterHomePage() {
         title={<>¡Hola, {profile.name}! <span aria-hidden="true">👋</span></>}
         subtitle="Gestioná las actividades de tu refugio."
       />
+
+      {pendingCount > 0 && (
+        <Notice to="/refugio/solicitudes" actionLabel="Ver solicitudes">
+          {pendingCount === 1
+            ? 'Tenés 1 solicitud pendiente de revisar.'
+            : `Tenés ${pendingCount} solicitudes pendientes de revisar.`}
+        </Notice>
+      )}
 
       <div className={styles.cards}>
         {/* Los datos de donaciones y calificaciones se conectan en los hitos 5 y 6 */}

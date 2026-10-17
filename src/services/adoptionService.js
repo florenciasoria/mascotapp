@@ -1,7 +1,7 @@
 // Servicio de solicitudes de adopción: el único lugar que usa la colección "adoptionRequests"
 import { db } from './firebase'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
-import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, getCountFromServer, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import { PET_STATUS } from '@/utils/petOptions'
 
 
@@ -160,3 +160,23 @@ export function markRequestSeen(requestId) {
   return updateDoc(doc(db, 'adoptionRequests', requestId), { seenByAdopter: true })
 }
 
+// Cuántas respuestas del refugio el adoptante todavía no vio.
+// getCountFromServer trae solo el número, no los documentos.
+export async function countUnseenResponses(adopterId) {
+  const snapshot = await getCountFromServer(
+    query(requestsCollection, where('adopterId', '==', adopterId), where('seenByAdopter', '==', false)),
+  )
+  return snapshot.data().count
+}
+
+// Cuántas solicitudes pendientes tiene un refugio para revisar
+export async function countPendingRequests(shelterId) {
+  const snapshot = await getCountFromServer(
+    query(
+      requestsCollection,
+      where('shelterId', '==', shelterId),
+      where('status', '==', REQUEST_STATUS.PENDING),
+    ),
+  )
+  return snapshot.data().count
+}
