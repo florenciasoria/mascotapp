@@ -13,7 +13,14 @@ const STATUS_ICONS = {
 
 // highlightPending: borde amarillo en las pendientes (para el refugio, que tiene que revisarlas).
 // highlightNew: borde de color y "Nueva respuesta" si el adoptante todavía no vio la respuesta.
-function RequestCard({ request, subtitle, highlightPending = false, highlightNew = false, statusLabel, children }) {
+function RequestCard({
+  request,
+  subtitle,
+  highlightPending = false,
+  highlightNew = false,
+  statusLabel,
+  children,
+}) {
   const titleId = `request-${request.id}`
   const { pet } = request
   const isCancelled = request.status === REQUEST_STATUS.CANCELLED
@@ -51,7 +58,10 @@ function RequestCard({ request, subtitle, highlightPending = false, highlightNew
             <li>Aceptada el {formatDate(request.resolvedAt)}</li>
           )}
         </ul>
-        <StatusBadge tone={REQUEST_STATUS_TONES[request.status]} icon={STATUS_ICONS[request.status]}>
+        <StatusBadge
+          tone={REQUEST_STATUS_TONES[request.status]}
+          icon={STATUS_ICONS[request.status]}
+        >
           {statusLabel ?? REQUEST_STATUS_LABELS[request.status]}
         </StatusBadge>
         {request.autoRejected && (

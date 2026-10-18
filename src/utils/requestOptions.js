@@ -32,4 +32,3 @@ export const REQUEST_STATUS_TONES = {
   [REQUEST_STATUS.REJECTED]: 'danger',
   [REQUEST_STATUS.CANCELLED]: 'neutral',
 }
-

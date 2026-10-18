@@ -1,7 +1,11 @@
 import Card from '@/components/ui/Card'
 import StatusBadge from '@/components/ui/StatusBadge'
 import { formatDate } from '@/utils/dates'
-import { DONATION_STATUS_LABELS, formatCurrency, PAYMENT_METHOD_LABELS } from '@/utils/donationOptions'
+import {
+  DONATION_STATUS_LABELS,
+  formatCurrency,
+  PAYMENT_METHOD_LABELS,
+} from '@/utils/donationOptions'
 import styles from './DonationCard.module.css'
 
 // Tarjeta de una donación. La usan el adoptante (title = refugio) y el refugio (title = adoptante).

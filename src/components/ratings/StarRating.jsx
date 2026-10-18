@@ -24,7 +24,10 @@ function StarRating({ label, name, value, onChange, error }) {
               aria-invalid={error ? true : undefined}
               aria-describedby={error ? errorId : undefined}
             />
-            <span aria-hidden="true" className={Number(score) <= selected ? styles.filled : styles.empty}>
+            <span
+              aria-hidden="true"
+              className={Number(score) <= selected ? styles.filled : styles.empty}
+            >
               {Number(score) <= selected ? '★' : '☆'}
             </span>
             <span className={styles.srOnly}>{score} de 5 estrellas</span>

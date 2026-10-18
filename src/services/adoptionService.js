@@ -1,11 +1,28 @@
 // Servicio de solicitudes de adopción: el único lugar que usa la colección "adoptionRequests"
+import {
+  collection,
+  doc,
+  getCountFromServer,
+  getDoc,
+  getDocs,
+  query,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { db } from './firebase'
-import { REQUEST_STATUS } from '@/utils/requestOptions'
-import { collection, doc, getCountFromServer, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
+import { sortByNewest } from '@/utils/dates'
 import { PET_STATUS } from '@/utils/petOptions'
-
+import { REQUEST_STATUS } from '@/utils/requestOptions'
 
 const requestsCollection = collection(db, 'adoptionRequests')
+
+// Pasa un documento de Firestore a un objeto con su id
+function toRequest(snapshot) {
+  return { id: snapshot.id, ...snapshot.data() }
+}
 
 // Una sola solicitud por adoptante y mascota: el ID combina los dos
 function getRequestId(petId, adopterId) {
@@ -23,7 +40,8 @@ export async function hasActiveRequestForPet(petId, adopterId) {
   return snapshot.docs.some((requestDoc) => requestDoc.data().status !== REQUEST_STATUS.CANCELLED)
 }
 
-
+// El adoptante envía (o vuelve a enviar, si había cancelado) una solicitud.
+// El ID combina mascota y adoptante: setDoc reemplaza una cancelada y las reglas impiden duplicadas.
 export function createAdoptionRequest(pet, adopter, answers) {
   return setDoc(doc(db, 'adoptionRequests', getRequestId(pet.id, adopter.uid)), {
     petId: pet.id,
@@ -64,21 +82,16 @@ export function createAdoptionRequest(pet, adopter, answers) {
   })
 }
 
-// Solicitudes que envió un adoptante, de la más nueva a la más vieja.
-// Se ordena acá (y no con orderBy) para no necesitar un índice compuesto, igual que en petService.
+// Solicitudes que envió un adoptante, de la más nueva a la más vieja
 export async function getAdopterRequests(adopterId) {
   const snapshot = await getDocs(query(requestsCollection, where('adopterId', '==', adopterId)))
-  return snapshot.docs
-    .map((requestDoc) => ({ id: requestDoc.id, ...requestDoc.data() }))
-    .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+  return sortByNewest(snapshot.docs.map(toRequest))
 }
 
 // Solicitudes que recibió un refugio, de la más nueva a la más vieja
 export async function getShelterRequests(shelterId) {
   const snapshot = await getDocs(query(requestsCollection, where('shelterId', '==', shelterId)))
-  return snapshot.docs
-    .map((requestDoc) => ({ id: requestDoc.id, ...requestDoc.data() }))
-    .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+  return sortByNewest(snapshot.docs.map(toRequest))
 }
 
 // El adoptante cancela una solicitud pendiente. No se borra: queda guardada como
@@ -93,7 +106,7 @@ export function cancelAdoptionRequest(requestId) {
 // Una solicitud por su ID. Si no existe o no es del usuario, las reglas no dejan leerla.
 export async function getRequest(requestId) {
   const snapshot = await getDoc(doc(db, 'adoptionRequests', requestId))
-  return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null
+  return snapshot.exists() ? toRequest(snapshot) : null
 }
 
 // El refugio acepta una solicitud. Todo junto o nada (transacción):
@@ -164,7 +177,11 @@ export function markRequestSeen(requestId) {
 // getCountFromServer trae solo el número, no los documentos.
 export async function countUnseenResponses(adopterId) {
   const snapshot = await getCountFromServer(
-    query(requestsCollection, where('adopterId', '==', adopterId), where('seenByAdopter', '==', false)),
+    query(
+      requestsCollection,
+      where('adopterId', '==', adopterId),
+      where('seenByAdopter', '==', false),
+    ),
   )
   return snapshot.data().count
 }
@@ -185,11 +202,13 @@ export async function countPendingRequests(shelterId) {
 // field: 'adopterId' o 'shelterId' (las reglas solo dejan leer las propias).
 async function getAdoptions(field, uid) {
   const snapshot = await getDocs(
-    query(requestsCollection, where(field, '==', uid), where('status', '==', REQUEST_STATUS.ACCEPTED)),
+    query(
+      requestsCollection,
+      where(field, '==', uid),
+      where('status', '==', REQUEST_STATUS.ACCEPTED),
+    ),
   )
-  return snapshot.docs
-    .map((requestDoc) => ({ id: requestDoc.id, ...requestDoc.data() }))
-    .sort((a, b) => (b.resolvedAt?.toMillis() ?? 0) - (a.resolvedAt?.toMillis() ?? 0))
+  return sortByNewest(snapshot.docs.map(toRequest), 'resolvedAt')
 }
 
 export function getAdopterAdoptions(adopterId) {

@@ -106,8 +106,8 @@ function DonationFormPage() {
       <PageHeader title={`Donación a ${shelter.name}`} />
 
       <p className={styles.simulated}>
-        Donación simulada: no se realiza ningún cobro y solo se guardan los últimos 4 números de
-        la tarjeta.
+        Donación simulada: no se realiza ningún cobro y solo se guardan los últimos 4 números de la
+        tarjeta.
       </p>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>

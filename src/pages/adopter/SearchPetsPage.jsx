@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import PageHeader from '@/components/ui/PageHeader'
 import ButtonLink from '@/components/ui/ButtonLink'
 import PetCard from '@/components/pets/PetCard'
-import { getAvailablePets } from '@/services/petService'
-import styles from './SearchPetsPage.module.css'
 import PetFilters from '@/components/pets/PetFilters'
+import { getAvailablePets } from '@/services/petService'
 import { EMPTY_FILTERS, filterPets, validateFilters } from '@/utils/petFilters'
+import styles from './SearchPetsPage.module.css'
 
 function SearchPetsPage() {
   const [pets, setPets] = useState([])
@@ -29,7 +29,7 @@ function SearchPetsPage() {
     }
   }, []) // aca
 
-    // Mascotas que se muestran: las que cumplen los filtros aplicados
+  // Mascotas que se muestran: las que cumplen los filtros aplicados
   const visiblePets = filterPets(pets, appliedFilters)
   const isReady = !isLoading && !loadError
 
@@ -39,7 +39,9 @@ function SearchPetsPage() {
   )
 
   // Aplicar: solo si lo elegido es distinto de lo aplicado
-  const canApply = Object.keys(EMPTY_FILTERS).some((key) => draftFilters[key] !== appliedFilters[key])
+  const canApply = Object.keys(EMPTY_FILTERS).some(
+    (key) => draftFilters[key] !== appliedFilters[key],
+  )
   // Limpiar: solo si hay algún filtro elegido o aplicado
   const canClear = [draftFilters, appliedFilters].some((filters) =>
     Object.values(filters).some((value) => value !== ''),
@@ -78,7 +80,7 @@ function SearchPetsPage() {
         canClear={canClear}
         error={filterError}
       />
-     
+
       <section aria-labelledby="available-pets-title">
         <h2 id="available-pets-title" className={styles.sectionTitle}>
           Mascotas disponibles
@@ -92,7 +94,7 @@ function SearchPetsPage() {
           </p>
         )}
 
-                {isReady && pets.length > 0 && (
+        {isReady && pets.length > 0 && (
           <p className={styles.count} role="status">
             {visiblePets.length === 1
               ? '1 mascota encontrada'

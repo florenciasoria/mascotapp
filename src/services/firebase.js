@@ -1,6 +1,6 @@
 // Inicialización de Firebase.
 // Es el único archivo que conoce la configuración del proyecto:
-// el resto de la app importa `auth` y `db` desde acá.
+// el resto de la app importa `auth`, `db` y `storage` desde acá.
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
@@ -37,4 +37,3 @@ auth.languageCode = 'es'
 export const db = getFirestore(app)
 
 export const storage = getStorage(app)
-

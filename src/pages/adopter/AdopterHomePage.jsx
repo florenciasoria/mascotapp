@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import Notice from '@/components/ui/Notice'
-import { countUnseenResponses } from '@/services/adoptionService'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import ButtonLink from '@/components/ui/ButtonLink'
 import { useAuth } from '@/hooks/useAuth'
+import { countUnseenResponses } from '@/services/adoptionService'
 import styles from '@/pages/shared/HomeCards.module.css'
 
 function AdopterHomePage() {
@@ -35,10 +35,14 @@ function AdopterHomePage() {
       )}
 
       <PageHeader
-        title={<>¡Hola, {firstName}! <span aria-hidden="true">👋</span></>}
+        title={
+          <>
+            ¡Hola, {firstName}! <span aria-hidden="true">👋</span>
+          </>
+        }
         subtitle="Todo lo que necesitás para adoptar y ayudar está acá."
       />
-      
+
       {unseenCount > 0 && (
         <Notice to="/adoptante/solicitudes" actionLabel="Ver mis solicitudes">
           {unseenCount === 1
@@ -46,10 +50,12 @@ function AdopterHomePage() {
             : `Tenés ${unseenCount} solicitudes con respuesta nueva.`}
         </Notice>
       )}
-      
+
       <div className={styles.cards}>
         <Card as="section" aria-labelledby="find-pet-title">
-          <h2 id="find-pet-title" className={styles.cardTitle}>Encontrá a tu próximo compañero</h2>
+          <h2 id="find-pet-title" className={styles.cardTitle}>
+            Encontrá a tu próximo compañero
+          </h2>
           <p className={styles.cardText}>Explorá las mascotas disponibles para adopción.</p>
           <div className={styles.cardAction}>
             <ButtonLink to="/adoptante/buscar">Buscar mascotas</ButtonLink>
@@ -57,7 +63,9 @@ function AdopterHomePage() {
         </Card>
 
         <Card as="section" aria-labelledby="help-shelter-title">
-          <h2 id="help-shelter-title" className={styles.cardTitle}>Ayudá a un refugio</h2>
+          <h2 id="help-shelter-title" className={styles.cardTitle}>
+            Ayudá a un refugio
+          </h2>
           <p className={styles.cardText}>Colaborá con un refugio y ayudá a más mascotas.</p>
           <div className={styles.cardAction}>
             <ButtonLink to="/adoptante/donaciones/nueva" variant="secondary">

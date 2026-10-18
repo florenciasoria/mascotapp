@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router'
-import LoadingScreen from '@/components/ui/LoadingScreen'
 import AccountStatusPage from '@/pages/auth/AccountStatusPage'
 import PendingApprovalPage from '@/pages/auth/PendingApprovalPage'
 import VerifyEmailPage from '@/pages/auth/VerifyEmailPage'
+import LoadingScreen from '@/components/ui/LoadingScreen'
 import { useAuth } from '@/hooks/useAuth'
 import { getHomePath, STATUS } from '@/utils/roles'
 

@@ -18,7 +18,16 @@ import { ROLES, STATUS } from '@/utils/roles'
 // Después de hacer clic en el enlace del email, Firebase ofrece volver al login
 const actionCodeSettings = { url: `${window.location.origin}/login` }
 
-export async function registerUser({ role, name, email, password, phone, address, neighborhood, about }) {
+export async function registerUser({
+  role,
+  name,
+  email,
+  password,
+  phone,
+  address,
+  neighborhood,
+  about,
+}) {
   const { user } = await createUserWithEmailAndPassword(auth, email.trim(), password)
 
   const profile = {
@@ -45,7 +54,7 @@ export async function registerUser({ role, name, email, password, phone, address
     throw error
   }
 
-    // Si falla el envío no cancelamos el registro: se puede reenviar desde la app
+  // Si falla el envío no cancelamos el registro: se puede reenviar desde la app
   try {
     await sendEmailVerification(user, actionCodeSettings)
   } catch {
@@ -111,12 +120,12 @@ export function getAuthErrorMessage(error) {
       return 'La contraseña es demasiado débil'
     case 'auth/network-request-failed':
       return 'No hay conexión. Revisá tu internet e intentá de nuevo'
-        case 'auth/invalid-credential':
+    case 'auth/invalid-credential':
       return 'Email o contraseña incorrectos'
     case 'auth/too-many-requests':
       return 'Demasiados intentos fallidos. Esperá unos minutos e intentá de nuevo'
     case 'auth/user-disabled':
-      return 'Esta cuenta fue deshabilitada'  
+      return 'Esta cuenta fue deshabilitada'
     default:
       return 'Ocurrió un error inesperado. Intentá de nuevo'
   }

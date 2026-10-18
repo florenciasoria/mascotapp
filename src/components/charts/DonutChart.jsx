@@ -36,7 +36,13 @@ function DonutChart({ title, data }) {
                   {data.map((item) => (
                     <Cell key={item.label} fill={item.color} />
                   ))}
-                  <Label value={total} position="center" fill="#6b625e" fontSize={24} fontWeight={700} />
+                  <Label
+                    value={total}
+                    position="center"
+                    fill="#6b625e"
+                    fontSize={24}
+                    fontWeight={700}
+                  />
                 </Pie>
                 <Tooltip />
               </PieChart>
@@ -46,7 +52,11 @@ function DonutChart({ title, data }) {
           <ul className={styles.legend}>
             {data.map((item) => (
               <li key={item.label}>
-                <span className={styles.swatch} style={{ backgroundColor: item.color }} aria-hidden="true" />
+                <span
+                  className={styles.swatch}
+                  style={{ backgroundColor: item.color }}
+                  aria-hidden="true"
+                />
                 <span className={styles.legendLabel}>{item.label}</span>
                 <span className={styles.legendValue}>{item.value}</span>
               </li>

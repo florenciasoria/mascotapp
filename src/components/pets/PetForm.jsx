@@ -2,23 +2,31 @@ import { useState } from 'react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
-import ImageUpload from './ImageUpload'
 import { focusFirstInvalidField } from '@/utils/forms'
 import { AGE_UNITS, COLORS, SEXES, SIZES, SPECIES } from '@/utils/petOptions'
 import { LIMITS, validatePetForm } from '@/utils/validators'
+import ImageUpload from './ImageUpload'
 import styles from './PetForm.module.css'
 
 // Formulario compartido por "Registrar mascota" y "Editar mascota".
 // Valida y avisa a la página con onSubmit(values, imageFile); la página decide qué hacer.
 // isEditing: al editar, "Guardar" se habilita recién cuando hay algún cambio.
-function PetForm({ initialValues, currentImageUrl, submitLabel, onSubmit, onCancel, isEditing = false }) {
+function PetForm({
+  initialValues,
+  currentImageUrl,
+  submitLabel,
+  onSubmit,
+  onCancel,
+  isEditing = false,
+}) {
   const [values, setValues] = useState(initialValues)
   const [imageFile, setImageFile] = useState(null)
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const hasChanges =
-    imageFile !== null || Object.keys(initialValues).some((field) => values[field] !== initialValues[field])
+    imageFile !== null ||
+    Object.keys(initialValues).some((field) => values[field] !== initialValues[field])
 
   function handleChange(event) {
     const { name, value } = event.target

@@ -35,9 +35,7 @@ export function validateProfileForm(values, role) {
 
   if (!hasLength(values.name, LIMITS.name)) {
     errors.name =
-      role === ROLES.SHELTER
-        ? 'Ingresá el nombre del refugio'
-        : 'Ingresá tu nombre y apellido'
+      role === ROLES.SHELTER ? 'Ingresá el nombre del refugio' : 'Ingresá tu nombre y apellido'
   }
 
   if (!hasLength(values.phone, LIMITS.phone) || !PHONE_REGEX.test(values.phone.trim())) {
@@ -74,7 +72,6 @@ export function validateRegisterForm(values, role) {
 
   return errors
 }
-
 
 export function validateLoginForm(values) {
   const errors = {}
@@ -120,7 +117,12 @@ export function validatePetForm(values, imageFile, hasCurrentImage) {
   }
 
   const age = Number(values.ageValue)
-  if (values.ageValue === '' || !Number.isInteger(age) || age < LIMITS.age.min || age > LIMITS.age.max) {
+  if (
+    values.ageValue === '' ||
+    !Number.isInteger(age) ||
+    age < LIMITS.age.min ||
+    age > LIMITS.age.max
+  ) {
     errors.ageValue = 'Ingresá una edad entre 0 y 30'
   }
   if (!AGE_UNITS.some((unit) => unit.value === values.ageUnit)) {
@@ -247,4 +249,3 @@ export function validateDonationForm(values) {
 
   return errors
 }
-

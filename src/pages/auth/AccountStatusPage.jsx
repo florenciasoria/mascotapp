@@ -1,7 +1,7 @@
 import AuthLayout from '@/layouts/AuthLayout'
 import LogoutButton from '@/components/LogoutButton'
-import logo from '@/assets/logo.png'
 import { STATUS } from '@/utils/roles'
+import logo from '@/assets/logo.png'
 import styles from './MessagePage.module.css'
 
 const MESSAGES = {

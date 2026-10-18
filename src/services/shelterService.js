@@ -1,6 +1,14 @@
 // Perfiles públicos de los refugios: lo único que los adoptantes pueden ver de un refugio
 // (nombre, barrio y descripción). El perfil completo en "users" sigue siendo privado.
-import { collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore'
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  serverTimestamp,
+  setDoc,
+} from 'firebase/firestore'
 import { db } from './firebase'
 
 const sheltersCollection = collection(db, 'shelters')
@@ -10,7 +18,11 @@ const sheltersCollection = collection(db, 'shelters')
 export async function syncShelterPublicProfile(uid, { name, neighborhood, about }) {
   const ref = doc(db, 'shelters', uid)
   const current = (await getDoc(ref)).data()
-  if (current?.name === name && current?.neighborhood === neighborhood && current?.about === about) {
+  if (
+    current?.name === name &&
+    current?.neighborhood === neighborhood &&
+    current?.about === about
+  ) {
     return
   }
   await setDoc(ref, { name, neighborhood, about, updatedAt: serverTimestamp() })

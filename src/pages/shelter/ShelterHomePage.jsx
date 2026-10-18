@@ -1,24 +1,23 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import ButtonLink from '@/components/ui/ButtonLink'
-import { useAuth } from '@/hooks/useAuth'
-import styles from '@/pages/shared/HomeCards.module.css'
-import { useEffect, useState } from 'react'
 import Notice from '@/components/ui/Notice'
-import { countPendingRequests } from '@/services/adoptionService'
 import StarDisplay from '@/components/ratings/StarDisplay'
+import { useAuth } from '@/hooks/useAuth'
+import { countPendingRequests } from '@/services/adoptionService'
 import { getShelterRatingSummary } from '@/services/ratingService'
 import { syncShelterPublicProfile } from '@/services/shelterService'
 import { getShelterDonationSummary } from '@/services/donationService'
 import { formatCurrency } from '@/utils/donationOptions'
+import styles from '@/pages/shared/HomeCards.module.css'
 
 function ShelterHomePage() {
   const { user, profile } = useAuth()
   const [pendingCount, setPendingCount] = useState(0)
   const [ratingSummary, setRatingSummary] = useState(null)
   const [donationSummary, setDonationSummary] = useState(null)
-
 
   // Los avisos y el resumen son secundarios: si fallan, simplemente no se muestran
   useEffect(() => {
@@ -34,7 +33,7 @@ function ShelterHomePage() {
     getShelterDonationSummary(user.uid)
       .then((summary) => isActive && setDonationSummary(summary))
       .catch(() => {})
-      
+
     return () => {
       isActive = false
     }
@@ -51,11 +50,14 @@ function ShelterHomePage() {
     }).catch(() => {})
   }, [user.uid, profile.name, profile.neighborhood, profile.about])
 
-
   return (
     <>
       <PageHeader
-        title={<>¡Hola, {profile.name}! <span aria-hidden="true">👋</span></>}
+        title={
+          <>
+            ¡Hola, {profile.name}! <span aria-hidden="true">👋</span>
+          </>
+        }
         subtitle="Gestioná las actividades de tu refugio."
       />
 
@@ -70,7 +72,9 @@ function ShelterHomePage() {
       <div className={styles.cards}>
         <div className={styles.stats}>
           <Card as="section" aria-labelledby="donations-title">
-            <h2 id="donations-title" className={styles.cardTitle}>Donaciones</h2>
+            <h2 id="donations-title" className={styles.cardTitle}>
+              Donaciones
+            </h2>
             {donationSummary?.total > 0 ? (
               <>
                 <p className={styles.statValue}>{formatCurrency(donationSummary.amount)}</p>
@@ -92,7 +96,9 @@ function ShelterHomePage() {
           </Card>
 
           <Card as="section" aria-labelledby="rating-title">
-            <h2 id="rating-title" className={styles.cardTitle}>Calificación</h2>
+            <h2 id="rating-title" className={styles.cardTitle}>
+              Calificación
+            </h2>
             {ratingSummary?.total > 0 ? (
               <>
                 {/* Promedio general: el promedio de los dos puntajes */}
@@ -121,15 +127,21 @@ function ShelterHomePage() {
         </div>
 
         <Card as="section" aria-labelledby="manage-pets-title">
-          <h2 id="manage-pets-title" className={styles.cardTitle}>Gestioná tus mascotas</h2>
-          <p className={styles.cardText}>Registrá y actualizá mascotas disponibles para adopción.</p>
+          <h2 id="manage-pets-title" className={styles.cardTitle}>
+            Gestioná tus mascotas
+          </h2>
+          <p className={styles.cardText}>
+            Registrá y actualizá mascotas disponibles para adopción.
+          </p>
           <div className={styles.cardAction}>
             <ButtonLink to="/refugio/mascotas">Ver mascotas</ButtonLink>
           </div>
         </Card>
 
         <Card as="section" aria-labelledby="requests-title">
-          <h2 id="requests-title" className={styles.cardTitle}>Revisá las solicitudes</h2>
+          <h2 id="requests-title" className={styles.cardTitle}>
+            Revisá las solicitudes
+          </h2>
           <p className={styles.cardText}>Consultá y gestioná las solicitudes recibidas.</p>
           <div className={styles.cardAction}>
             <ButtonLink to="/refugio/solicitudes" variant="secondary">

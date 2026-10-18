@@ -3,8 +3,17 @@ import styles from './ImageUpload.module.css'
 
 function UploadIcon() {
   return (
-    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M12 16V4M7 9l5-5 5 5M4 20h16" />
     </svg>
   )

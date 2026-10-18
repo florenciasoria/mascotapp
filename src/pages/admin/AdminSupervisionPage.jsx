@@ -3,8 +3,9 @@ import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import DonutChart from '@/components/charts/DonutChart'
 import MonthlyChart from '@/components/charts/MonthlyChart'
-import { getDonationsByMonth, getPlatformStats } from '@/services/statsService'
+import { getDonationsByMonth, getPlatformStats, getRecentActivity } from '@/services/statsService'
 import { CHART_COLORS } from '@/utils/chartColors'
+import { formatDate } from '@/utils/dates'
 import { formatCurrency } from '@/utils/donationOptions'
 import { PET_STATUS, PET_STATUS_LABELS } from '@/utils/petOptions'
 import { REQUEST_STATUS, REQUEST_STATUS_LABELS } from '@/utils/requestOptions'
@@ -19,17 +20,19 @@ function sumValues(counts) {
 function AdminSupervisionPage() {
   const [stats, setStats] = useState(null)
   const [donationsByMonth, setDonationsByMonth] = useState([])
+  const [activity, setActivity] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
 
   useEffect(() => {
     let isActive = true
 
-    Promise.all([getPlatformStats(), getDonationsByMonth()])
-      .then(([platformStats, byMonth]) => {
+    Promise.all([getPlatformStats(), getDonationsByMonth(), getRecentActivity()])
+      .then(([platformStats, byMonth, recentActivity]) => {
         if (!isActive) return
         setStats(platformStats)
         setDonationsByMonth(byMonth)
+        setActivity(recentActivity)
       })
       .catch(() => isActive && setLoadError(true))
       .finally(() => isActive && setIsLoading(false))
@@ -144,6 +147,24 @@ function AdminSupervisionPage() {
             />
           </div>
         </div>
+      </section>
+
+      <section aria-labelledby="activity-title">
+        <h2 id="activity-title" className={styles.sectionTitle}>
+          Actividad reciente
+        </h2>
+        {activity.length === 0 ? (
+          <p>Todavía no hay actividad en la plataforma.</p>
+        ) : (
+          <ul className={styles.activity}>
+            {activity.map((event) => (
+              <li key={`${event.text}-${event.date?.toMillis()}`} className={styles.activityItem}>
+                <span>{event.text}</span>
+                <span className={styles.activityDate}>{formatDate(event.date)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </>
   )

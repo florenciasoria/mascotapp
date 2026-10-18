@@ -2,7 +2,16 @@
 export const SPECIES = ['Perro', 'Gato']
 export const SEXES = ['Macho', 'Hembra']
 export const SIZES = ['Pequeño', 'Mediano', 'Grande']
-export const COLORS = ['Negro', 'Blanco', 'Gris', 'Marrón', 'Naranja', 'Atigrado', 'Tricolor', 'Mixto']
+export const COLORS = [
+  'Negro',
+  'Blanco',
+  'Gris',
+  'Marrón',
+  'Naranja',
+  'Atigrado',
+  'Tricolor',
+  'Mixto',
+]
 
 export const AGE_UNITS = [
   { value: 'meses', label: 'Meses' },

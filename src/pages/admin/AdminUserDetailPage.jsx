@@ -8,7 +8,8 @@ import StatusBadge from '@/components/ui/StatusBadge'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
 import { useAuth } from '@/hooks/useAuth'
-import { getUser, updateUserStatus, deactivateAccount  } from '@/services/userService'
+import { deactivateAccount, getUser, updateUserStatus } from '@/services/userService'
+import { formatDate } from '@/utils/dates'
 import { ROLE_LABELS, ROLES, STATUS, STATUS_LABELS, STATUS_TONES } from '@/utils/roles'
 import styles from './AdminUserDetailPage.module.css'
 
@@ -26,7 +27,8 @@ const ACTIONS = {
     variant: 'secondary',
     confirm: {
       title: '¿Rechazar este refugio?',
-      message: 'El refugio no va a poder usar MascotApp. Si cambiás de opinión, más adelante podés aprobarlo.',
+      message:
+        'El refugio no va a poder usar MascotApp. Si cambiás de opinión, más adelante podés aprobarlo.',
     },
     successTitle: 'Refugio rechazado',
     successMessage: 'El refugio no va a poder usar MascotApp.',
@@ -36,7 +38,8 @@ const ACTIONS = {
     newStatus: STATUS.INACTIVE,
     confirm: {
       title: '¿Desactivar esta cuenta?',
-      message: 'Mientras esté desactivada, no va a poder usar MascotApp. Si es un refugio, sus mascotas publicadas dejan de mostrarse. Podés reactivarla cuando quieras.',
+      message:
+        'Mientras esté desactivada, no va a poder usar MascotApp. Si es un refugio, sus mascotas publicadas dejan de mostrarse. Podés reactivarla cuando quieras.',
     },
     successTitle: 'Cuenta desactivada',
     successMessage: 'La cuenta ya no puede usar MascotApp.',
@@ -55,10 +58,6 @@ const ACTIONS_BY_STATUS = {
   [STATUS.APPROVED]: ['deactivate'],
   [STATUS.INACTIVE]: ['reactivate'],
   [STATUS.REJECTED]: ['approve'],
-}
-
-function formatDate(timestamp) {
-  return timestamp ? timestamp.toDate().toLocaleDateString('es-AR') : '—'
 }
 
 function AdminUserDetailPage() {
@@ -95,7 +94,11 @@ function AdminUserDetailPage() {
       setAccount((current) => ({ ...current, status: action.newStatus }))
       setDialog({ type: 'success', title: action.successTitle, message: action.successMessage })
     } catch {
-      setDialog({ type: 'error', title: '¡Error!', message: 'No pudimos actualizar el estado. Intentá nuevamente.' })
+      setDialog({
+        type: 'error',
+        title: '¡Error!',
+        message: 'No pudimos actualizar el estado. Intentá nuevamente.',
+      })
     } finally {
       setIsSaving(false)
       setActionToConfirm(null)
@@ -155,7 +158,9 @@ function AdminUserDetailPage() {
             <dt>Correo electrónico</dt>
             <dd>
               {account.email}
-              {!account.emailVerified && <span className={styles.unverified}>Email sin verificar</span>}
+              {!account.emailVerified && (
+                <span className={styles.unverified}>Email sin verificar</span>
+              )}
             </dd>
           </div>
           <div>
@@ -179,7 +184,9 @@ function AdminUserDetailPage() {
           <div>
             <dt>Estado</dt>
             <dd>
-              <StatusBadge tone={STATUS_TONES[account.status]}>{STATUS_LABELS[account.status]}</StatusBadge>
+              <StatusBadge tone={STATUS_TONES[account.status]}>
+                {STATUS_LABELS[account.status]}
+              </StatusBadge>
             </dd>
           </div>
           <div>

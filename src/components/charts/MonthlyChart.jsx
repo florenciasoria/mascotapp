@@ -18,7 +18,11 @@ function MonthlyChart({ title, data, valueLabel, formatValue = (value) => value 
 
       <div aria-hidden="true">
         <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 0 }} accessibilityLayer={false}>
+          <BarChart
+            data={data}
+            margin={{ top: 8, right: 8, left: 8, bottom: 0 }}
+            accessibilityLayer={false}
+          >
             <CartesianGrid vertical={false} stroke="#e6e1d9" />
             <XAxis
               dataKey="label"
@@ -33,7 +37,10 @@ function MonthlyChart({ title, data, valueLabel, formatValue = (value) => value 
               axisLine={false}
               tick={{ fill: '#776d68', fontSize: 13 }}
             />
-            <Tooltip formatter={(value) => [formatValue(value), valueLabel]} cursor={{ fill: '#f7f4ed' }} />
+            <Tooltip
+              formatter={(value) => [formatValue(value), valueLabel]}
+              cursor={{ fill: '#f7f4ed' }}
+            />
             <Bar dataKey="value" fill={CHART_COLORS.bar} radius={[4, 4, 0, 0]} maxBarSize={48} />
           </BarChart>
         </ResponsiveContainer>

@@ -19,7 +19,10 @@ function StarDisplay({ value, showValue = false }) {
             <span key={position} className={styles.slot}>
               <span className={styles.empty}>☆</span>
               {fill > 0 && (
-                <span className={`${styles.filled} ${styles.fill}`} style={{ width: `${fill * 100}%` }}>
+                <span
+                  className={`${styles.filled} ${styles.fill}`}
+                  style={{ width: `${fill * 100}%` }}
+                >
                   ★
                 </span>
               )}

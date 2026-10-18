@@ -46,7 +46,9 @@ function UserCard({ user, onDeactivate, onReactivate, isUpdating = false }) {
             onClick={() => onReactivate(user)}
             isLoading={isUpdating}
             disabled={!user.emailVerified}
-            title={user.emailVerified ? undefined : 'No se puede reactivar: el email no está verificado'}
+            title={
+              user.emailVerified ? undefined : 'No se puede reactivar: el email no está verificado'
+            }
             aria-label={`Reactivar a ${user.name}`}
             size="sm"
           >

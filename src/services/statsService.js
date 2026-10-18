@@ -6,14 +6,18 @@ import {
   getAggregateFromServer,
   getCountFromServer,
   getDocs,
+  limit,
+  orderBy,
   query,
   sum,
   where,
 } from 'firebase/firestore'
 import { db } from './firebase'
-import { ROLES } from '@/utils/roles'
+import { sortByNewest } from '@/utils/dates'
+import { formatCurrency } from '@/utils/donationOptions'
 import { PET_STATUS } from '@/utils/petOptions'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
+import { ROLE_LABELS, ROLES } from '@/utils/roles'
 
 // Cuántos documentos de la colección tienen ese valor en ese campo
 async function countWhere(collectionName, field, value) {
@@ -68,4 +72,57 @@ export async function getDonationsByMonth(months = 6) {
   })
 
   return buckets.map(({ label, value }) => ({ label, value }))
+}
+
+// Últimos movimientos de la plataforma (como en el diseño): usuarios nuevos, mascotas publicadas,
+// solicitudes, adopciones aceptadas y donaciones. Se traen los más recientes de cada tipo
+// (orderBy + limit) y se mezclan por fecha.
+export async function getRecentActivity(maxItems = 8) {
+  const latest = (collectionName, dateField = 'createdAt') =>
+    getDocs(query(collection(db, collectionName), orderBy(dateField, 'desc'), limit(maxItems)))
+
+  const [users, pets, requests, resolvedRequests, donations] = await Promise.all([
+    latest('users'),
+    latest('pets'),
+    latest('adoptionRequests'),
+    latest('adoptionRequests', 'resolvedAt'),
+    latest('donations'),
+  ])
+
+  const events = [
+    ...users.docs
+      .map((item) => item.data())
+      .filter((user) => user.role !== ROLES.ADMIN)
+      .map((user) => ({
+        date: user.createdAt,
+        text: `Nuevo ${ROLE_LABELS[user.role].toLowerCase()} registrado: ${user.name}`,
+      })),
+    ...pets.docs
+      .map((item) => item.data())
+      .map((pet) => ({
+        date: pet.createdAt,
+        text: `Nueva mascota publicada: ${pet.name} (${pet.shelterName})`,
+      })),
+    ...requests.docs
+      .map((item) => item.data())
+      .map((request) => ({
+        date: request.createdAt,
+        text: `Nueva solicitud de adopción: ${request.adopterName} quiere adoptar a ${request.pet.name}`,
+      })),
+    ...resolvedRequests.docs
+      .map((item) => item.data())
+      .filter((request) => request.status === REQUEST_STATUS.ACCEPTED)
+      .map((request) => ({
+        date: request.resolvedAt,
+        text: `Adopción aceptada: ${request.pet.name} con ${request.adopterName}`,
+      })),
+    ...donations.docs
+      .map((item) => item.data())
+      .map((donation) => ({
+        date: donation.createdAt,
+        text: `Donación registrada: ${formatCurrency(donation.amount)} a ${donation.shelterName}`,
+      })),
+  ]
+
+  return sortByNewest(events, 'date').slice(0, maxItems)
 }

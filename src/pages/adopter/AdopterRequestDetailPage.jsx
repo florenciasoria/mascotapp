@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link, useLocation, useParams } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -7,12 +8,10 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
 import RequestCard from '@/components/requests/RequestCard'
 import RequestAnswers from '@/components/requests/RequestAnswers'
-import { REQUEST_STATUS } from '@/utils/requestOptions'
-import styles from './AdopterRequestDetailPage.module.css'
 import RequestResultBanner from '@/components/requests/RequestResultBanner'
 import { cancelAdoptionRequest, getRequest, markRequestSeen } from '@/services/adoptionService'
-import { Link, useLocation, useParams } from 'react-router'
-
+import { REQUEST_STATUS } from '@/utils/requestOptions'
+import styles from './AdopterRequestDetailPage.module.css'
 
 function AdopterRequestDetailPage() {
   const { requestId } = useParams()
@@ -77,7 +76,7 @@ function AdopterRequestDetailPage() {
     return (
       <>
         <PageHeader title="Solicitud no encontrada" />
-        <Link to={backTo} >Volver a Mis solicitudes</Link>
+        <Link to={backTo}>Volver a Mis solicitudes</Link>
       </>
     )
   }
