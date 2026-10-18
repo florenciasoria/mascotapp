@@ -31,6 +31,7 @@ import DonationSheltersPage from '@/pages/adopter/DonationSheltersPage'
 import DonationFormPage from '@/pages/adopter/DonationFormPage'
 import MyDonationsPage from '@/pages/adopter/MyDonationsPage'
 import ShelterDonationsPage from '@/pages/shelter/ShelterDonationsPage'
+import AdminSupervisionPage from '@/pages/admin/AdminSupervisionPage'
 
 function App() {
   return (
@@ -82,7 +83,6 @@ function App() {
           <Route path="historial" element={<AdoptionHistoryPage />} />
           <Route path="calificaciones" element={<ShelterRatingsPage />} />
           <Route path="donaciones" element={<ShelterDonationsPage />} />
-          <Route path="*" element={<ComingSoonPage />} />
         </Route>
 
         <Route
@@ -97,7 +97,7 @@ function App() {
           <Route path="perfil" element={<ProfilePage />} />
           <Route path="usuarios" element={<AdminUsersPage />} />
           <Route path="usuarios/:userId" element={<AdminUserDetailPage />} />
-          <Route path="*" element={<ComingSoonPage />} />
+          <Route path="supervision" element={<AdminSupervisionPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

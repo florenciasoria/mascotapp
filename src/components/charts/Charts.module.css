@@ -1,0 +1,87 @@
+/* Cada gráfico es una tarjeta blanca con su título */
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.title {
+  font-size: 1.25rem;
+  color: var(--color-text);
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-text-soft);
+}
+
+/* Dona a la izquierda y leyenda a la derecha; en celular, una debajo de la otra */
+.donutLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+@media (min-width: 30rem) {
+  .donutLayout {
+    /* minmax(0, 1fr): la leyenda se achica dentro de la tarjeta en vez de desbordarla */
+    grid-template-columns: 140px minmax(0, 1fr);
+  }
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  font-size: var(--font-size-sm);
+  list-style: none;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  flex-shrink: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 3px;
+}
+
+.legendLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+/* El número siempre a la derecha, sin partirse */
+.legendValue {
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.legendTotal {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-soft);
+}
+
+/* Solo para lectores de pantalla: no se ve, pero se lee */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
