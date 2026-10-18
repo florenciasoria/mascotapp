@@ -21,16 +21,20 @@
   cursor: not-allowed;
 }
 
+/* Botón principal (a la derecha): verde salvia. Secundario (a la izquierda): rosa.
+   Se usan los colores directos y no --color-primary/--color-secondary, porque esos tokens
+   también marcan estados (verde = aceptada/éxito, rosa = rechazada) y esos no cambian.
+   Texto blanco de 19px en negrita: ambos superan 3:1 (WCAG, texto grande). */
 .primary {
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
+  background-color: var(--color-sage-deep);
+  color: var(--color-white);
   font-size: 1.1875rem; /* 19px en negrita = "texto grande" según WCAG */
   font-weight: var(--font-weight-bold);
 }
 
 .secondary {
-  background-color: var(--color-secondary);
-  color: var(--color-on-secondary);
+  background-color: var(--color-pink-deep);
+  color: var(--color-white);
   font-size: 1.1875rem; /* 19px en negrita = "texto grande" según WCAG */
   font-weight: var(--font-weight-bold);
 }

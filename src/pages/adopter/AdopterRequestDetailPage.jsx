@@ -106,7 +106,7 @@ function AdopterRequestDetailPage() {
           <RequestAnswers answers={request.answers} />
         </Card>
 
-        {/* Volver verde a la izquierda; la acción principal (rosa) a la derecha */}
+        {/* Volver (secundario) a la izquierda; la acción principal a la derecha */}
         <div className={styles.actions}>
           <ButtonLink to={backTo} variant="secondary">
             Volver
