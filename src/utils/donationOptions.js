@@ -1,12 +1,21 @@
 // Montos rápidos del formulario de donación (como en el diseño)
 export const DONATION_PRESETS = [5000, 10000, 15000]
 
+// Las donaciones son simuladas: todas quedan registradas, pagadas con tarjeta
+export const DONATION_STATUS = {
+  REGISTERED: 'registrada',
+}
+
 export const DONATION_STATUS_LABELS = {
-  registrada: 'Registrada',
+  [DONATION_STATUS.REGISTERED]: 'Registrada',
+}
+
+export const PAYMENT_METHODS = {
+  CARD: 'tarjeta',
 }
 
 export const PAYMENT_METHOD_LABELS = {
-  tarjeta: 'Tarjeta',
+  [PAYMENT_METHODS.CARD]: 'Tarjeta',
 }
 
 // Importe en pesos argentinos: 15000 → "$ 15.000"

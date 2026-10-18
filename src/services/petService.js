@@ -12,13 +12,24 @@ import {
   writeBatch,
 } from 'firebase/firestore'
 import { db } from './firebase'
-import { PET_STATUS, toMonths } from '@/utils/petOptions'
 import { deletePetImage, uploadPetImage } from './storageService'
+import { sortByNewest } from '@/utils/dates'
+import { PET_STATUS, toMonths } from '@/utils/petOptions'
 
 const petsCollection = collection(db, 'pets')
 
 // Convierte los datos del formulario en los campos que se guardan
-function buildPetFields({ name, species, breed, sex, ageValue, ageUnit, size, color, description }) {
+function buildPetFields({
+  name,
+  species,
+  breed,
+  sex,
+  ageValue,
+  ageUnit,
+  size,
+  color,
+  description,
+}) {
   const age = Number(ageValue)
   return {
     name: name.trim(),
@@ -39,15 +50,9 @@ function toPet(snapshot) {
   return { id: snapshot.id, ...snapshot.data() }
 }
 
-// Ordena de la más nueva a la más vieja (se ordena acá para no necesitar un índice compuesto)
-function sortByNewest(pets) {
-  return pets.sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
-}
-
-// El nombre y el barrio del refugio se copian en la mascota (desnormalización):
-// así el adoptante puede ver y filtrar por barrio sin leer el perfil del refugio.
-// Primero sube la foto y después guarda la mascota.
-// El nombre y el barrio del refugio se copian en la mascota (desnormalización).
+// Registra una mascota. Primero sube la foto y después guarda los datos.
+// El nombre, el barrio y la dirección del refugio se copian en la mascota (desnormalización):
+// así el adoptante puede verlos y filtrar por barrio sin leer el perfil del refugio.
 export async function createPet(shelterId, shelterProfile, petData, imageFile) {
   const image = await uploadPetImage(shelterId, imageFile)
 
@@ -93,10 +98,12 @@ export async function updatePet(pet, petData, newImageFile) {
   }
 }
 
+// Activar o desactivar una mascota (disponible / no disponible)
 export function setPetStatus(petId, status) {
   return updateDoc(doc(db, 'pets', petId), { status, updatedAt: serverTimestamp() })
 }
 
+// Una mascota por su ID (o null si no existe o las reglas no dejan leerla)
 export async function getPet(petId) {
   const snapshot = await getDoc(doc(db, 'pets', petId))
   return snapshot.exists() ? toPet(snapshot) : null
@@ -110,13 +117,11 @@ export async function getShelterPets(shelterId) {
 
 // Mascotas que se pueden adoptar (los filtros se aplican después, en el navegador)
 export async function getAvailablePets() {
-  const snapshot = await getDocs(
-    query(petsCollection, where('status', '==', PET_STATUS.AVAILABLE)),
-  )
+  const snapshot = await getDocs(query(petsCollection, where('status', '==', PET_STATUS.AVAILABLE)))
   return sortByNewest(snapshot.docs.map(toPet))
 }
 
-// Mantiene actualizados el nombre, el barrio y la dirección del refugio
+// Cuando el refugio edita su perfil, actualiza su nombre, barrio y dirección en sus mascotas.
 // Las adoptadas no se tocan: quedan como registro de dónde estaban.
 export async function syncShelterInfoInPets(shelterId, { name, neighborhood, address }) {
   const snapshot = await getDocs(query(petsCollection, where('shelterId', '==', shelterId)))
@@ -151,4 +156,3 @@ export async function pauseShelterPets(shelterId) {
   })
   return batch.commit()
 }
-

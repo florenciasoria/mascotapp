@@ -12,9 +12,11 @@ import {
   where,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { sortByNewest } from '@/utils/dates'
 
 const ratingsCollection = collection(db, 'ratings')
 
+// Pasa un documento de Firestore a un objeto con su id
 function toRating(snapshot) {
   return { id: snapshot.id, ...snapshot.data() }
 }
@@ -43,9 +45,7 @@ export async function getAdopterRatings(adopterId) {
 // Calificaciones que recibió un refugio, de la más nueva a la más vieja
 export async function getShelterRatings(shelterId) {
   const snapshot = await getDocs(query(ratingsCollection, where('shelterId', '==', shelterId)))
-  return snapshot.docs
-    .map(toRating)
-    .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+  return sortByNewest(snapshot.docs.map(toRating))
 }
 
 // Resumen de un refugio calculado en el servidor: cantidad y los dos promedios.

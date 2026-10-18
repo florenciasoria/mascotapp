@@ -1,19 +1,33 @@
 // Servicio de perfiles de usuario en Firestore
-import { collection, doc, getCountFromServer, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  getCountFromServer,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { db } from './firebase'
 import { pauseShelterPets } from './petService'
 import { removeShelterPublicProfile } from './shelterService'
+import { sortByNewest } from '@/utils/dates'
 import { ROLES, STATUS } from '@/utils/roles'
+
+const usersCollection = collection(db, 'users')
 
 // Actualiza los datos editables del perfil (las reglas validan qué campos puede tocar cada rol)
 export function updateUserProfile(uid, changes) {
   const data = Object.fromEntries(
-    Object.entries(changes).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value]),
+    Object.entries(changes).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? value.trim() : value,
+    ]),
   )
   return updateDoc(doc(db, 'users', uid), data)
 }
-
-const usersCollection = collection(db, 'users')
 
 // Pasa un documento a un objeto con su id
 function toUser(snapshot) {
@@ -23,11 +37,10 @@ function toUser(snapshot) {
 // Todos los usuarios, del más nuevo al más viejo (solo el admin tiene permiso)
 export async function getAllUsers() {
   const snapshot = await getDocs(usersCollection)
-  return snapshot.docs
-    .map(toUser)
-    .sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+  return sortByNewest(snapshot.docs.map(toUser))
 }
 
+// Un usuario por su ID (o null si no existe)
 export async function getUser(uid) {
   const snapshot = await getDoc(doc(db, 'users', uid))
   return snapshot.exists() ? toUser(snapshot) : null
@@ -62,7 +75,7 @@ export async function deactivateAccount(account) {
 export async function countPendingShelters() {
   const snapshot = await getCountFromServer(
     query(
-      collection(db, 'users'),
+      usersCollection,
       where('role', '==', ROLES.SHELTER),
       where('status', '==', STATUS.PENDING),
     ),

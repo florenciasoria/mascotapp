@@ -16,9 +16,18 @@ import { LIMITS, validateProfileForm } from '@/utils/validators'
 import styles from './ProfilePage.module.css'
 
 const HEADERS = {
-  [ROLES.ADOPTER]: { title: 'Mi perfil', subtitle: 'Consultá y actualizá tu información personal.' },
-  [ROLES.SHELTER]: { title: 'Mi refugio', subtitle: 'Consultá y actualizá la información de tu refugio.' },
-  [ROLES.ADMIN]: { title: 'Mi perfil', subtitle: 'Consultá y actualizá la información de tu cuenta.' },
+  [ROLES.ADOPTER]: {
+    title: 'Mi perfil',
+    subtitle: 'Consultá y actualizá tu información personal.',
+  },
+  [ROLES.SHELTER]: {
+    title: 'Mi refugio',
+    subtitle: 'Consultá y actualizá la información de tu refugio.',
+  },
+  [ROLES.ADMIN]: {
+    title: 'Mi perfil',
+    subtitle: 'Consultá y actualizá la información de tu cuenta.',
+  },
 }
 
 // Campos que cada rol puede editar (las reglas de Firestore validan lo mismo)

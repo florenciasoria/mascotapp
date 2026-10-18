@@ -3,11 +3,11 @@ import { Link, Navigate } from 'react-router'
 import AuthLayout from '@/layouts/AuthLayout'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
-import logo from '@/assets/logo.png'
 import { useAuth } from '@/hooks/useAuth'
 import { getAuthErrorMessage, loginUser } from '@/services/authService'
 import { validateLoginForm } from '@/utils/validators'
 import { getHomePath } from '@/utils/roles'
+import logo from '@/assets/logo.png'
 import styles from './AuthPage.module.css'
 
 function LoginPage() {

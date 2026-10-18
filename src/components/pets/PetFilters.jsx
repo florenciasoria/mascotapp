@@ -8,7 +8,16 @@ import styles from './PetFilters.module.css'
 // Primera opción de cada lista: valor vacío = no filtra (el texto cambia según el filtro)
 const withAll = (label, options) => [{ value: '', label }, ...options]
 
-function PetFilters({ values, neighborhoods, onChange, onApply, onClear, canApply, canClear, error }) {
+function PetFilters({
+  values,
+  neighborhoods,
+  onChange,
+  onApply,
+  onClear,
+  canApply,
+  canClear,
+  error,
+}) {
   function handleSubmit(event) {
     event.preventDefault()
     onApply()
@@ -24,15 +33,57 @@ function PetFilters({ values, neighborhoods, onChange, onApply, onClear, canAppl
       noValidate
     >
       <div className={styles.grid}>
-        <Select label="Especie" name="species" value={values.species} onChange={onChange} options={withAll('Todas', SPECIES)} />
-        <Select label="Sexo" name="sex" value={values.sex} onChange={onChange} options={withAll('Todos', SEXES)} />
+        <Select
+          label="Especie"
+          name="species"
+          value={values.species}
+          onChange={onChange}
+          options={withAll('Todas', SPECIES)}
+        />
+        <Select
+          label="Sexo"
+          name="sex"
+          value={values.sex}
+          onChange={onChange}
+          options={withAll('Todos', SEXES)}
+        />
         <div className={styles.ageGroup}>
-          <Select label="Edad desde" name="ageFrom" value={values.ageFrom} onChange={onChange} options={withAll('Sin mínimo', AGE_FILTER_OPTIONS)} />
-          <Select label="Edad hasta" name="ageTo" value={values.ageTo} onChange={onChange} options={withAll('Sin máximo', AGE_FILTER_OPTIONS)} />
+          <Select
+            label="Edad desde"
+            name="ageFrom"
+            value={values.ageFrom}
+            onChange={onChange}
+            options={withAll('Sin mínimo', AGE_FILTER_OPTIONS)}
+          />
+          <Select
+            label="Edad hasta"
+            name="ageTo"
+            value={values.ageTo}
+            onChange={onChange}
+            options={withAll('Sin máximo', AGE_FILTER_OPTIONS)}
+          />
         </div>
-        <Select label="Tamaño" name="size" value={values.size} onChange={onChange} options={withAll('Todos', SIZES)} />
-        <Select label="Color" name="color" value={values.color} onChange={onChange} options={withAll('Todos', COLORS)} />
-        <Select label="Ubicación" name="neighborhood" value={values.neighborhood} onChange={onChange} options={withAll('Todas', neighborhoods)} />
+        <Select
+          label="Tamaño"
+          name="size"
+          value={values.size}
+          onChange={onChange}
+          options={withAll('Todos', SIZES)}
+        />
+        <Select
+          label="Color"
+          name="color"
+          value={values.color}
+          onChange={onChange}
+          options={withAll('Todos', COLORS)}
+        />
+        <Select
+          label="Ubicación"
+          name="neighborhood"
+          value={values.neighborhood}
+          onChange={onChange}
+          options={withAll('Todas', neighborhoods)}
+        />
       </div>
 
       {error && (

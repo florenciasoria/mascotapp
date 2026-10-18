@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { AuthContext } from './AuthContext'
 import {
   checkEmailVerified,
   subscribeToAuthChanges,
   subscribeToUserProfile,
 } from '@/services/authService'
-import { markEmailVerified } from '../services/userService'
+import { markEmailVerified } from '@/services/userService'
+import { AuthContext } from './AuthContext'
 
 // Mantiene actualizada la sesión y el perfil del usuario para toda la app.
 export function AuthProvider({ children }) {
@@ -13,7 +13,6 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isEmailVerified, setIsEmailVerified] = useState(false)
-
 
   useEffect(() => {
     let unsubscribeProfile = () => {}
@@ -36,7 +35,6 @@ export function AuthProvider({ children }) {
         setIsLoading(false)
       })
     })
-    
 
     // Al desmontar, cortamos ambas suscripciones (evita pérdidas de memoria)
     return () => {
@@ -52,7 +50,6 @@ export function AuthProvider({ children }) {
       markEmailVerified(user.uid).catch(() => {})
     }
   }, [user, isEmailVerified, profile])
-
 
   // Se llama desde la pantalla "Verificá tu email"
   async function refreshEmailVerification() {

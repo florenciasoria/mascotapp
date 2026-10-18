@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
-import RequestCard from '@/components/requests/RequestCard'
-import { useAuth } from '@/hooks/useAuth'
-import styles from './MyRequestsPage.module.css'
 import Button from '@/components/ui/Button'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
-import { cancelAdoptionRequest, getAdopterRequests } from '@/services/adoptionService'
-import { REQUEST_STATUS } from '@/utils/requestOptions'
 import ButtonLink from '@/components/ui/ButtonLink'
 import Select from '@/components/ui/Select'
+import RequestCard from '@/components/requests/RequestCard'
+import { useAuth } from '@/hooks/useAuth'
+import { cancelAdoptionRequest, getAdopterRequests } from '@/services/adoptionService'
+import { REQUEST_STATUS } from '@/utils/requestOptions'
 import { filterRequestsByStatus, REQUEST_STATUS_OPTIONS } from '@/utils/requestFilters'
+import styles from './MyRequestsPage.module.css'
 
 function MyRequestsPage() {
   const { user } = useAuth()
@@ -23,8 +23,6 @@ function MyRequestsPage() {
   const [errorMessage, setErrorMessage] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const visibleRequests = filterRequestsByStatus(requests, statusFilter)
-
-
 
   // Carga las solicitudes del adoptante al entrar a la pantalla
   useEffect(() => {
@@ -51,7 +49,9 @@ function MyRequestsPage() {
         ),
       )
     } catch {
-      setErrorMessage(`No pudimos cancelar tu solicitud para ${requestToCancel.pet.name}. Intentá nuevamente.`)
+      setErrorMessage(
+        `No pudimos cancelar tu solicitud para ${requestToCancel.pet.name}. Intentá nuevamente.`,
+      )
     } finally {
       setIsCancelling(false)
       setRequestToCancel(null)
@@ -147,10 +147,8 @@ function MyRequestsPage() {
         title="¡Error!"
         message={errorMessage}
       />
-
     </>
   )
 }
 
 export default MyRequestsPage
-

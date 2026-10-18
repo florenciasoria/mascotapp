@@ -11,11 +11,14 @@ import {
   where,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { sortByNewest } from '@/utils/dates'
+import { DONATION_STATUS, PAYMENT_METHODS } from '@/utils/donationOptions'
 
 const donationsCollection = collection(db, 'donations')
 
-function sortByNewest(donations) {
-  return donations.sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0))
+// Pasa un documento de Firestore a un objeto con su id
+function toDonation(snapshot) {
+  return { id: snapshot.id, ...snapshot.data() }
 }
 
 // Registra una donación simulada. De la tarjeta solo se guardan los últimos 4 dígitos:
@@ -29,9 +32,9 @@ export function createDonation(adopter, shelter, { amount, cardNumber }) {
     shelterName: shelter.name,
     neighborhood: shelter.neighborhood,
     amount: Number(amount),
-    paymentMethod: 'tarjeta',
+    paymentMethod: PAYMENT_METHODS.CARD,
     cardLast4: digits.slice(-4),
-    status: 'registrada',
+    status: DONATION_STATUS.REGISTERED,
     createdAt: serverTimestamp(),
   })
 }
@@ -39,13 +42,13 @@ export function createDonation(adopter, shelter, { amount, cardNumber }) {
 // Donaciones que hizo un adoptante, de la más nueva a la más vieja
 export async function getAdopterDonations(adopterId) {
   const snapshot = await getDocs(query(donationsCollection, where('adopterId', '==', adopterId)))
-  return sortByNewest(snapshot.docs.map((donation) => ({ id: donation.id, ...donation.data() })))
+  return sortByNewest(snapshot.docs.map(toDonation))
 }
 
 // Donaciones que recibió un refugio, de la más nueva a la más vieja
 export async function getShelterDonations(shelterId) {
   const snapshot = await getDocs(query(donationsCollection, where('shelterId', '==', shelterId)))
-  return sortByNewest(snapshot.docs.map((donation) => ({ id: donation.id, ...donation.data() })))
+  return sortByNewest(snapshot.docs.map(toDonation))
 }
 
 // Total recibido y cantidad de donaciones de un refugio, calculado en el servidor

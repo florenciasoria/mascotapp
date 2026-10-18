@@ -5,9 +5,7 @@ import styles from './AuthLayout.module.css'
 function AuthLayout({ children, wide = false }) {
   return (
     <main className={styles.layout}>
-      <div className={wide ? `${styles.content} ${styles.wide}` : styles.content}>
-        {children}
-      </div>
+      <div className={wide ? `${styles.content} ${styles.wide}` : styles.content}>{children}</div>
     </main>
   )
 }

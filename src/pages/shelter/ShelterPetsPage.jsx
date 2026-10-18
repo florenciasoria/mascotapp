@@ -74,13 +74,17 @@ function ShelterPetsPage() {
       <PageHeader title="Mis mascotas" subtitle="Gestioná las mascotas de tu refugio." />
 
       <Card as="section" className={styles.registerCard} aria-labelledby="register-pet-title">
-        <h2 id="register-pet-title" className={styles.cardTitle}>Registrar una mascota</h2>
+        <h2 id="register-pet-title" className={styles.cardTitle}>
+          Registrar una mascota
+        </h2>
         <p className={styles.cardText}>Agregá una nueva mascota para publicar en la plataforma.</p>
         <ButtonLink to="/refugio/mascotas/nueva">Registrar mascota</ButtonLink>
       </Card>
 
       <section aria-labelledby="registered-pets-title">
-        <h2 id="registered-pets-title" className={styles.sectionTitle}>Mascotas registradas</h2>
+        <h2 id="registered-pets-title" className={styles.sectionTitle}>
+          Mascotas registradas
+        </h2>
 
         {isLoading && <p role="status">Cargando mascotas…</p>}
 
@@ -90,9 +94,7 @@ function ShelterPetsPage() {
           </p>
         )}
 
-        {!isLoading && !loadError && pets.length === 0 && (
-          <p>Todavía no registraste mascotas.</p>
-        )}
+        {!isLoading && !loadError && pets.length === 0 && <p>Todavía no registraste mascotas.</p>}
 
         <ul className={styles.grid}>
           {pets.map((pet) => {

@@ -3,11 +3,11 @@ import { Link, useParams } from 'react-router'
 import Card from '@/components/ui/Card'
 import ButtonLink from '@/components/ui/ButtonLink'
 import LocationMap from '@/components/ui/LocationMap'
+import { useAuth } from '@/hooks/useAuth'
 import { getPet } from '@/services/petService'
+import { hasActiveRequestForPet } from '@/services/adoptionService'
 import { formatAge, PET_STATUS } from '@/utils/petOptions'
 import styles from './PetDetailPage.module.css'
-import { useAuth } from '@/hooks/useAuth'
-import { hasActiveRequestForPet } from '@/services/adoptionService'
 
 function PetDetailPage() {
   const { petId } = useParams()

@@ -25,7 +25,10 @@ function DonationSheltersPage() {
 
   return (
     <>
-      <PageHeader title="Realizar donación" subtitle="Elegí un refugio para realizar tu donación." />
+      <PageHeader
+        title="Realizar donación"
+        subtitle="Elegí un refugio para realizar tu donación."
+      />
 
       {isLoading && <p role="status">Cargando refugios…</p>}
 
@@ -45,7 +48,11 @@ function DonationSheltersPage() {
           <ul className={styles.grid}>
             {shelters.map((shelter) => (
               <li key={shelter.id}>
-                <Card as="article" className={styles.card} aria-labelledby={`shelter-${shelter.id}`}>
+                <Card
+                  as="article"
+                  className={styles.card}
+                  aria-labelledby={`shelter-${shelter.id}`}
+                >
                   <h3 id={`shelter-${shelter.id}`} className={styles.name}>
                     {shelter.name}
                   </h3>

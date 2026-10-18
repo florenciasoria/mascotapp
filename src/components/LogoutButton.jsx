@@ -10,7 +10,7 @@ function LogoutButton() {
     navigate('/login', { replace: true })
   }
 
-    return (
+  return (
     <Button variant="link" onClick={handleLogout}>
       Cerrar sesión
     </Button>

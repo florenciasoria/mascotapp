@@ -4,15 +4,19 @@ import Card from '@/components/ui/Card'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
-import UserCard from '@/components/users/UserCard'
-import { useAuth } from '@/hooks/useAuth'
-import styles from './AdminUsersPage.module.css'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
-import { getAllUsers, updateUserStatus, deactivateAccount } from '@/services/userService'
+import UserCard from '@/components/users/UserCard'
+import { useAuth } from '@/hooks/useAuth'
+import { deactivateAccount, getAllUsers, updateUserStatus } from '@/services/userService'
 import { ROLE_LABELS, ROLES, STATUS } from '@/utils/roles'
-import { EMPTY_USER_FILTERS, filterUsers, getStatusOptions, sortPendingFirst } from '@/utils/userFilters'
-
+import {
+  EMPTY_USER_FILTERS,
+  filterUsers,
+  getStatusOptions,
+  sortPendingFirst,
+} from '@/utils/userFilters'
+import styles from './AdminUsersPage.module.css'
 
 // Opciones de los filtros, armadas a partir de los textos de roles y estados
 const toOptions = (labels) => Object.entries(labels).map(([value, label]) => ({ value, label }))
@@ -59,7 +63,10 @@ function AdminUsersPage() {
     setDraftFilters((previous) => {
       const next = { ...previous, [name]: value }
       // Si el estado elegido no existe para el rol nuevo, vuelve a "Todos"
-      if (name === 'role' && !getStatusOptions(value).some((option) => option.value === next.status)) {
+      if (
+        name === 'role' &&
+        !getStatusOptions(value).some((option) => option.value === next.status)
+      ) {
         next.status = ''
       }
       return next
@@ -83,7 +90,8 @@ function AdminUsersPage() {
     setAppliedFilters(pendingFilters)
   }
 
-    async function changeStatus(account, newStatus) {
+  // Desactivar (con sus efectos sobre un refugio) o reactivar una cuenta desde la tarjeta
+  async function changeStatus(account, newStatus) {
     setUpdatingId(account.id)
     try {
       if (newStatus === STATUS.INACTIVE) {
@@ -144,8 +152,20 @@ function AdminUsersPage() {
             onChange={handleFilterChange}
             hint="Por nombre o email"
           />
-          <Select label="Rol" name="role" value={draftFilters.role} onChange={handleFilterChange} options={ROLE_OPTIONS} />
-          <Select label="Estado" name="status" value={draftFilters.status} onChange={handleFilterChange} options={getStatusOptions(draftFilters.role)}/>
+          <Select
+            label="Rol"
+            name="role"
+            value={draftFilters.role}
+            onChange={handleFilterChange}
+            options={ROLE_OPTIONS}
+          />
+          <Select
+            label="Estado"
+            name="status"
+            value={draftFilters.status}
+            onChange={handleFilterChange}
+            options={getStatusOptions(draftFilters.role)}
+          />
         </div>
         <div className={styles.filterActions}>
           <Button variant="secondary" onClick={handleClear} disabled={!canClear}>
@@ -179,21 +199,25 @@ function AdminUsersPage() {
         )}
 
         {isReady && visibleUsers.length === 0 && (
-          <p className={styles.empty}>No encontramos usuarios que coincidan con los filtros elegidos.</p>
+          <p className={styles.empty}>
+            No encontramos usuarios que coincidan con los filtros elegidos.
+          </p>
         )}
 
-        <ul className={styles.grid}>
-          {visibleUsers.map((item) => (
-            <li key={item.id}>
+        {visibleUsers.length > 0 && (
+          <ul className={styles.grid}>
+            {visibleUsers.map((item) => (
+              <li key={item.id}>
                 <UserCard
-                    user={item}
-                    onDeactivate={setUserToDeactivate}
-                    onReactivate={(account) => changeStatus(account, STATUS.APPROVED)}
-                    isUpdating={updatingId === item.id}
+                  user={item}
+                  onDeactivate={setUserToDeactivate}
+                  onReactivate={(account) => changeStatus(account, STATUS.APPROVED)}
+                  isUpdating={updatingId === item.id}
                 />
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <ConfirmDialog

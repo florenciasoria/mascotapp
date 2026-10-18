@@ -3,12 +3,12 @@ import { Link, useLocation } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
 import ButtonLink from '@/components/ui/ButtonLink'
 import RequestCard from '@/components/requests/RequestCard'
+import StarDisplay from '@/components/ratings/StarDisplay'
 import { useAuth } from '@/hooks/useAuth'
 import { getAdopterAdoptions, getShelterAdoptions } from '@/services/adoptionService'
+import { getAdopterRatings } from '@/services/ratingService'
 import { ROLES } from '@/utils/roles'
 import styles from './AdoptionHistoryPage.module.css'
-import StarDisplay from '@/components/ratings/StarDisplay'
-import { getAdopterRatings } from '@/services/ratingService'
 
 // Lo que cambia según quién mira el historial
 const HISTORY_BY_ROLE = {
@@ -19,7 +19,7 @@ const HISTORY_BY_ROLE = {
     detailPath: '/adoptante/solicitudes',
     empty: 'Todavía no tenés adopciones aceptadas.',
     emptyLink: { to: '/adoptante/buscar', label: 'Buscá una mascota para adoptar' },
-    canRate: true,    
+    canRate: true,
   },
   [ROLES.SHELTER]: {
     subtitle: 'Las adopciones que aceptaste.',
@@ -90,10 +90,12 @@ function AdoptionHistoryPage() {
                   <div className={styles.myRating}>
                     <p className={styles.myRatingTitle}>Tu calificación</p>
                     <p className={styles.scoreRow}>
-                      Atención del refugio <StarDisplay value={ratingsById[request.id].shelterScore} />
+                      Atención del refugio{' '}
+                      <StarDisplay value={ratingsById[request.id].shelterScore} />
                     </p>
                     <p className={styles.scoreRow}>
-                      Proceso de adopción <StarDisplay value={ratingsById[request.id].processScore} />
+                      Proceso de adopción{' '}
+                      <StarDisplay value={ratingsById[request.id].processScore} />
                     </p>
                   </div>
                 )}

@@ -1,17 +1,16 @@
 import { useState } from 'react'
+import { Link, Navigate, useNavigate } from 'react-router'
 import AuthLayout from '@/layouts/AuthLayout'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
+import Select from '@/components/ui/Select'
+import { useAuth } from '@/hooks/useAuth'
 import { getAuthErrorMessage, registerUser } from '@/services/authService'
 import { LIMITS, validateRegisterForm } from '@/utils/validators'
-import styles from './RegisterPage.module.css'
-import { Link, Navigate, useNavigate } from 'react-router'
-import { useAuth } from '@/hooks/useAuth'
 import { getHomePath, ROLES } from '@/utils/roles'
-import Select from '@/components/ui/Select'
 import { NEIGHBORHOODS } from '@/utils/neighborhoods'
 import { focusFirstInvalidField } from '@/utils/forms'
-
+import styles from './RegisterPage.module.css'
 
 const INITIAL_VALUES = {
   name: '',
@@ -66,7 +65,7 @@ function RegisterPage() {
     }
   }
 
-    // Si ya hay sesión iniciada, no tiene sentido registrarse: va a su área
+  // Si ya hay sesión iniciada, no tiene sentido registrarse: va a su área
   if (profile && !isSubmitting) {
     return <Navigate to={getHomePath(profile.role)} replace />
   }
@@ -201,8 +200,8 @@ function RegisterPage() {
           </Button>
           {isShelter && (
             <p className={styles.note}>
-              Tu cuenta deberá ser aprobada por un administrador antes de poder
-              utilizar las funcionalidades del sistema.
+              Tu cuenta deberá ser aprobada por un administrador antes de poder utilizar las
+              funcionalidades del sistema.
             </p>
           )}
         </div>

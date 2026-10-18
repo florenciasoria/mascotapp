@@ -1,7 +1,7 @@
 import AuthLayout from '@/layouts/AuthLayout'
 import LogoutButton from '@/components/LogoutButton'
-import logo from '@/assets/logo.png'
 import { useAuth } from '@/hooks/useAuth'
+import logo from '@/assets/logo.png'
 import styles from './MessagePage.module.css'
 
 // Se muestra a los refugios hasta que un administrador apruebe su cuenta.
@@ -15,13 +15,13 @@ function PendingApprovalPage() {
         <img src={logo} alt="MascotApp" className={styles.logo} />
         <h1 className={styles.title}>¡Recibimos tu solicitud!</h1>
         <p className={styles.text}>
-          Gracias por sumar a <strong>{profile?.name}</strong> a MascotApp. Un
-          administrador va a revisar los datos del refugio y, cuando tu cuenta
-          sea aprobada, vas a poder usar todas las funcionalidades.
+          Gracias por sumar a <strong>{profile?.name}</strong> a MascotApp. Un administrador va a
+          revisar los datos del refugio y, cuando tu cuenta sea aprobada, vas a poder usar todas las
+          funcionalidades.
         </p>
         <p className={styles.text}>
-          No hace falta que recargues: esta pantalla se actualiza sola cuando
-          tu cuenta sea aprobada.
+          No hace falta que recargues: esta pantalla se actualiza sola cuando tu cuenta sea
+          aprobada.
         </p>
         <LogoutButton />
       </div>

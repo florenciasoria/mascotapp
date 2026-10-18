@@ -3,9 +3,9 @@ import { Link } from 'react-router'
 import AuthLayout from '@/layouts/AuthLayout'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
-import logo from '@/assets/logo.png'
 import { getAuthErrorMessage, sendPasswordReset } from '@/services/authService'
 import { validateForgotPasswordForm } from '@/utils/validators'
+import logo from '@/assets/logo.png'
 import styles from './AuthPage.module.css'
 
 function ForgotPasswordPage() {
@@ -47,9 +47,8 @@ function ForgotPasswordPage() {
 
       {wasSent ? (
         <p className={styles.success} role="status">
-          Si existe una cuenta con <strong>{email.trim()}</strong>, te enviamos un
-          enlace para restablecer tu contraseña. Revisá tu bandeja de entrada y la
-          carpeta de spam.
+          Si existe una cuenta con <strong>{email.trim()}</strong>, te enviamos un enlace para
+          restablecer tu contraseña. Revisá tu bandeja de entrada y la carpeta de spam.
         </p>
       ) : (
         <form className={styles.form} onSubmit={handleSubmit} noValidate>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link, useLocation, useParams } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -7,12 +8,14 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import ResultDialog from '@/components/ui/ResultDialog'
 import RequestCard from '@/components/requests/RequestCard'
 import RequestAnswers from '@/components/requests/RequestAnswers'
-import { acceptAdoptionRequest, getRequest, rejectAdoptionRequest } from '@/services/adoptionService'
+import RequestResultBanner from '@/components/requests/RequestResultBanner'
+import {
+  acceptAdoptionRequest,
+  getRequest,
+  rejectAdoptionRequest,
+} from '@/services/adoptionService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './ShelterRequestDetailPage.module.css'
-import RequestResultBanner from '@/components/requests/RequestResultBanner'
-import { Link, useLocation, useParams } from 'react-router'
-
 
 function ShelterRequestDetailPage() {
   const { requestId } = useParams()
@@ -93,7 +96,6 @@ function ShelterRequestDetailPage() {
     request.adopterContact &&
     [REQUEST_STATUS.PENDING, REQUEST_STATUS.ACCEPTED].includes(request.status)
 
-
   return (
     <>
       <PageHeader
@@ -126,7 +128,9 @@ function ShelterRequestDetailPage() {
               <div>
                 <dt>Email</dt>
                 <dd>
-                  <a href={`mailto:${request.adopterContact.email}`}>{request.adopterContact.email}</a>
+                  <a href={`mailto:${request.adopterContact.email}`}>
+                    {request.adopterContact.email}
+                  </a>
                 </dd>
               </div>
               <div>
@@ -146,7 +150,11 @@ function ShelterRequestDetailPage() {
               <span aria-hidden="true">←</span> Volver
             </ButtonLink>
             <div className={styles.mainActions}>
-              <Button variant="secondary" onClick={() => setActionToConfirm('reject')} disabled={isSaving}>
+              <Button
+                variant="secondary"
+                onClick={() => setActionToConfirm('reject')}
+                disabled={isSaving}
+              >
                 Rechazar
               </Button>
               <Button onClick={() => setActionToConfirm('accept')} disabled={isSaving}>

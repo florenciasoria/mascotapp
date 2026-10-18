@@ -7,8 +7,16 @@ import styles from './Sidebar.module.css'
 
 function MenuIcon() {
   return (
-    <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+    <svg
+      aria-hidden="true"
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    >
       <path d="M3 6h18M3 12h18M3 18h18" />
     </svg>
   )
@@ -77,7 +85,12 @@ function Sidebar() {
             <ul className={styles.list}>
               {menu.main.map((item) => (
                 <li key={item.to}>
-                  <NavLink to={item.to} end={item.end} className={linkClassName} onClick={closeMenu}>
+                  <NavLink
+                    to={item.to}
+                    end={item.end}
+                    className={linkClassName}
+                    onClick={closeMenu}
+                  >
                     {item.label}
                   </NavLink>
                 </li>

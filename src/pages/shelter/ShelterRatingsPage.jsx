@@ -83,7 +83,11 @@ function ShelterRatingsPage() {
             <ul className={styles.list}>
               {ratings.map((rating) => (
                 <li key={rating.id}>
-                  <Card as="article" className={styles.rating} aria-labelledby={`rating-${rating.id}`}>
+                  <Card
+                    as="article"
+                    className={styles.rating}
+                    aria-labelledby={`rating-${rating.id}`}
+                  >
                     <h3 id={`rating-${rating.id}`} className={styles.ratingTitle}>
                       {rating.adopterName} · adopción de {rating.petName}
                     </h3>
@@ -94,7 +98,9 @@ function ShelterRatingsPage() {
                     <p className={styles.scoreRow}>
                       Proceso de adopción <StarDisplay value={rating.processScore} />
                     </p>
-                    {rating.comment && <blockquote className={styles.comment}>{rating.comment}</blockquote>}
+                    {rating.comment && (
+                      <blockquote className={styles.comment}>{rating.comment}</blockquote>
+                    )}
                   </Card>
                 </li>
               ))}
