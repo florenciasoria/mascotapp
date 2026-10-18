@@ -60,7 +60,7 @@ function AdopterHomePage() {
           <h2 id="help-shelter-title" className={styles.cardTitle}>Ayudá a un refugio</h2>
           <p className={styles.cardText}>Colaborá con un refugio y ayudá a más mascotas.</p>
           <div className={styles.cardAction}>
-            <ButtonLink to="/adoptante/donaciones" variant="secondary">
+            <ButtonLink to="/adoptante/donaciones/nueva" variant="secondary">
               Realizar donación
             </ButtonLink>
           </div>

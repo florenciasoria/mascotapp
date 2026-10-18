@@ -2,6 +2,7 @@
 import { collection, doc, getCountFromServer, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db } from './firebase'
 import { pauseShelterPets } from './petService'
+import { removeShelterPublicProfile } from './shelterService'
 import { ROLES, STATUS } from '@/utils/roles'
 
 // Actualiza los datos editables del perfil (las reglas validan qué campos puede tocar cada rol)
@@ -46,11 +47,14 @@ export function markEmailVerified(uid) {
   return updateDoc(doc(db, 'users', uid), { emailVerified: true })
 }
 
-// Desactivar una cuenta. Si es un refugio, además se pausan sus mascotas publicadas.
+// Desactivar una cuenta. Si es un refugio, además se pausan sus mascotas publicadas
+// y se borra su perfil público (deja de aparecer para donar).
+// Si después se reactiva, el refugio vuelve a publicarlo al entrar a su Inicio.
 export async function deactivateAccount(account) {
   await updateUserStatus(account.id, STATUS.INACTIVE)
   if (account.role === ROLES.SHELTER) {
     await pauseShelterPets(account.id)
+    await removeShelterPublicProfile(account.id)
   }
 }
 

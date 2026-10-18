@@ -276,6 +276,38 @@ service cloud.firestore {
              'shelterScore', 'processScore', 'comment', 'createdAt']);
     }
 
+    // Donación simulada: a nombre del adoptante, a un refugio aprobado y con un importe válido.
+    // De la tarjeta solo se guardan los últimos 4 dígitos (nunca el número completo ni el CVV).
+    function isValidDonation() {
+      let data = request.resource.data;
+      let shelter = get(/databases/$(database)/documents/users/$(data.shelterId)).data;
+      return data.adopterId == request.auth.uid
+        && data.adopterName == currentUser().name
+        && shelter.role == 'refugio'
+        && shelter.status == 'aprobado'
+        && data.shelterName == shelter.name
+        && data.neighborhood == shelter.neighborhood
+        && data.amount is int && data.amount >= 100 && data.amount <= 1000000
+        && data.paymentMethod == 'tarjeta'
+        && data.cardLast4 is string && data.cardLast4.matches('[0-9]{4}')
+        && data.status == 'registrada'
+        && data.createdAt == request.time
+        && data.keys().hasOnly(['adopterId', 'adopterName', 'shelterId', 'shelterName',
+             'neighborhood', 'amount', 'paymentMethod', 'cardLast4', 'status', 'createdAt']);
+    }
+
+    // Perfil público de un refugio: solo los datos que ven los adoptantes.
+    // Lo escribe el propio refugio aprobado y tiene que coincidir con su perfil.
+    function isValidPublicShelter(shelterId) {
+      let data = request.resource.data;
+      return request.auth.uid == shelterId
+        && data.name == currentUser().name
+        && data.neighborhood == currentUser().neighborhood
+        && data.about == currentUser().about
+        && data.updatedAt == request.time
+        && data.keys().hasOnly(['name', 'neighborhood', 'about', 'updatedAt']);
+    }
+
     // Perfiles de usuario: el ID del documento es el uid de Authentication
     match /users/{userId} {
       // Cada usuario lee su perfil; el admin, todos
@@ -309,6 +341,34 @@ service cloud.firestore {
       allow create: if isApprovedRole('adoptante') && isValidNewRating(ratingId);
 
       // Una vez enviada, no se edita ni se borra
+      allow update, delete: if false;
+    }
+
+    // Perfiles públicos de los refugios aprobados (nombre, barrio y descripción).
+    // El perfil completo (email, teléfono, estado) sigue siendo privado.
+    match /shelters/{shelterId} {
+      allow read: if isSignedIn() && isVerified();
+
+      // Solo el propio refugio aprobado, con los mismos datos de su perfil
+      allow create, update: if isApprovedRole('refugio') && isValidPublicShelter(shelterId);
+
+      // Al desactivar un refugio, el admin borra su perfil público
+      allow delete: if isAdmin();
+    }
+
+    // Donaciones simuladas (sin transacción real)
+    match /donations/{donationId} {
+      // Adoptante: las suyas. Refugio: las que recibió. Admin: todas.
+      allow read: if isSignedIn() && isVerified() && (
+        resource.data.adopterId == request.auth.uid
+        || resource.data.shelterId == request.auth.uid
+        || isAdmin()
+      );
+
+      // Alta: solo un adoptante aprobado, a su nombre, para un refugio aprobado
+      allow create: if isApprovedRole('adoptante') && isValidDonation();
+
+      // Una donación registrada no se modifica ni se borra
       allow update, delete: if false;
     }
 

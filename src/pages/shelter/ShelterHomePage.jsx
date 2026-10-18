@@ -9,6 +9,7 @@ import Notice from '@/components/ui/Notice'
 import { countPendingRequests } from '@/services/adoptionService'
 import StarDisplay from '@/components/ratings/StarDisplay'
 import { getShelterRatingSummary } from '@/services/ratingService'
+import { syncShelterPublicProfile } from '@/services/shelterService'
 
 function ShelterHomePage() {
   const { user, profile } = useAuth()
@@ -20,22 +21,27 @@ function ShelterHomePage() {
     let isActive = true
     countPendingRequests(user.uid)
       .then((count) => isActive && setPendingCount(count))
-      .catch((error) => {
-        console.error(error) // temporal, para diagnosticar
-        if (isActive) setLoadError(true)
-      })
+      .catch(() => {})
 
     getShelterRatingSummary(user.uid)
       .then((summary) => isActive && setRatingSummary(summary))
-      .catch((error) => {
-        console.error(error) // temporal, para diagnosticar
-        if (isActive) setLoadError(true)
-      })
+      .catch(() => {})
 
     return () => {
       isActive = false
     }
   }, [user.uid])
+
+  // Al entrar, el refugio aprobado publica (o actualiza) su perfil público para los adoptantes.
+  // Así también aparecen los refugios aprobados antes de que existiera el perfil público,
+  // y los que se reactivan. Si ya está al día, no escribe nada.
+  useEffect(() => {
+    syncShelterPublicProfile(user.uid, {
+      name: profile.name,
+      neighborhood: profile.neighborhood,
+      about: profile.about,
+    }).catch(() => {})
+  }, [user.uid, profile.name, profile.neighborhood, profile.about])
 
 
   return (
