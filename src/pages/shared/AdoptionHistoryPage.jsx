@@ -99,7 +99,7 @@ function AdoptionHistoryPage() {
                     </p>
                   </div>
                 )}
-                {/* Si todavía puede calificar, Calificar es la acción principal (rosa, a la derecha) */}
+                {/* Si todavía puede calificar, Calificar es la acción principal (a la derecha) */}
                 <ButtonLink
                   to={`${config.detailPath}/${request.id}`}
                   state={{ backTo: location.pathname }}

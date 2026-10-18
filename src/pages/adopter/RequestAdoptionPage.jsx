@@ -267,11 +267,12 @@ function RequestAdoptionPage() {
           />
         </div>
 
+        <p className={styles.privacyNote}>
+          Al enviar la solicitud, {pet.shelterName} va a poder ver tu email y teléfono para
+          contactarte.
+        </p>
+
         <div className={styles.actions}>
-          <p className={styles.privacyNote}>
-            Al enviar la solicitud, {pet.shelterName} va a poder ver tu email y teléfono para
-            contactarte.
-          </p>
           <Button
             variant="secondary"
             onClick={() => navigate(`/adoptante/mascotas/${pet.id}`)}
