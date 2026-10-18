@@ -18,6 +18,7 @@ export const LIMITS = {
   otherPets: { min: 2, max: 100 },
   requestText: { min: 10, max: 1000 },
   ratingComment: { max: 500 },
+  donation: { min: 100, max: 1000000 },
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -210,3 +211,40 @@ export function validateRatingForm(values) {
 
   return errors
 }
+
+// Vencimiento MM/AA: mes válido y no vencido
+function isValidExpiry(value) {
+  const match = /^(\d{2})\/(\d{2})$/.exec(value.trim())
+  if (!match) return false
+  const month = Number(match[1])
+  const year = 2000 + Number(match[2])
+  if (month < 1 || month > 12) return false
+  const now = new Date()
+  return year > now.getFullYear() || (year === now.getFullYear() && month >= now.getMonth() + 1)
+}
+
+// Formulario de donación simulada. Los datos de la tarjeta se validan para que el formulario
+// sea realista, pero solo se guardan los últimos 4 dígitos.
+export function validateDonationForm(values) {
+  const errors = {}
+  const amount = Number(values.amount)
+
+  if (!Number.isInteger(amount) || amount < LIMITS.donation.min || amount > LIMITS.donation.max) {
+    errors.amount = 'Ingresá un importe entre $100 y $1.000.000, sin centavos'
+  }
+  if (!/^\d{16}$/.test(values.cardNumber.replace(/\s/g, ''))) {
+    errors.cardNumber = 'Ingresá los 16 números de la tarjeta'
+  }
+  if (!hasLength(values.cardHolder, LIMITS.name)) {
+    errors.cardHolder = 'Ingresá el nombre como figura en la tarjeta'
+  }
+  if (!isValidExpiry(values.expiry)) {
+    errors.expiry = 'Ingresá un vencimiento válido (MM/AA)'
+  }
+  if (!/^\d{3,4}$/.test(values.cvv.trim())) {
+    errors.cvv = 'Ingresá el código de 3 o 4 números'
+  }
+
+  return errors
+}
+

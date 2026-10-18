@@ -27,6 +27,10 @@ import ShelterRequestDetailPage from '@/pages/shelter/ShelterRequestDetailPage'
 import AdoptionHistoryPage from '@/pages/shared/AdoptionHistoryPage'
 import RateAdoptionPage from '@/pages/adopter/RateAdoptionPage'
 import ShelterRatingsPage from '@/pages/shelter/ShelterRatingsPage'
+import DonationSheltersPage from '@/pages/adopter/DonationSheltersPage'
+import DonationFormPage from '@/pages/adopter/DonationFormPage'
+import MyDonationsPage from '@/pages/adopter/MyDonationsPage'
+import ShelterDonationsPage from '@/pages/shelter/ShelterDonationsPage'
 
 function App() {
   return (
@@ -55,7 +59,9 @@ function App() {
           <Route path="solicitudes/:requestId" element={<AdopterRequestDetailPage />} />
           <Route path="historial" element={<AdoptionHistoryPage />} />
           <Route path="historial/:requestId/calificar" element={<RateAdoptionPage />} />
-          <Route path="*" element={<ComingSoonPage />} />
+          <Route path="donaciones/nueva" element={<DonationSheltersPage />} />
+          <Route path="donaciones/nueva/:shelterId" element={<DonationFormPage />} />
+          <Route path="donaciones" element={<MyDonationsPage />} />
         </Route>
 
         <Route
@@ -75,6 +81,7 @@ function App() {
           <Route path="solicitudes/:requestId" element={<ShelterRequestDetailPage />} />
           <Route path="historial" element={<AdoptionHistoryPage />} />
           <Route path="calificaciones" element={<ShelterRatingsPage />} />
+          <Route path="donaciones" element={<ShelterDonationsPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
 

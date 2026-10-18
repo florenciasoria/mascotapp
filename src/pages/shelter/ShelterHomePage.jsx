@@ -9,33 +9,47 @@ import Notice from '@/components/ui/Notice'
 import { countPendingRequests } from '@/services/adoptionService'
 import StarDisplay from '@/components/ratings/StarDisplay'
 import { getShelterRatingSummary } from '@/services/ratingService'
+import { syncShelterPublicProfile } from '@/services/shelterService'
+import { getShelterDonationSummary } from '@/services/donationService'
+import { formatCurrency } from '@/utils/donationOptions'
 
 function ShelterHomePage() {
   const { user, profile } = useAuth()
   const [pendingCount, setPendingCount] = useState(0)
   const [ratingSummary, setRatingSummary] = useState(null)
+  const [donationSummary, setDonationSummary] = useState(null)
+
 
   // Los avisos y el resumen son secundarios: si fallan, simplemente no se muestran
   useEffect(() => {
     let isActive = true
     countPendingRequests(user.uid)
       .then((count) => isActive && setPendingCount(count))
-      .catch((error) => {
-        console.error(error) // temporal, para diagnosticar
-        if (isActive) setLoadError(true)
-      })
+      .catch(() => {})
 
     getShelterRatingSummary(user.uid)
       .then((summary) => isActive && setRatingSummary(summary))
-      .catch((error) => {
-        console.error(error) // temporal, para diagnosticar
-        if (isActive) setLoadError(true)
-      })
+      .catch(() => {})
 
+    getShelterDonationSummary(user.uid)
+      .then((summary) => isActive && setDonationSummary(summary))
+      .catch(() => {})
+      
     return () => {
       isActive = false
     }
   }, [user.uid])
+
+  // Al entrar, el refugio aprobado publica (o actualiza) su perfil público para los adoptantes.
+  // Así también aparecen los refugios aprobados antes de que existiera el perfil público,
+  // y los que se reactivan. Si ya está al día, no escribe nada.
+  useEffect(() => {
+    syncShelterPublicProfile(user.uid, {
+      name: profile.name,
+      neighborhood: profile.neighborhood,
+      about: profile.about,
+    }).catch(() => {})
+  }, [user.uid, profile.name, profile.neighborhood, profile.about])
 
 
   return (
@@ -54,12 +68,24 @@ function ShelterHomePage() {
       )}
 
       <div className={styles.cards}>
-        {/* Los datos de donaciones y calificaciones se conectan en los hitos 5 y 6 */}
         <div className={styles.stats}>
           <Card as="section" aria-labelledby="donations-title">
             <h2 id="donations-title" className={styles.cardTitle}>Donaciones</h2>
-            <p className={styles.statValue}>$0</p>
-            <p className={styles.statDetail}>Todavía no recibiste donaciones</p>
+            {donationSummary?.total > 0 ? (
+              <>
+                <p className={styles.statValue}>{formatCurrency(donationSummary.amount)}</p>
+                <p className={styles.statDetail}>
+                  {donationSummary.total === 1
+                    ? '1 donación recibida'
+                    : `${donationSummary.total} donaciones recibidas`}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className={styles.statValue}>$0</p>
+                <p className={styles.statDetail}>Todavía no recibiste donaciones</p>
+              </>
+            )}
             <Link to="/refugio/donaciones" className={styles.statLink}>
               Ver más <span aria-hidden="true">→</span>
             </Link>

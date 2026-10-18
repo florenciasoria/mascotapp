@@ -20,6 +20,7 @@ export const MENUS = {
       { to: '/refugio/solicitudes', label: 'Solicitudes de adopción' },
       { to: '/refugio/historial', label: 'Historial de adopciones' },
       { to: '/refugio/calificaciones', label: 'Calificaciones' },
+      { to: '/refugio/donaciones', label: 'Donaciones' },
     ],
     profile: { to: '/refugio/perfil', label: 'Mi refugio' },
   },

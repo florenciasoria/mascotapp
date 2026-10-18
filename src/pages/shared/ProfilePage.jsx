@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { getAuthErrorMessage, sendPasswordReset } from '@/services/authService'
 import { updateUserProfile } from '@/services/userService'
 import { syncShelterInfoInPets } from '@/services/petService'
+import { syncShelterPublicProfile } from '@/services/shelterService'
 import { focusFirstInvalidField } from '@/utils/forms'
 import { NEIGHBORHOODS } from '@/utils/neighborhoods'
 import { ROLE_LABELS, ROLES } from '@/utils/roles'
@@ -68,12 +69,17 @@ function ProfilePage() {
     setIsSaving(true)
     try {
       await updateUserProfile(user.uid, values)
-      // El refugio tiene su nombre y barrio copiados en sus mascotas: los actualizamos
+      // El refugio tiene sus datos copiados en sus mascotas y en su perfil público: los actualizamos
       if (isShelter) {
         await syncShelterInfoInPets(user.uid, {
           name: values.name.trim(),
           neighborhood: values.neighborhood,
           address: values.address.trim(),
+        })
+        await syncShelterPublicProfile(user.uid, {
+          name: values.name.trim(),
+          neighborhood: values.neighborhood,
+          about: values.about.trim(),
         })
       }
       setDialog({
