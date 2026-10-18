@@ -29,6 +29,7 @@ import RateAdoptionPage from '@/pages/adopter/RateAdoptionPage'
 import ShelterRatingsPage from '@/pages/shelter/ShelterRatingsPage'
 import DonationSheltersPage from '@/pages/adopter/DonationSheltersPage'
 import DonationFormPage from '@/pages/adopter/DonationFormPage'
+import MyDonationsPage from '@/pages/adopter/MyDonationsPage'
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
           <Route path="historial/:requestId/calificar" element={<RateAdoptionPage />} />
           <Route path="donaciones/nueva" element={<DonationSheltersPage />} />
           <Route path="donaciones/nueva/:shelterId" element={<DonationFormPage />} />
+          <Route path="donaciones" element={<MyDonationsPage />} />
         </Route>
 
         <Route
