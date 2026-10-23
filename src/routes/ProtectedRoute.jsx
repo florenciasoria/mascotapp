@@ -6,12 +6,17 @@ import LoadingScreen from '@/components/ui/LoadingScreen'
 import { useAuth } from '@/hooks/useAuth'
 import { getHomePath, STATUS } from '@/utils/roles'
 
-// Estados con los que se puede entrar a la app (lista blanca):
-// cualquier otro estado queda bloqueado.
+// Estados de cuenta habilitados para entrar (lista blanca): cualquier otro queda bloqueado.
 const ALLOWED_STATUSES = [STATUS.PENDING, STATUS.APPROVED]
 
-// Guardia de rutas: solo deja pasar a usuarios logueados, habilitados,
-// con email verificado y con alguno de los roles permitidos.
+/**
+ * Protege un área de la app: exige sesión, uno de los roles permitidos, estado habilitado
+ * y email verificado. Si falta algo, redirige o muestra la pantalla que corresponde.
+ * La seguridad de los datos la aplican las reglas de Firestore; este componente es de navegación.
+ * @param {object} props
+ * @param {string[]} props.allowedRoles - Roles que pueden entrar.
+ * @param {React.ReactNode} props.children - Contenido protegido.
+ */
 function ProtectedRoute({ allowedRoles, children }) {
   const { user, profile, isLoading, isEmailVerified } = useAuth()
 

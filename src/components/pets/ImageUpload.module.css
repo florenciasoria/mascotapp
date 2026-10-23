@@ -22,7 +22,7 @@
   border-radius: var(--radius-md);
 }
 
-/* Input real oculto a la vista: el botón visible es su <label> */
+/* Input de archivo oculto a la vista: su <label> funciona como botón */
 .fileInput {
   position: absolute;
   width: 1px;

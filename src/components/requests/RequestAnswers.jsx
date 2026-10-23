@@ -4,9 +4,12 @@ function yesNo(value) {
   return value ? 'Sí' : 'No'
 }
 
-// Respuestas del formulario de solicitud, solo lectura.
-// La usan el adoptante (ver su solicitud) y el refugio (revisarla antes de decidir).
-// Las preguntas de seguimiento se muestran solo si respondió "Sí".
+/**
+ * Respuestas del formulario de solicitud, en modo lectura.
+ * Las preguntas de seguimiento se muestran solo si la respuesta fue "Sí".
+ * @param {object} props
+ * @param {object} props.answers - Respuestas guardadas en la solicitud.
+ */
 function RequestAnswers({ answers }) {
   return (
     <dl className={styles.answers}>

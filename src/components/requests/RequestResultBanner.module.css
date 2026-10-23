@@ -1,5 +1,4 @@
-/* Mismos colores que la pastilla de estado: fondo suave, borde de color y texto marrón
-   (el Figma usa fondo sólido con texto blanco, que no llega al contraste mínimo). */
+/* Fondo suave, borde de color y texto oscuro para mantener el contraste */
 .banner {
   display: flex;
   flex-direction: column;

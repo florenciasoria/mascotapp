@@ -22,6 +22,7 @@ const INITIAL_VALUES = {
   neighborhood: '',
 }
 
+/** Registro de adoptantes y refugios. */
 function RegisterPage() {
   const navigate = useNavigate()
   const { profile } = useAuth()
@@ -50,7 +51,6 @@ function RegisterPage() {
     const validationErrors = validateRegisterForm(values, role)
     setErrors(validationErrors)
 
-    // Si hay errores, llevamos el foco al primer campo inválido
     if (focusFirstInvalidField(event.target, validationErrors)) {
       return
     }
@@ -65,7 +65,6 @@ function RegisterPage() {
     }
   }
 
-  // Si ya hay sesión iniciada, no tiene sentido registrarse: va a su área
   if (profile && !isSubmitting) {
     return <Navigate to={getHomePath(profile.role)} replace />
   }

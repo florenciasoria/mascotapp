@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { getPet, updatePet } from '@/services/petService'
 import { PET_STATUS } from '@/utils/petOptions'
 
-// Pasa los datos guardados al formato del formulario
+// Convierte una mascota guardada en valores del formulario
 function toFormValues(pet) {
   return {
     name: pet.name,
@@ -22,6 +22,7 @@ function toFormValues(pet) {
   }
 }
 
+/** Edición de una mascota del refugio (CU001). */
 function EditPetPage() {
   const { petId } = useParams()
   const { user } = useAuth()
@@ -72,7 +73,7 @@ function EditPetPage() {
     return <p role="status">Cargando mascota…</p>
   }
 
-  // Solo se editan las mascotas propias que no fueron adoptadas
+  // Solo se editan mascotas propias que no fueron adoptadas
   const canEdit = pet && pet.shelterId === user.uid && pet.status !== PET_STATUS.ADOPTED
 
   if (!canEdit) {

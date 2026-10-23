@@ -11,10 +11,10 @@
 
 .text {
   margin: 0;
-  overflow-wrap: anywhere; /* los emails largos cortan línea en lugar de desbordar */
+  overflow-wrap: anywhere;
 }
 
-/* margin-top: auto empuja los botones al fondo de la tarjeta */
+/* Acciones al pie de la tarjeta */
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -24,19 +24,18 @@
   padding-top: var(--space-3);
 }
 
-/* Pendiente de aprobación: borde amarillo para que resalte */
+/* Pendiente de aprobación */
 .card.pending {
   border: 2px solid #d9b44a;
 }
 
-/* Desactivado: fondo gris claro y borde punteado */
+/* Cuenta desactivada */
 .card.inactive {
   border: 1px dashed var(--color-brown-light);
   background-color: #efedea;
 }
 
-/* Etiqueta "Email sin verificar": borde punteado, sin color de alerta
-   (es información, no un error) */
+/* Email sin verificar: informativo, sin color de alerta */
 .unverified {
   align-self: flex-start;
   margin: 0;

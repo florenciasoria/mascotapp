@@ -7,6 +7,7 @@ import { getShelterRatings, getShelterRatingSummary } from '@/services/ratingSer
 import { formatDate } from '@/utils/dates'
 import styles from './ShelterRatingsPage.module.css'
 
+/** Calificaciones recibidas por el refugio: promedios y opiniones. */
 function ShelterRatingsPage() {
   const { user } = useAuth()
   const [ratings, setRatings] = useState([])
@@ -14,7 +15,6 @@ function ShelterRatingsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
 
-  // Las opiniones y los promedios (calculados en el servidor) se buscan a la vez
   useEffect(() => {
     let isActive = true
 

@@ -4,7 +4,9 @@ import Card from '@/components/ui/Card'
 import ButtonLink from '@/components/ui/ButtonLink'
 import { getPublicShelters } from '@/services/shelterService'
 import styles from './DonationSheltersPage.module.css'
+import ShelterRatings from '@/components/ratings/ShelterRatings'
 
+/** Elección del refugio para donar: refugios activos con su calificación. */
 function DonationSheltersPage() {
   const [shelters, setShelters] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -59,6 +61,9 @@ function DonationSheltersPage() {
                   <p className={styles.neighborhood}>
                     <span aria-hidden="true">📍</span> {shelter.neighborhood}
                   </p>
+
+                  <ShelterRatings shelterId={shelter.id} compact />
+
                   <p className={styles.about}>{shelter.about}</p>
                   <div className={styles.action}>
                     <ButtonLink

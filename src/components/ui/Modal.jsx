@@ -1,13 +1,19 @@
 import { useEffect, useId, useRef } from 'react'
 import styles from './Modal.module.css'
 
-// Ventana modal accesible basada en <dialog>: atrapa el foco,
-// se cierra con Escape y devuelve el foco al elemento que la abrió.
+/**
+ * Ventana modal basada en <dialog>: atrapa el foco, se cierra con Escape
+ * y devuelve el foco al elemento que la abrió.
+ * @param {object} props
+ * @param {boolean} props.isOpen - Si está abierta.
+ * @param {() => void} props.onClose - Cierra la ventana.
+ * @param {string} props.title - Título.
+ */
 function Modal({ isOpen, onClose, title, children }) {
   const dialogRef = useRef(null)
   const titleId = useId()
 
-  // Sincroniza el estado de React (isOpen) con el <dialog> del navegador
+  // Sincroniza isOpen con el estado del <dialog>
   useEffect(() => {
     const dialog = dialogRef.current
     if (isOpen && !dialog.open) {
@@ -17,7 +23,7 @@ function Modal({ isOpen, onClose, title, children }) {
     }
   }, [isOpen])
 
-  // Clic en el fondo oscuro: cierra
+  // Un clic en el fondo cierra la ventana
   function handleClick(event) {
     if (event.target === dialogRef.current) {
       onClose()

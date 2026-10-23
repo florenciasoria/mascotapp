@@ -13,13 +13,14 @@ import { getShelterDonationSummary } from '@/services/donationService'
 import { formatCurrency } from '@/utils/donationOptions'
 import styles from '@/pages/shared/HomeCards.module.css'
 
+/** Inicio del refugio: avisos, donaciones y calificación. */
 function ShelterHomePage() {
   const { user, profile } = useAuth()
   const [pendingCount, setPendingCount] = useState(0)
   const [ratingSummary, setRatingSummary] = useState(null)
   const [donationSummary, setDonationSummary] = useState(null)
 
-  // Los avisos y el resumen son secundarios: si fallan, simplemente no se muestran
+  // Los avisos y resúmenes son secundarios: si fallan, no se muestran
   useEffect(() => {
     let isActive = true
     countPendingRequests(user.uid)
@@ -39,9 +40,7 @@ function ShelterHomePage() {
     }
   }, [user.uid])
 
-  // Al entrar, el refugio aprobado publica (o actualiza) su perfil público para los adoptantes.
-  // Así también aparecen los refugios aprobados antes de que existiera el perfil público,
-  // y los que se reactivan. Si ya está al día, no escribe nada.
+  // Publica o actualiza el perfil público del refugio (también al reactivarse); si no hay cambios, no escribe
   useEffect(() => {
     syncShelterPublicProfile(user.uid, {
       name: profile.name,
@@ -101,7 +100,7 @@ function ShelterHomePage() {
             </h2>
             {ratingSummary?.total > 0 ? (
               <>
-                {/* Promedio general: el promedio de los dos puntajes */}
+                {/* Promedio general de los dos puntajes */}
                 <p className={styles.statValue}>
                   <StarDisplay
                     value={(ratingSummary.shelterAverage + ratingSummary.processAverage) / 2}

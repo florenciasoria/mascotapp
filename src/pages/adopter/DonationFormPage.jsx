@@ -15,12 +15,13 @@ import styles from './DonationFormPage.module.css'
 
 const EMPTY_DONATION = { amount: '', cardNumber: '', cardHolder: '', expiry: '', cvv: '' }
 
-// Montos rápidos como opciones del ToggleGroup: { value: '5000', label: '$ 5.000' }
+// Montos rápidos como opciones: { value: "5000", label: "$ 5.000" }
 const PRESET_OPTIONS = DONATION_PRESETS.map((amount) => ({
   value: String(amount),
   label: formatCurrency(amount),
 }))
 
+/** Formulario de donación simulada a un refugio (CU005). Solo se guardan los últimos 4 dígitos de la tarjeta. */
 function DonationFormPage() {
   const { shelterId } = useParams()
   const { user, profile } = useAuth()
@@ -45,7 +46,7 @@ function DonationFormPage() {
     }
   }, [shelterId])
 
-  // Las pastillas de monto y "Otro importe" escriben en el mismo campo (amount)
+  // Los montos rápidos y "Otro importe" comparten el campo amount
   function handleChange(event) {
     const { name, value } = event.target
     setValues((previous) => ({ ...previous, [name]: value }))
@@ -79,7 +80,6 @@ function DonationFormPage() {
     }
   }
 
-  // Al cerrar el diálogo de éxito, vamos a Mis donaciones
   function handleDialogClose() {
     const wasSuccess = dialog?.type === 'success'
     setDialog(null)

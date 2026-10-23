@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { getAdopterDonations } from '@/services/donationService'
 import styles from './MyDonationsPage.module.css'
 
+/** Donaciones realizadas por el adoptante. */
 function MyDonationsPage() {
   const { user } = useAuth()
   const [donations, setDonations] = useState([])

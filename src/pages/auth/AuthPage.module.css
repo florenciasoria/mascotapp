@@ -49,14 +49,13 @@
   text-align: center;
 }
 
-/* Link "¿Olvidaste tu contraseña?" pegado al campo de contraseña */
+/* Link "¿Olvidaste tu contraseña?" */
 .forgotLink {
   align-self: flex-end;
   margin-top: calc(var(--space-4) * -1);
   font-size: var(--font-size-sm);
 }
 
-/* Mensaje de confirmación */
 .success {
   margin: 0;
   padding: var(--space-4);
@@ -65,7 +64,7 @@
   background-color: var(--color-surface);
 }
 
-/* "Mantener la sesión iniciada": casilla nativa (se usa con teclado y lector de pantalla) */
+/* "Mantener la sesión iniciada" */
 .remember {
   display: flex;
   align-items: center;
@@ -77,6 +76,6 @@
 .remember input {
   width: 1.125rem;
   height: 1.125rem;
-  accent-color: var(--color-primary); /* la casilla marcada toma el rosa de la app */
+  accent-color: var(--color-primary);
   cursor: pointer;
 }

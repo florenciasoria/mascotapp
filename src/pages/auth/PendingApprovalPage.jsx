@@ -4,8 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import logo from '@/assets/logo.png'
 import styles from './MessagePage.module.css'
 
-// Se muestra a los refugios hasta que un administrador apruebe su cuenta.
-// También funciona como confirmación del registro.
+/** Pantalla para refugios pendientes de aprobación. Se actualiza sola cuando el administrador los aprueba. */
 function PendingApprovalPage() {
   const { profile } = useAuth()
 

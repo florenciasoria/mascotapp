@@ -1,7 +1,6 @@
 import { ROLES } from './roles'
 
-// Opciones del menú lateral de cada rol.
-// "end: true" marca Inicio como activo solo en su ruta exacta.
+// Opciones del menú lateral de cada rol. "end: true" marca Inicio solo en su ruta exacta.
 export const MENUS = {
   [ROLES.ADOPTER]: {
     main: [

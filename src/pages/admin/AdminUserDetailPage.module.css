@@ -2,7 +2,7 @@
   max-width: 48rem;
 }
 
-/* Datos en grilla de 2 columnas: etiqueta arriba, valor abajo */
+/* Datos en dos columnas: etiqueta arriba, valor abajo */
 .facts {
   display: grid;
   grid-template-columns: 1fr;
@@ -40,7 +40,7 @@
   margin-top: var(--space-6);
 }
 
-/* Solicitud de registro: Volver a la izquierda, las decisiones a la derecha */
+/* Volver a la izquierda, decisiones a la derecha */
 .actionsSplit {
   display: flex;
   flex-wrap: wrap;

@@ -1,4 +1,4 @@
-/* Cada gráfico es una tarjeta blanca con su título */
+/* Tarjeta de cada gráfico */
 .chart {
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@
   color: var(--color-text-soft);
 }
 
-/* Dona a la izquierda y leyenda a la derecha; en celular, una debajo de la otra */
+/* Dona y leyenda lado a lado; en pantallas angostas, apiladas */
 .donutLayout {
   display: grid;
   grid-template-columns: 1fr;
@@ -30,7 +30,6 @@
 
 @media (min-width: 30rem) {
   .donutLayout {
-    /* minmax(0, 1fr): la leyenda se achica dentro de la tarjeta en vez de desbordarla */
     grid-template-columns: 140px minmax(0, 1fr);
   }
 }
@@ -64,7 +63,6 @@
   min-width: 0;
 }
 
-/* El número siempre a la derecha, sin partirse */
 .legendValue {
   font-weight: var(--font-weight-semibold);
   white-space: nowrap;
@@ -76,7 +74,7 @@
   color: var(--color-text-soft);
 }
 
-/* Solo para lectores de pantalla: no se ve, pero se lee */
+/* Visible solo para lectores de pantalla */
 .srOnly {
   position: absolute;
   width: 1px;

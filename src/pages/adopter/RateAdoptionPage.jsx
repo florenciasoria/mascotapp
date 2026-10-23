@@ -13,9 +13,10 @@ import { LIMITS, validateRatingForm } from '@/utils/validators'
 import { focusFirstInvalidField } from '@/utils/forms'
 import styles from './RateAdoptionPage.module.css'
 
-// Sin estrellas elegidas: el adoptante tiene que elegir cada puntaje
+// Sin puntajes iniciales: el adoptante elige cada uno
 const EMPTY_RATING = { shelterScore: '', processScore: '', comment: '' }
 
+/** Calificación de una adopción aceptada (CU006): atención del refugio, proceso y comentario. */
 function RateAdoptionPage() {
   const { requestId } = useParams()
   const { user } = useAuth()
@@ -28,7 +29,6 @@ function RateAdoptionPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [dialog, setDialog] = useState(null)
 
-  // La adopción y si ya la calificó se buscan a la vez
   useEffect(() => {
     let isActive = true
 
@@ -79,7 +79,6 @@ function RateAdoptionPage() {
     }
   }
 
-  // Al cerrar el diálogo de éxito, volvemos al historial
   function handleDialogClose() {
     const wasSuccess = dialog?.type === 'success'
     setDialog(null)
@@ -92,7 +91,7 @@ function RateAdoptionPage() {
     return <p role="status">Cargando…</p>
   }
 
-  // Solo se califica una adopción aceptada propia (la regla también lo exige)
+  // Solo se califica una adopción aceptada propia (las reglas también lo exigen)
   if (!adoption || adoption.status !== REQUEST_STATUS.ACCEPTED) {
     return (
       <>

@@ -1,4 +1,4 @@
-/* Mismas columnas que "Mis mascotas": se acomodan solas según el ancho */
+/* Grilla de tarjetas adaptable al ancho */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));

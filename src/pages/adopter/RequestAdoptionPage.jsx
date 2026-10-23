@@ -15,7 +15,7 @@ import { LIMITS, validateRequestForm } from '@/utils/validators'
 import { focusFirstInvalidField } from '@/utils/forms'
 import styles from './RequestAdoptionPage.module.css'
 
-// Sí/No sin valor inicial: el adoptante tiene que elegir cada respuesta
+// Las preguntas Sí/No no tienen valor inicial: el adoptante elige cada respuesta
 const EMPTY_REQUEST_VALUES = {
   housingType: '',
   hoursAlone: '',
@@ -30,13 +30,14 @@ const EMPTY_REQUEST_VALUES = {
   motivation: '',
 }
 
-// Pregunta de seguimiento de cada Sí/No (solo aparece si respondió "Sí")
+// Pregunta de seguimiento de cada Sí/No (aparece solo con "Sí")
 const FOLLOW_UPS = {
   hasYard: 'hasSafetyNet',
   hasOtherPets: 'otherPetsDetail',
   hasExperience: 'experienceYears',
 }
 
+/** Formulario de solicitud de adopción (CU003). */
 function RequestAdoptionPage() {
   const { petId } = useParams()
   const { user, profile } = useAuth()
@@ -49,7 +50,6 @@ function RequestAdoptionPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [dialog, setDialog] = useState(null)
 
-  // La mascota y si ya la pidió se buscan a la vez
   useEffect(() => {
     let isActive = true
 
@@ -71,7 +71,7 @@ function RequestAdoptionPage() {
     const { name, value } = event.target
     setValues((previous) => {
       const next = { ...previous, [name]: value }
-      // Si pasa a "No", se borra lo que había respondido en la pregunta de seguimiento
+      // Al responder "No", se borra la respuesta de seguimiento
       if (FOLLOW_UPS[name] && value === 'no') {
         next[FOLLOW_UPS[name]] = ''
       }
@@ -111,7 +111,6 @@ function RequestAdoptionPage() {
     }
   }
 
-  // Al cerrar el diálogo de éxito, vamos a Mis solicitudes
   function handleDialogClose() {
     const wasSuccess = dialog?.type === 'success'
     setDialog(null)
@@ -134,7 +133,7 @@ function RequestAdoptionPage() {
     )
   }
 
-  // Una sola solicitud por mascota (la regla de Firestore también lo impide)
+  // Una sola solicitud vigente por mascota (las reglas también lo impiden)
   if (alreadyRequested && dialog === null) {
     return (
       <>

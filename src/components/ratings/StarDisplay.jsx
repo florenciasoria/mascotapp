@@ -2,9 +2,13 @@ import styles from './Stars.module.css'
 
 const POSITIONS = [1, 2, 3, 4, 5]
 
-// Muestra un puntaje o un promedio con estrellas (solo lectura), con medias estrellas.
-// Se redondea a la media estrella más cercana (4,3 → 4,5) y el número exacto se muestra aparte.
-// showValue: además muestra el número (por ejemplo "4,3"), útil para los promedios.
+/**
+ * Muestra un puntaje o un promedio con estrellas (solo lectura).
+ * Redondea a la media estrella más cercana; el valor exacto se anuncia a los lectores de pantalla.
+ * @param {object} props
+ * @param {number} props.value - Puntaje de 1 a 5.
+ * @param {boolean} [props.showValue] - Muestra también el número (por ejemplo, "4,3").
+ */
 function StarDisplay({ value, showValue = false }) {
   const rounded = Math.round(value * 2) / 2
   const text = value.toFixed(1).replace('.', ',')
@@ -13,7 +17,7 @@ function StarDisplay({ value, showValue = false }) {
     <span className={styles.display}>
       <span aria-hidden="true" className={styles.displayStars}>
         {POSITIONS.map((position) => {
-          // Cuánto se llena esta estrella: 0 (vacía), 0.5 (media) o 1 (llena)
+          // Relleno de la estrella: 0, 0.5 o 1
           const fill = Math.min(Math.max(rounded - (position - 1), 0), 1)
           return (
             <span key={position} className={styles.slot}>

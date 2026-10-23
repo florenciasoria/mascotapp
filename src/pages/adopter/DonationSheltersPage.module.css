@@ -13,7 +13,7 @@
   list-style: none;
 }
 
-/* Todas las tarjetas de una fila miden lo mismo; el botón queda abajo */
+/* Tarjetas de igual altura, con el botón al pie */
 .card {
   display: flex;
   flex-direction: column;
@@ -30,7 +30,6 @@
   margin: 0;
 }
 
-/* Descripción del refugio (de su perfil público) */
 .about {
   overflow-wrap: anywhere;
 }

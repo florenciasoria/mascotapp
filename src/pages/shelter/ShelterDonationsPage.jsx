@@ -7,6 +7,7 @@ import { getShelterDonations, getShelterDonationSummary } from '@/services/donat
 import { formatCurrency } from '@/utils/donationOptions'
 import styles from './ShelterDonationsPage.module.css'
 
+/** Donaciones recibidas por el refugio: total, cantidad y detalle. */
 function ShelterDonationsPage() {
   const { user } = useAuth()
   const [donations, setDonations] = useState([])
@@ -14,7 +15,6 @@ function ShelterDonationsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
 
-  // La lista y el total (calculado en el servidor) se buscan a la vez
   useEffect(() => {
     let isActive = true
 

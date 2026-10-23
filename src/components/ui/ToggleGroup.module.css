@@ -1,4 +1,4 @@
-/* El fieldset no trae borde ni márgenes: se ve como cualquier otro campo */
+/* Fieldset sin estilos propios: se ve como cualquier otro campo */
 .field {
   display: flex;
   flex-direction: column;
@@ -15,7 +15,7 @@
   color: var(--color-text);
 }
 
-/* Mismo aspecto que el selector Adoptante / Refugio del registro */
+/* Contenedor de las opciones */
 .options {
   display: inline-flex;
   align-self: flex-start;
@@ -33,7 +33,7 @@
   position: relative;
 }
 
-/* El radio real queda invisible encima de la pastilla: se puede clickear y enfocar */
+/* Radio invisible sobre la pastilla: se puede clickear y enfocar */
 .option input {
   position: absolute;
   inset: 0;

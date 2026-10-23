@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router'
 import Button from '@/components/ui/Button'
 import { logoutUser } from '@/services/authService'
 
+/** Cierra la sesión y vuelve al login (pantallas sin menú lateral). */
 function LogoutButton() {
   const navigate = useNavigate()
 

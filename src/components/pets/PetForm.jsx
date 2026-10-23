@@ -8,9 +8,17 @@ import { LIMITS, validatePetForm } from '@/utils/validators'
 import ImageUpload from './ImageUpload'
 import styles from './PetForm.module.css'
 
-// Formulario compartido por "Registrar mascota" y "Editar mascota".
-// Valida y avisa a la página con onSubmit(values, imageFile); la página decide qué hacer.
-// isEditing: al editar, "Guardar" se habilita recién cuando hay algún cambio.
+/**
+ * Formulario de alta y edición de una mascota (CU001).
+ * Valida los datos y los entrega con onSubmit(values, imageFile).
+ * @param {object} props
+ * @param {object} props.initialValues - Valores iniciales del formulario.
+ * @param {string} [props.currentImageUrl] - Foto actual (al editar).
+ * @param {string} props.submitLabel - Texto del botón de envío.
+ * @param {(values: object, imageFile: File|null) => Promise<void>} props.onSubmit - Guarda la mascota.
+ * @param {() => void} props.onCancel - Cancela y vuelve al listado.
+ * @param {boolean} [props.isEditing] - Si es true, "Guardar" se habilita solo cuando hay cambios.
+ */
 function PetForm({
   initialValues,
   currentImageUrl,

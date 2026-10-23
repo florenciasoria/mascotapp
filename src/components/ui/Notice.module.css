@@ -1,4 +1,4 @@
-/* Mismo estilo que el aviso de refugios pendientes en Gestionar usuarios */
+/* Aviso destacado con borde amarillo */
 .notice {
   display: flex;
   flex-wrap: wrap;

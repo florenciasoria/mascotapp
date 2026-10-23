@@ -55,7 +55,7 @@
   color: var(--color-error);
 }
 
-/* Aviso de refugios pendientes: mismo amarillo que el borde de las tarjetas */
+/* Aviso de refugios pendientes */
 .pendingAlert {
   display: flex;
   flex-wrap: wrap;

@@ -13,6 +13,7 @@ import { REQUEST_STATUS } from '@/utils/requestOptions'
 import { filterRequestsByStatus, REQUEST_STATUS_OPTIONS } from '@/utils/requestFilters'
 import styles from './MyRequestsPage.module.css'
 
+/** Solicitudes enviadas por el adoptante, con filtro por estado y cancelación (CU003). */
 function MyRequestsPage() {
   const { user } = useAuth()
   const [requests, setRequests] = useState([])
@@ -24,7 +25,6 @@ function MyRequestsPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const visibleRequests = filterRequestsByStatus(requests, statusFilter)
 
-  // Carga las solicitudes del adoptante al entrar a la pantalla
   useEffect(() => {
     let isActive = true
 
@@ -42,7 +42,7 @@ function MyRequestsPage() {
     setIsCancelling(true)
     try {
       await cancelAdoptionRequest(requestToCancel.id)
-      // Se actualiza la tarjeta en pantalla sin volver a cargar toda la lista
+      // Actualiza la tarjeta sin volver a cargar la lista
       setRequests((current) =>
         current.map((item) =>
           item.id === requestToCancel.id ? { ...item, status: REQUEST_STATUS.CANCELLED } : item,
@@ -103,7 +103,7 @@ function MyRequestsPage() {
               {visibleRequests.map((request) => (
                 <li key={request.id}>
                   <RequestCard request={request} subtitle={request.shelterName} highlightNew>
-                    {/* Solo se puede cancelar mientras el refugio no decidió */}
+                    {/* Solo se cancelan las pendientes */}
                     {request.status === REQUEST_STATUS.PENDING && (
                       <Button
                         variant="secondary"

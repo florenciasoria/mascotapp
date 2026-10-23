@@ -37,7 +37,17 @@ function ErrorIcon() {
   )
 }
 
-// Diálogo de resultado de una operación (éxito o error), como en el diseño de Figma.
+/**
+ * Diálogo con el resultado de una operación (éxito o error).
+ * @param {object} props
+ * @param {boolean} props.isOpen - Si está abierto.
+ * @param {() => void} props.onClose - Cierra el diálogo.
+ * @param {'success'|'error'} [props.type] - Tipo de resultado.
+ * @param {string} props.title - Título.
+ * @param {string} [props.message] - Detalle.
+ * @param {string} [props.actionLabel] - Texto del botón.
+ * @param {() => void} [props.onAction] - Acción del botón (por defecto, cerrar).
+ */
 function ResultDialog({
   isOpen,
   onClose,

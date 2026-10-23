@@ -30,7 +30,7 @@ const HEADERS = {
   },
 }
 
-// Campos que cada rol puede editar (las reglas de Firestore validan lo mismo)
+// Campos editables por rol (las reglas de Firestore validan lo mismo)
 const EDITABLE_FIELDS = {
   [ROLES.ADOPTER]: ['name', 'phone', 'address'],
   [ROLES.SHELTER]: ['name', 'phone', 'address', 'neighborhood', 'about'],
@@ -41,7 +41,7 @@ function getInitialValues(profile, fields) {
   return Object.fromEntries(fields.map((field) => [field, profile[field] ?? '']))
 }
 
-// Perfil compartido por los tres roles: cada uno ve y edita sus campos
+/** Perfil del usuario, compartido por los tres roles: cada uno ve y edita sus campos (CU004). */
 function ProfilePage() {
   const { user, profile } = useAuth()
   const fields = EDITABLE_FIELDS[profile.role]
@@ -78,7 +78,7 @@ function ProfilePage() {
     setIsSaving(true)
     try {
       await updateUserProfile(user.uid, values)
-      // El refugio tiene sus datos copiados en sus mascotas y en su perfil público: los actualizamos
+      // Los datos del refugio están copiados en sus mascotas y en su perfil público: se actualizan
       if (isShelter) {
         await syncShelterInfoInPets(user.uid, {
           name: values.name.trim(),

@@ -1,0 +1,73 @@
+.title {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+/* Lista ordenada: los puntos y la línea reemplazan a los números */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Punto, texto y fecha; la línea vertical une los puntos */
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 1.25rem;
+  left: calc(0.5rem - 1px);
+  width: 2px;
+  height: calc(100% - 0.5rem);
+  background-color: var(--color-border);
+}
+
+.dot {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid;
+  border-radius: 50%;
+}
+
+.neutral {
+  border-color: var(--color-border-input);
+  background-color: var(--color-border-input);
+}
+
+.success {
+  border-color: var(--color-secondary);
+  background-color: var(--color-secondary);
+}
+
+.danger {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+}
+
+/* Paso pendiente: punto vacío */
+.warning,
+.pending {
+  border-color: #d9b44a;
+  background-color: var(--color-surface);
+}
+
+.text {
+  overflow-wrap: anywhere;
+}
+
+.date {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}

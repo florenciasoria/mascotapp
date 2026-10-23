@@ -1,4 +1,4 @@
 import { createContext } from 'react'
 
-// Contexto con la sesión actual: { user, profile, isLoading, isEmailVerified, refreshEmailVerification }
+// Contexto de la sesión: { user, profile, isLoading, isEmailVerified, refreshEmailVerification }
 export const AuthContext = createContext(null)

@@ -1,5 +1,8 @@
-// Pasa a minúsculas y quita las tildes: así "lujan" encuentra "Luján".
-// Se usa en los buscadores para comparar textos sin importar mayúsculas ni acentos.
+/**
+ * Pasa a minúsculas y quita las tildes, para buscar sin distinguir mayúsculas ni acentos.
+ * @param {string} text
+ * @returns {string}
+ */
 export function normalizeText(text) {
   return text
     .toLowerCase()

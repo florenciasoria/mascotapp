@@ -22,7 +22,7 @@
   cursor: pointer;
 }
 
-/* El <dialog> es el panel que entra desde la izquierda */
+/* Panel lateral (<dialog>) */
 .drawer {
   width: min(18rem, 85vw);
   max-width: none;
@@ -82,7 +82,7 @@
   background-color: var(--color-bg);
 }
 
-/* Opción actual: en negrita para cumplir contraste (texto grande) y no depender solo del color */
+/* Opción actual: en negrita, para no depender solo del color */
 .active,
 .active:hover {
   background-color: var(--color-primary);

@@ -6,7 +6,7 @@
   text-align: center;
 }
 
-/* El ícono va arriba del título: lo ubicamos con "order" sin cambiar el HTML */
+/* El ícono se muestra arriba del título (order) sin cambiar el HTML */
 .successIcon,
 .errorIcon {
   display: flex;

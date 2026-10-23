@@ -7,7 +7,11 @@ import {
 import { markEmailVerified } from '@/services/userService'
 import { AuthContext } from './AuthContext'
 
-// Mantiene actualizada la sesión y el perfil del usuario para toda la app.
+/**
+ * Mantiene la sesión y el perfil del usuario (en tiempo real) y los comparte con toda la app.
+ * @param {object} props
+ * @param {React.ReactNode} props.children - La aplicación.
+ */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
@@ -18,7 +22,7 @@ export function AuthProvider({ children }) {
     let unsubscribeProfile = () => {}
 
     const unsubscribeAuth = subscribeToAuthChanges((firebaseUser) => {
-      // Si cambió el usuario, dejamos de escuchar el perfil anterior
+      // Al cambiar de usuario, se deja de escuchar el perfil anterior
       unsubscribeProfile()
       setUser(firebaseUser)
       setIsEmailVerified(firebaseUser?.emailVerified ?? false)
@@ -36,22 +40,21 @@ export function AuthProvider({ children }) {
       })
     })
 
-    // Al desmontar, cortamos ambas suscripciones (evita pérdidas de memoria)
+    // Cancela las suscripciones al desmontar
     return () => {
       unsubscribeProfile()
       unsubscribeAuth()
     }
   }, [])
 
-  // Si el email está verificado pero el perfil todavía no lo dice, lo guardamos.
-  // Pasa al verificar o, para cuentas ya verificadas, en el próximo inicio de sesión.
+  // Registra en el perfil la verificación del email, para que el admin y las reglas la conozcan
   useEffect(() => {
     if (user && isEmailVerified && profile && !profile.emailVerified) {
       markEmailVerified(user.uid).catch(() => {})
     }
   }, [user, isEmailVerified, profile])
 
-  // Se llama desde la pantalla "Verificá tu email"
+  // Vuelve a consultar la verificación (pantalla "Verificá tu email")
   async function refreshEmailVerification() {
     const verified = await checkEmailVerified()
     setIsEmailVerified(verified)

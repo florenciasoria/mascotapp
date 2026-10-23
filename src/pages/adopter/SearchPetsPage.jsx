@@ -7,6 +7,10 @@ import { getAvailablePets } from '@/services/petService'
 import { EMPTY_FILTERS, filterPets, validateFilters } from '@/utils/petFilters'
 import styles from './SearchPetsPage.module.css'
 
+/**
+ * Búsqueda de mascotas disponibles (CU002).
+ * Las mascotas se cargan una vez y se filtran en el navegador.
+ */
 function SearchPetsPage() {
   const [pets, setPets] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -15,7 +19,6 @@ function SearchPetsPage() {
   const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS)
   const [filterError, setFilterError] = useState('')
 
-  // Trae todas las mascotas disponibles una sola vez (los filtros se aplican después)
   useEffect(() => {
     let isActive = true
 
@@ -29,20 +32,19 @@ function SearchPetsPage() {
     }
   }, []) // aca
 
-  // Mascotas que se muestran: las que cumplen los filtros aplicados
   const visiblePets = filterPets(pets, appliedFilters)
   const isReady = !isLoading && !loadError
 
-  // Barrios con mascotas disponibles (sin repetir, en orden alfabético)
+  // Barrios con mascotas disponibles, sin repetir y en orden alfabético
   const neighborhoods = [...new Set(pets.map((pet) => pet.neighborhood))].sort((a, b) =>
     a.localeCompare(b, 'es'),
   )
 
-  // Aplicar: solo si lo elegido es distinto de lo aplicado
+  // Aplicar solo si hay cambios
   const canApply = Object.keys(EMPTY_FILTERS).some(
     (key) => draftFilters[key] !== appliedFilters[key],
   )
-  // Limpiar: solo si hay algún filtro elegido o aplicado
+  // Limpiar solo si hay algún filtro elegido o aplicado
   const canClear = [draftFilters, appliedFilters].some((filters) =>
     Object.values(filters).some((value) => value !== ''),
   )

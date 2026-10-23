@@ -1,4 +1,4 @@
-// Opciones fijas del formulario de solicitud. Las reglas de Firestore validan las mismas listas.
+// Opciones del formulario de solicitud (las reglas de Firestore validan las mismas listas).
 export const HOUSING_TYPES = ['Departamento', 'Casa', 'PH']
 
 export const HOURS_ALONE = [
@@ -25,7 +25,7 @@ export const REQUEST_STATUS_LABELS = {
   [REQUEST_STATUS.CANCELLED]: 'Cancelada',
 }
 
-// Color de la pastilla de estado (StatusBadge), como en el diseño
+// Color de la pastilla de cada estado
 export const REQUEST_STATUS_TONES = {
   [REQUEST_STATUS.PENDING]: 'warning',
   [REQUEST_STATUS.ACCEPTED]: 'success',

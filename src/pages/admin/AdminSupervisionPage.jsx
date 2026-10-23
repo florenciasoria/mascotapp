@@ -12,11 +12,12 @@ import { REQUEST_STATUS, REQUEST_STATUS_LABELS } from '@/utils/requestOptions'
 import { ROLE_LABELS, ROLES } from '@/utils/roles'
 import styles from './AdminSupervisionPage.module.css'
 
-// Suma los valores de un objeto: { a: 2, b: 3 } → 5
+/** Suma los valores de un objeto: { a: 2, b: 3 } → 5 */
 function sumValues(counts) {
   return Object.values(counts).reduce((total, value) => total + value, 0)
 }
 
+/** Supervisión de la plataforma (CU008): totales, gráficos y actividad reciente. */
 function AdminSupervisionPage() {
   const [stats, setStats] = useState(null)
   const [donationsByMonth, setDonationsByMonth] = useState([])
@@ -76,7 +77,7 @@ function AdminSupervisionPage() {
     { label: 'Mascotas', value: sumValues(petsByStatus) },
     { label: 'Solicitudes', value: sumValues(requestsByStatus) },
     { label: 'Adopciones', value: requestsByStatus[REQUEST_STATUS.ACCEPTED] },
-    // Sin donaciones, sum() devuelve null: se muestra $ 0
+    // Sin donaciones, sum() devuelve null
     { label: 'Donaciones', value: formatCurrency(donations.amount ?? 0) },
   ]
 

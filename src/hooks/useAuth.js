@@ -1,8 +1,10 @@
 import { useContext } from 'react'
 import { AuthContext } from '@/context/AuthContext'
 
-// Acceso a la sesión desde cualquier componente:
-// const { user, profile } = useAuth()
+/**
+ * Devuelve la sesión actual. Debe usarse dentro de AuthProvider.
+ * @returns {{user: object|null, profile: object|null, isLoading: boolean, isEmailVerified: boolean, refreshEmailVerification: () => Promise<boolean>}}
+ */
 export function useAuth() {
   const context = useContext(AuthContext)
   if (!context) {

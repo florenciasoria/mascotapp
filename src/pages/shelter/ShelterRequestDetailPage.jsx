@@ -16,10 +16,12 @@ import {
 } from '@/services/adoptionService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './ShelterRequestDetailPage.module.css'
+import RequestTimeline from '@/components/requests/RequestTimeline'
 
+/** Detalle de una solicitud para el refugio (CU003): respuestas, contacto, historial y decisión. */
 function ShelterRequestDetailPage() {
   const { requestId } = useParams()
-  // Volver a la pantalla de la que vino (Historial o Solicitudes); por defecto, Solicitudes
+  // Vuelve a la pantalla de origen (Historial o Solicitudes)
   const location = useLocation()
   const backTo = location.state?.backTo ?? '/refugio/solicitudes'
   const [request, setRequest] = useState(null)
@@ -50,7 +52,7 @@ function ShelterRequestDetailPage() {
       } else {
         await rejectAdoptionRequest(request.id)
       }
-      // Se vuelve a leer para mostrar la fecha real que puso el servidor
+      // Se vuelve a leer para mostrar la fecha asignada por el servidor
       setRequest(await getRequest(request.id))
       setDialog(
         isAccept
@@ -91,7 +93,7 @@ function ShelterRequestDetailPage() {
   }
 
   const isPending = request.status === REQUEST_STATUS.PENDING
-  // El contacto se muestra mientras sirve: para consultar antes de decidir, o para coordinar la adopción
+  // El contacto se muestra mientras la solicitud está pendiente o aceptada
   const showContact =
     request.adopterContact &&
     [REQUEST_STATUS.PENDING, REQUEST_STATUS.ACCEPTED].includes(request.status)
@@ -142,8 +144,9 @@ function ShelterRequestDetailPage() {
             </dl>
           </Card>
         )}
-        {/* Pendiente: Volver como link a la izquierda y las decisiones a la derecha
-            (como la solicitud de registro del admin). Resuelta: solo Volver. */}
+
+        <RequestTimeline request={request} />
+
         {isPending ? (
           <div className={styles.actionsSplit}>
             <ButtonLink to={backTo} variant="back">

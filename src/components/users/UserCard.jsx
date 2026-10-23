@@ -5,9 +5,15 @@ import StatusBadge from '@/components/ui/StatusBadge'
 import { ROLE_LABELS, STATUS, STATUS_LABELS, STATUS_TONES } from '@/utils/roles'
 import styles from './UserCard.module.css'
 
-// Tarjeta de usuario para el listado del admin.
-// Pendiente: borde amarillo. Desactivado: fondo gris. Los activos y desactivados
-// tienen el botón para cambiar su estado; los pendientes se revisan en el detalle.
+/**
+ * Tarjeta de un usuario en Gestionar usuarios.
+ * Resalta los pendientes y atenúa los desactivados.
+ * @param {object} props
+ * @param {object} props.user - Usuario.
+ * @param {(user: object) => void} props.onDeactivate - Pide desactivar la cuenta.
+ * @param {(user: object) => void} props.onReactivate - Reactiva la cuenta.
+ * @param {boolean} [props.isUpdating] - Hay un cambio de estado en curso.
+ */
 function UserCard({ user, onDeactivate, onReactivate, isUpdating = false }) {
   const titleId = `user-${user.id}`
   const isPending = user.status === STATUS.PENDING

@@ -1,12 +1,10 @@
-// Inicialización de Firebase.
-// Es el único archivo que conoce la configuración del proyecto:
-// el resto de la app importa `auth`, `db` y `storage` desde acá.
+// Inicialización de Firebase: exporta auth, db y storage para el resto de los servicios.
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
-// Vite expone en import.meta.env solo las variables que empiezan con VITE_
+// Configuración leída de las variables de entorno (.env.local)
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -16,8 +14,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-// Si falta alguna variable, cortamos con un mensaje claro
-// en lugar de dejar que Firebase falle con un error confuso.
+// Si falta alguna variable, se informa con un mensaje claro
 const missingKeys = Object.entries(firebaseConfig)
   .filter(([, value]) => !value)
   .map(([key]) => key)
@@ -31,7 +28,7 @@ if (missingKeys.length > 0) {
 const app = initializeApp(firebaseConfig)
 
 export const auth = getAuth(app)
-// Los emails que envía Firebase (verificación, recuperar contraseña) en español
+// Emails de Firebase (verificación y recuperación de contraseña) en español
 auth.languageCode = 'es'
 
 export const db = getFirestore(app)

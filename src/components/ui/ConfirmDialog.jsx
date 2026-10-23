@@ -2,8 +2,18 @@ import Modal from './Modal'
 import Button from './Button'
 import styles from './ConfirmDialog.module.css'
 
-// Pide confirmación antes de una acción importante (desactivar, rechazar, etc.).
-// El foco arranca en "Cancelar": si alguien aprieta Enter sin leer, no pasa nada grave.
+/**
+ * Pide confirmación antes de una acción importante. El foco inicial está en "Cancelar".
+ * @param {object} props
+ * @param {boolean} props.isOpen - Si está abierto.
+ * @param {() => void} props.onClose - Cierra sin confirmar.
+ * @param {() => void} props.onConfirm - Confirma la acción.
+ * @param {string} props.title - Pregunta.
+ * @param {string} [props.message] - Detalle de la acción.
+ * @param {string} [props.confirmLabel] - Texto del botón de confirmación.
+ * @param {string} [props.cancelLabel] - Texto del botón de cancelación.
+ * @param {boolean} [props.isLoading] - Muestra la carga en la confirmación.
+ */
 function ConfirmDialog({
   isOpen,
   onClose,

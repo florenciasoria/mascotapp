@@ -18,6 +18,7 @@ const STATUS_TONES = {
   [PET_STATUS.ADOPTED]: 'neutral',
 }
 
+/** Mascotas del refugio (CU001): listado, activación y desactivación. */
 function ShelterPetsPage() {
   const { user } = useAuth()
   const [pets, setPets] = useState([])
@@ -27,7 +28,6 @@ function ShelterPetsPage() {
   const [errorMessage, setErrorMessage] = useState('')
   const [petToDeactivate, setPetToDeactivate] = useState(null)
 
-  // Carga las mascotas del refugio al entrar a la pantalla
   useEffect(() => {
     let isActive = true // evita actualizar el estado si la pantalla ya se cerró
 
@@ -55,7 +55,7 @@ function ShelterPetsPage() {
     }
   }
 
-  // Desactivar pide confirmación (la mascota deja de verse); activar no hace falta
+  // Desactivar pide confirmación; activar, no
   function handleToggleClick(pet) {
     if (pet.status === PET_STATUS.AVAILABLE) {
       setPetToDeactivate(pet)

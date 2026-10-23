@@ -1,4 +1,4 @@
-// Servicio de donaciones simuladas: el único lugar que usa la colección "donations"
+// Donaciones simuladas (colección "donations"). No se procesan pagos reales.
 import {
   addDoc,
   collection,
@@ -16,13 +16,19 @@ import { DONATION_STATUS, PAYMENT_METHODS } from '@/utils/donationOptions'
 
 const donationsCollection = collection(db, 'donations')
 
-// Pasa un documento de Firestore a un objeto con su id
+/** Convierte un documento de Firestore en un objeto con su id. */
 function toDonation(snapshot) {
   return { id: snapshot.id, ...snapshot.data() }
 }
 
-// Registra una donación simulada. De la tarjeta solo se guardan los últimos 4 dígitos:
-// el número completo y el CVV nunca salen del navegador.
+/**
+ * Registra una donación simulada. De la tarjeta se guardan solo los últimos 4 dígitos;
+ * el número completo y el código de seguridad no se envían.
+ * @param {{uid: string, name: string}} adopter - Quien dona.
+ * @param {{id: string, name: string, neighborhood: string}} shelter - Refugio destinatario.
+ * @param {{amount: string|number, cardNumber: string}} payment - Importe y número de tarjeta.
+ * @returns {Promise<object>}
+ */
 export function createDonation(adopter, shelter, { amount, cardNumber }) {
   const digits = cardNumber.replace(/\D/g, '')
   return addDoc(donationsCollection, {
@@ -39,19 +45,31 @@ export function createDonation(adopter, shelter, { amount, cardNumber }) {
   })
 }
 
-// Donaciones que hizo un adoptante, de la más nueva a la más vieja
+/**
+ * Donaciones realizadas por un adoptante, de la más nueva a la más vieja.
+ * @param {string} adopterId
+ * @returns {Promise<object[]>}
+ */
 export async function getAdopterDonations(adopterId) {
   const snapshot = await getDocs(query(donationsCollection, where('adopterId', '==', adopterId)))
   return sortByNewest(snapshot.docs.map(toDonation))
 }
 
-// Donaciones que recibió un refugio, de la más nueva a la más vieja
+/**
+ * Donaciones recibidas por un refugio, de la más nueva a la más vieja.
+ * @param {string} shelterId
+ * @returns {Promise<object[]>}
+ */
 export async function getShelterDonations(shelterId) {
   const snapshot = await getDocs(query(donationsCollection, where('shelterId', '==', shelterId)))
   return sortByNewest(snapshot.docs.map(toDonation))
 }
 
-// Total recibido y cantidad de donaciones de un refugio, calculado en el servidor
+/**
+ * Total recibido y cantidad de donaciones de un refugio, calculados en el servidor.
+ * @param {string} shelterId
+ * @returns {Promise<{total: number, amount: number|null}>}
+ */
 export async function getShelterDonationSummary(shelterId) {
   const snapshot = await getAggregateFromServer(
     query(donationsCollection, where('shelterId', '==', shelterId)),

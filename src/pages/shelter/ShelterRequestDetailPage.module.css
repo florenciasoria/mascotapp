@@ -16,7 +16,7 @@
   justify-content: center;
 }
 
-/* Pendiente: Volver a la izquierda, las decisiones a la derecha */
+/* Volver a la izquierda, decisiones a la derecha */
 .actionsSplit {
   display: flex;
   flex-wrap: wrap;
@@ -31,7 +31,7 @@
   gap: var(--space-3);
 }
 
-/* Datos de contacto: etiqueta arriba, valor abajo (como las respuestas) */
+/* Datos de contacto: etiqueta arriba, valor abajo */
 .contact {
   display: grid;
   grid-template-columns: 1fr;

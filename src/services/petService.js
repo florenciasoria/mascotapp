@@ -1,4 +1,4 @@
-// Servicio de mascotas: el único lugar que lee y escribe la colección "pets"
+// Mascotas (colección "pets").
 import {
   addDoc,
   collection,
@@ -18,7 +18,11 @@ import { PET_STATUS, toMonths } from '@/utils/petOptions'
 
 const petsCollection = collection(db, 'pets')
 
-// Convierte los datos del formulario en los campos que se guardan
+/**
+ * Convierte los valores del formulario en los campos que se guardan.
+ * @param {object} values - Valores del formulario.
+ * @returns {object}
+ */
 function buildPetFields({
   name,
   species,
@@ -45,14 +49,21 @@ function buildPetFields({
   }
 }
 
-// Pasa un documento de Firestore a un objeto con su id
+/** Convierte un documento de Firestore en un objeto con su id. */
 function toPet(snapshot) {
   return { id: snapshot.id, ...snapshot.data() }
 }
 
-// Registra una mascota. Primero sube la foto y después guarda los datos.
-// El nombre, el barrio y la dirección del refugio se copian en la mascota (desnormalización):
-// así el adoptante puede verlos y filtrar por barrio sin leer el perfil del refugio.
+/**
+ * Registra una mascota: sube la foto y guarda los datos. Si falla el guardado, borra la foto.
+ * Copia nombre, barrio y dirección del refugio en la mascota, para mostrarlos y filtrar
+ * sin leer el perfil del refugio.
+ * @param {string} shelterId
+ * @param {object} shelterProfile - Perfil del refugio.
+ * @param {object} petData - Valores del formulario.
+ * @param {File} imageFile - Foto.
+ * @returns {Promise<object>}
+ */
 export async function createPet(shelterId, shelterProfile, petData, imageFile) {
   const image = await uploadPetImage(shelterId, imageFile)
 
@@ -69,13 +80,19 @@ export async function createPet(shelterId, shelterProfile, petData, imageFile) {
       updatedAt: serverTimestamp(),
     })
   } catch (error) {
-    // Si no se pudo guardar la mascota, borramos la foto para no dejarla huérfana
+    // Si falla el guardado, se borra la foto para no dejarla huérfana
     await deletePetImage(image.imageStoragePath).catch(() => {})
     throw error
   }
 }
 
-// Si hay foto nueva: se sube, se guarda la mascota y recién ahí se borra la vieja
+/**
+ * Edita una mascota. Con foto nueva: la sube, guarda los datos y después borra la anterior.
+ * @param {object} pet - Mascota actual.
+ * @param {object} petData - Valores del formulario.
+ * @param {File|null} newImageFile - Foto nueva, si se cambió.
+ * @returns {Promise<void>}
+ */
 export async function updatePet(pet, petData, newImageFile) {
   const newImage = newImageFile ? await uploadPetImage(pet.shelterId, newImageFile) : null
 
@@ -92,37 +109,58 @@ export async function updatePet(pet, petData, newImageFile) {
     throw error
   }
 
-  // La foto anterior ya no se usa. Si falla el borrado, la mascota no se ve afectada.
+  // Si falla el borrado de la foto anterior, la mascota no se ve afectada
   if (newImage && pet.imageStoragePath) {
     await deletePetImage(pet.imageStoragePath).catch(() => {})
   }
 }
 
-// Activar o desactivar una mascota (disponible / no disponible)
+/**
+ * Activa o desactiva una mascota.
+ * @param {string} petId
+ * @param {string} status - "disponible" o "no_disponible".
+ * @returns {Promise<void>}
+ */
 export function setPetStatus(petId, status) {
   return updateDoc(doc(db, 'pets', petId), { status, updatedAt: serverTimestamp() })
 }
 
-// Una mascota por su ID (o null si no existe o las reglas no dejan leerla)
+/**
+ * Una mascota por su ID.
+ * @param {string} petId
+ * @returns {Promise<object|null>} La mascota, o null si no existe.
+ */
 export async function getPet(petId) {
   const snapshot = await getDoc(doc(db, 'pets', petId))
   return snapshot.exists() ? toPet(snapshot) : null
 }
 
-// Mascotas de un refugio (todas, en cualquier estado)
+/**
+ * Mascotas de un refugio, en cualquier estado.
+ * @param {string} shelterId
+ * @returns {Promise<object[]>}
+ */
 export async function getShelterPets(shelterId) {
   const snapshot = await getDocs(query(petsCollection, where('shelterId', '==', shelterId)))
   return sortByNewest(snapshot.docs.map(toPet))
 }
 
-// Mascotas que se pueden adoptar (los filtros se aplican después, en el navegador)
+/**
+ * Mascotas disponibles para adopción (los filtros se aplican en el navegador).
+ * @returns {Promise<object[]>}
+ */
 export async function getAvailablePets() {
   const snapshot = await getDocs(query(petsCollection, where('status', '==', PET_STATUS.AVAILABLE)))
   return sortByNewest(snapshot.docs.map(toPet))
 }
 
-// Cuando el refugio edita su perfil, actualiza su nombre, barrio y dirección en sus mascotas.
-// Las adoptadas no se tocan: quedan como registro de dónde estaban.
+/**
+ * Actualiza el nombre, el barrio y la dirección del refugio en sus mascotas (escritura en lote).
+ * Las adoptadas no se modifican.
+ * @param {string} shelterId
+ * @param {{name: string, neighborhood: string, address: string}} info
+ * @returns {Promise<void>}
+ */
 export async function syncShelterInfoInPets(shelterId, { name, neighborhood, address }) {
   const snapshot = await getDocs(query(petsCollection, where('shelterId', '==', shelterId)))
   const batch = writeBatch(db)
@@ -141,7 +179,11 @@ export async function syncShelterInfoInPets(shelterId, { name, neighborhood, add
   return batch.commit()
 }
 
-// Pausa todas las mascotas disponibles de un refugio (lo usa el admin al desactivarlo)
+/**
+ * Pasa a "no disponible" todas las mascotas disponibles de un refugio (al desactivarlo).
+ * @param {string} shelterId
+ * @returns {Promise<void>}
+ */
 export async function pauseShelterPets(shelterId) {
   const snapshot = await getDocs(
     query(

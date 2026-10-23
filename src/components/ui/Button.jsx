@@ -1,7 +1,12 @@
 import styles from './Button.module.css'
 
-// Botón principal de la app.
-// isLoading lo deshabilita mientras se espera una respuesta (evita doble envío).
+/**
+ * Botón de acción.
+ * @param {object} props
+ * @param {'primary'|'secondary'|'link'|'back'} [props.variant] - Estilo del botón.
+ * @param {'md'|'sm'} [props.size] - Tamaño.
+ * @param {boolean} [props.isLoading] - Muestra la carga y lo deshabilita (evita el doble envío).
+ */
 function Button({
   children,
   type = 'button',

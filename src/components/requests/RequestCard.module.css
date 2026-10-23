@@ -1,11 +1,11 @@
-/* Misma estructura que PetCard: foto a la izquierda, datos a la derecha */
+/* Foto a la izquierda, datos a la derecha */
 .card {
   display: grid;
   grid-template-columns: 6rem 1fr;
-  grid-template-rows: 1fr auto; /* el espacio que sobra queda arriba: los botones van al fondo */
+  grid-template-rows: 1fr auto;
   gap: var(--space-4);
   align-items: start;
-  height: 100%; /* todas las tarjetas de una fila miden lo mismo */
+  height: 100%;
 }
 
 .image {
@@ -40,13 +40,13 @@
   grid-column: 1 / -1;
 }
 
-/* Solicitud cancelada: foto en blanco y negro, como las mascotas no disponibles */
+/* Solicitud cancelada: foto en escala de grises */
 .muted .image {
   filter: grayscale(1);
   opacity: 0.7;
 }
 
-/* Pendiente que el refugio tiene que revisar: borde amarillo (como en Gestionar usuarios) */
+/* Pendiente de revisión por el refugio */
 .pending {
   border: 2px solid #d9b44a;
 }
@@ -59,7 +59,7 @@
   font-style: italic;
 }
 
-/* Respuesta del refugio que el adoptante todavía no vio: borde del color del resultado */
+/* Respuesta que el adoptante todavía no vio */
 .newAccepted {
   border: 2px solid var(--color-secondary);
 }
@@ -70,7 +70,7 @@
 
 .newTag {
   margin: 0;
-  color: var(--color-link); /* rosa oscuro: 4.7:1 sobre blanco */
+  color: var(--color-link); /* contraste 4.7:1 sobre blanco */
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
 }
