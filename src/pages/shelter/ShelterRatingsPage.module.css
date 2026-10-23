@@ -4,7 +4,7 @@
   color: var(--color-text-muted);
 }
 
-/* Promedios: tres tarjetas que se acomodan solas según el ancho */
+/* Tarjetas de promedios */
 .summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
@@ -63,7 +63,6 @@
   margin: 0;
 }
 
-/* Comentario del adoptante, como una cita */
 .comment {
   margin: var(--space-2) 0 0;
   padding-left: var(--space-4);

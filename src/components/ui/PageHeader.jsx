@@ -1,6 +1,11 @@
 import styles from './PageHeader.module.css'
 
-// Encabezado de las pantallas de cada área: título + subtítulo
+/**
+ * Encabezado de página: título y subtítulo.
+ * @param {object} props
+ * @param {React.ReactNode} props.title - Título.
+ * @param {string} [props.subtitle] - Subtítulo.
+ */
 function PageHeader({ title, subtitle }) {
   return (
     <header className={styles.header}>

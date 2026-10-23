@@ -1,5 +1,4 @@
-// Barrios fijos para que la ubicación se escriba siempre igual
-// (necesario para filtrar mascotas por ubicación).
+// Barrios de CABA y zonas del GBA: lista fija para que la ubicación sea consistente y filtrable
 export const NEIGHBORHOODS = [
   'Agronomía',
   'Almagro',

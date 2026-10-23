@@ -8,11 +8,12 @@ import { useAuth } from '@/hooks/useAuth'
 import { countUnseenResponses } from '@/services/adoptionService'
 import styles from '@/pages/shared/HomeCards.module.css'
 
+/** Inicio del adoptante, con el aviso de respuestas nuevas a sus solicitudes. */
 function AdopterHomePage() {
   const { user, profile } = useAuth()
   const [unseenCount, setUnseenCount] = useState(0)
 
-  // El aviso es secundario: si falla el conteo, simplemente no se muestra
+  // El aviso es secundario: si falla el conteo, no se muestra
   useEffect(() => {
     let isActive = true
     countUnseenResponses(user.uid)

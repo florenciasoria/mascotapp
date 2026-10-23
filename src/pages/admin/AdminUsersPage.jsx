@@ -18,10 +18,11 @@ import {
 } from '@/utils/userFilters'
 import styles from './AdminUsersPage.module.css'
 
-// Opciones de los filtros, armadas a partir de los textos de roles y estados
+// Opciones de los filtros a partir de los textos de roles
 const toOptions = (labels) => Object.entries(labels).map(([value, label]) => ({ value, label }))
 const ROLE_OPTIONS = [{ value: '', label: 'Todos' }, ...toOptions(ROLE_LABELS)]
 
+/** Gestión de usuarios (CU007): listado con filtros, aviso de pendientes y cambio de estado. */
 function AdminUsersPage() {
   const { user } = useAuth()
   const [users, setUsers] = useState([])
@@ -37,7 +38,7 @@ function AdminUsersPage() {
     let isActive = true
 
     getAllUsers()
-      // El admin no se gestiona a sí mismo
+      // El administrador no se lista a sí mismo
       .then((result) => isActive && setUsers(result.filter((item) => item.id !== user.uid)))
       .catch(() => isActive && setLoadError(true))
       .finally(() => isActive && setIsLoading(false))
@@ -62,7 +63,7 @@ function AdminUsersPage() {
     const { name, value } = event.target
     setDraftFilters((previous) => {
       const next = { ...previous, [name]: value }
-      // Si el estado elegido no existe para el rol nuevo, vuelve a "Todos"
+      // Si el estado elegido no aplica al rol nuevo, vuelve a "Todos"
       if (
         name === 'role' &&
         !getStatusOptions(value).some((option) => option.value === next.status)
@@ -83,14 +84,12 @@ function AdminUsersPage() {
     setAppliedFilters(EMPTY_USER_FILTERS)
   }
 
-  // Atajo del aviso: muestra solo los refugios pendientes
   function handleShowPending() {
     const pendingFilters = { ...EMPTY_USER_FILTERS, role: ROLES.SHELTER, status: STATUS.PENDING }
     setDraftFilters(pendingFilters)
     setAppliedFilters(pendingFilters)
   }
 
-  // Desactivar (con sus efectos sobre un refugio) o reactivar una cuenta desde la tarjeta
   async function changeStatus(account, newStatus) {
     setUpdatingId(account.id)
     try {

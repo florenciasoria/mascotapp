@@ -22,7 +22,7 @@ function MenuIcon() {
   )
 }
 
-// Menú lateral: un <dialog> nativo que se abre desde el botón hamburguesa.
+/** Menú lateral según el rol, en un <dialog> que se abre desde el botón de menú. */
 function Sidebar() {
   const { profile } = useAuth()
   const navigate = useNavigate()
@@ -37,7 +37,7 @@ function Sidebar() {
     dialogRef.current.close()
   }
 
-  // Un clic en el fondo oscuro (fuera del panel) cierra el menú
+  // Un clic fuera del panel cierra el menú
   function handleDialogClick(event) {
     if (event.target === dialogRef.current) {
       closeMenu()

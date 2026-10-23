@@ -5,9 +5,21 @@ import { COLORS, SEXES, SIZES, SPECIES } from '@/utils/petOptions'
 import { AGE_FILTER_OPTIONS } from '@/utils/petFilters'
 import styles from './PetFilters.module.css'
 
-// Primera opción de cada lista: valor vacío = no filtra (el texto cambia según el filtro)
+// Agrega la opción "sin filtro" (valor vacío) al principio de una lista
 const withAll = (label, options) => [{ value: '', label }, ...options]
 
+/**
+ * Filtros de la búsqueda de mascotas (CU002).
+ * @param {object} props
+ * @param {object} props.values - Filtros elegidos (todavía sin aplicar).
+ * @param {string[]} props.neighborhoods - Barrios con mascotas disponibles.
+ * @param {(event: Event) => void} props.onChange - Cambio en un filtro.
+ * @param {() => void} props.onApply - Aplica los filtros elegidos.
+ * @param {() => void} props.onClear - Limpia los filtros.
+ * @param {boolean} props.canApply - Hay cambios para aplicar.
+ * @param {boolean} props.canClear - Hay filtros para limpiar.
+ * @param {string} [props.error] - Error de validación de los filtros.
+ */
 function PetFilters({
   values,
   neighborhoods,

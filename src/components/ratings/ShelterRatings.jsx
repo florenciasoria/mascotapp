@@ -6,9 +6,13 @@ import styles from './ShelterRatings.module.css'
 
 const MAX_OPINIONS = 3
 
-// Calificaciones de un refugio para los adoptantes: promedio general y las opiniones más recientes.
-// Por privacidad, de quien calificó se muestra solo el nombre de pila.
-// Es información secundaria: si falla la carga, la sección simplemente no se muestra.
+/**
+ * Calificaciones de un refugio para los adoptantes: promedio general y opiniones recientes.
+ * De quien calificó se muestra solo el nombre de pila. Si la carga falla, no se muestra nada.
+ * @param {object} props
+ * @param {string} props.shelterId - Refugio calificado.
+ * @param {boolean} [props.compact] - Muestra solo el promedio y la cantidad (para tarjetas).
+ */
 function ShelterRatings({ shelterId, compact = false }) {
   const [summary, setSummary] = useState(null)
   const [opinions, setOpinions] = useState([])
@@ -18,7 +22,8 @@ function ShelterRatings({ shelterId, compact = false }) {
 
     Promise.all([
       getShelterRatingSummary(shelterId),
-      compact ? Promise.resolve([]) : getShelterRatings(shelterId),])
+      compact ? Promise.resolve([]) : getShelterRatings(shelterId),
+    ])
       .then(([totals, ratings]) => {
         if (!isActive) return
         setSummary(totals)
@@ -33,7 +38,6 @@ function ShelterRatings({ shelterId, compact = false }) {
 
   if (!summary) return null
 
-  // Versión compacta (por ejemplo, en la tarjeta de un refugio): solo el promedio y la cantidad
   if (compact) {
     return summary.total === 0 ? (
       <p className={styles.compactEmpty}>Sin calificaciones todavía</p>
@@ -58,7 +62,6 @@ function ShelterRatings({ shelterId, compact = false }) {
       ) : (
         <>
           <p className={styles.summary}>
-            {/* Promedio general: el promedio de los dos puntajes */}
             <StarDisplay value={(summary.shelterAverage + summary.processAverage) / 2} showValue />
             <span className={styles.count}>
               · {summary.total === 1 ? '1 calificación' : `${summary.total} calificaciones`}

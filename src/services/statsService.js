@@ -1,5 +1,4 @@
-// Supervisión del admin: totales y datos para los gráficos.
-// Los conteos y las sumas se calculan en el servidor (agregaciones): no se descargan los documentos.
+// Datos de la supervisión del administrador. Los conteos y las sumas se calculan en el servidor.
 import {
   collection,
   count,
@@ -19,7 +18,13 @@ import { PET_STATUS } from '@/utils/petOptions'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import { ROLE_LABELS, ROLES } from '@/utils/roles'
 
-// Cuántos documentos de la colección tienen ese valor en ese campo
+/**
+ * Cantidad de documentos de una colección con un valor en un campo.
+ * @param {string} collectionName
+ * @param {string} field
+ * @param {string} value
+ * @returns {Promise<number>}
+ */
 async function countWhere(collectionName, field, value) {
   const snapshot = await getCountFromServer(
     query(collection(db, collectionName), where(field, '==', value)),
@@ -27,13 +32,22 @@ async function countWhere(collectionName, field, value) {
   return snapshot.data().count
 }
 
-// Cuenta cada valor posible a la vez: { disponible: 5, no_disponible: 1, adoptada: 2 }
+/**
+ * Cantidad de documentos por cada valor de un campo, por ejemplo { disponible: 5, adoptada: 2 }.
+ * @param {string} collectionName
+ * @param {string} field
+ * @param {string[]} values
+ * @returns {Promise<Object<string, number>>}
+ */
 async function countByValues(collectionName, field, values) {
   const counts = await Promise.all(values.map((value) => countWhere(collectionName, field, value)))
   return Object.fromEntries(values.map((value, index) => [value, counts[index]]))
 }
 
-// Todos los números de la Supervisión, en paralelo
+/**
+ * Totales de la plataforma: usuarios por rol, mascotas y solicitudes por estado, y donaciones.
+ * @returns {Promise<{usersByRole: object, petsByStatus: object, requestsByStatus: object, donations: {total: number, amount: number|null}}>}
+ */
 export async function getPlatformStats() {
   const [usersByRole, petsByStatus, requestsByStatus, donations] = await Promise.all([
     countByValues('users', 'role', [ROLES.ADOPTER, ROLES.SHELTER]),
@@ -45,8 +59,11 @@ export async function getPlatformStats() {
   return { usersByRole, petsByStatus, requestsByStatus, donations: donations.data() }
 }
 
-// Importe donado en cada uno de los últimos meses: [{ label: 'oct 2026', value: 50000 }, ...]
-// (se traen solo las donaciones de ese período y se suman por mes en el navegador)
+/**
+ * Importe donado en cada uno de los últimos meses (se agrupa por mes en el navegador).
+ * @param {number} [months] - Cantidad de meses.
+ * @returns {Promise<{label: string, value: number}[]>}
+ */
 export async function getDonationsByMonth(months = 6) {
   const now = new Date()
   const since = new Date(now.getFullYear(), now.getMonth() - (months - 1), 1)
@@ -74,9 +91,12 @@ export async function getDonationsByMonth(months = 6) {
   return buckets.map(({ label, value }) => ({ label, value }))
 }
 
-// Últimos movimientos de la plataforma (como en el diseño): usuarios nuevos, mascotas publicadas,
-// solicitudes, adopciones aceptadas y donaciones. Se traen los más recientes de cada tipo
-// (orderBy + limit) y se mezclan por fecha.
+/**
+ * Últimos movimientos de la plataforma: usuarios, mascotas, solicitudes, adopciones y donaciones,
+ * ordenados por fecha.
+ * @param {number} [maxItems] - Cantidad máxima de movimientos.
+ * @returns {Promise<{date: object, text: string}[]>}
+ */
 export async function getRecentActivity(maxItems = 8) {
   const latest = (collectionName, dateField = 'createdAt') =>
     getDocs(query(collection(db, collectionName), orderBy(dateField, 'desc'), limit(maxItems)))

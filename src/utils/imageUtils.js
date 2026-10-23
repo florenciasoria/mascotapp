@@ -1,5 +1,10 @@
-// Achica una imagen en el navegador antes de subirla: lado mayor de hasta maxSize px,
-// formato JPEG. Una foto de celular de 4 MB queda en ~200 KB.
+/**
+ * Achica una imagen en el navegador antes de subirla (JPEG, lado mayor de hasta maxSize px).
+ * @param {File} file
+ * @param {number} [maxSize]
+ * @param {number} [quality] - Calidad JPEG, de 0 a 1.
+ * @returns {Promise<Blob>}
+ */
 export async function resizeImage(file, maxSize = 1200, quality = 0.8) {
   const bitmap = await createImageBitmap(file)
   const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height))

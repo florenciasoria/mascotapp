@@ -1,7 +1,6 @@
 import { REQUEST_STATUS, REQUEST_STATUS_LABELS } from './requestOptions'
 
-// Opciones del filtro por estado. Se arman desde REQUEST_STATUS:
-// si se agrega un estado nuevo, aparece solo en el filtro.
+// Opciones del filtro por estado, generadas desde REQUEST_STATUS
 export const REQUEST_STATUS_OPTIONS = [
   { value: '', label: 'Todas' },
   ...Object.values(REQUEST_STATUS).map((status) => ({
@@ -10,13 +9,21 @@ export const REQUEST_STATUS_OPTIONS = [
   })),
 ]
 
-// Filtra por estado ('' = todas)
+/**
+ * Filtra solicitudes por estado.
+ * @param {object[]} requests
+ * @param {string} status - Estado, o "" para todas.
+ * @returns {object[]}
+ */
 export function filterRequestsByStatus(requests, status) {
   return status ? requests.filter((request) => request.status === status) : requests
 }
 
-// Pendientes primero; el resto mantiene el orden que traía (por fecha).
-// Se copia el array porque sort modifica el original (y es el estado de React).
+/**
+ * Ubica primero las pendientes; el resto mantiene su orden.
+ * @param {object[]} requests
+ * @returns {object[]} Una copia ordenada.
+ */
 export function sortRequestsPendingFirst(requests) {
   return [...requests].sort(
     (a, b) =>

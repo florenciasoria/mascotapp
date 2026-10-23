@@ -2,7 +2,7 @@ import { formatDate } from '@/utils/dates'
 import { REQUEST_STATUS, REQUEST_STATUS_TONES } from '@/utils/requestOptions'
 import styles from './RequestTimeline.module.css'
 
-// Qué pasó con la solicitud después de enviarla (el segundo paso de la línea de tiempo)
+// Segundo paso de la línea de tiempo: cómo y cuándo se resolvió la solicitud
 function getResolution(request) {
   switch (request.status) {
     case REQUEST_STATUS.ACCEPTED:
@@ -17,13 +17,16 @@ function getResolution(request) {
     case REQUEST_STATUS.CANCELLED:
       return { text: 'Cancelada por el adoptante', date: request.resolvedAt }
     default:
-      // Pendiente: todavía no hay respuesta, se muestra como el paso que falta
+      // Pendiente: el paso que falta, sin fecha
       return { text: `Esperando la respuesta de ${request.shelterName}`, date: null }
   }
 }
 
-// Historial de la solicitud: cuándo se envió y cómo y cuándo se resolvió.
-// Se arma con las fechas que ya guarda la solicitud (createdAt y resolvedAt).
+/**
+ * Línea de tiempo de una solicitud (RF-17): envío y resolución, con sus fechas.
+ * @param {object} props
+ * @param {object} props.request - Solicitud.
+ */
 function RequestTimeline({ request }) {
   const resolution = getResolution(request)
   const isPending = request.status === REQUEST_STATUS.PENDING

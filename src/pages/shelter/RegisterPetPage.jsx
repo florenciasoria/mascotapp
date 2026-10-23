@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { createPet } from '@/services/petService'
 import { EMPTY_PET_VALUES } from '@/utils/petOptions'
 
+/** Alta de una mascota del refugio (CU001). */
 function RegisterPetPage() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
@@ -29,7 +30,6 @@ function RegisterPetPage() {
     }
   }
 
-  // Al cerrar el diálogo de éxito, volvemos al listado
   function handleDialogClose() {
     const wasSuccess = dialog?.type === 'success'
     setDialog(null)

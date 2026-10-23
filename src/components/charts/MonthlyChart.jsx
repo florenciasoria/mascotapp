@@ -3,10 +3,14 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { CHART_COLORS } from '@/utils/chartColors'
 import styles from './Charts.module.css'
 
-// Columnas por mes (por ejemplo, donaciones de los últimos 6 meses).
-// data: [{ label: 'oct 2026', value: 50000 }, ...]
-// formatValue: cómo mostrar cada valor (por ejemplo, en pesos).
-// Para el lector de pantalla hay una tabla con los mismos datos (oculta a la vista).
+/**
+ * Gráfico de columnas por mes, con una tabla equivalente para lectores de pantalla.
+ * @param {object} props
+ * @param {string} props.title - Título del gráfico.
+ * @param {{label: string, value: number}[]} props.data - Valor de cada mes.
+ * @param {string} props.valueLabel - Nombre de la magnitud (por ejemplo, "Donado").
+ * @param {(value: number) => string} [props.formatValue] - Formato de cada valor.
+ */
 function MonthlyChart({ title, data, valueLabel, formatValue = (value) => value }) {
   const titleId = useId()
 

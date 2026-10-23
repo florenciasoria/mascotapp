@@ -15,13 +15,17 @@ const MESSAGES = {
   },
 }
 
-// Para cualquier estado que no esté contemplado
+// Mensaje para cualquier otro estado
 const DEFAULT_MESSAGE = {
   title: 'Tu cuenta no está habilitada',
   text: 'Por el momento no podés usar las funcionalidades de MascotApp.',
 }
 
-// Se muestra a las cuentas bloqueadas (rechazadas, desactivadas o con un estado desconocido)
+/**
+ * Pantalla para cuentas no habilitadas (rechazadas, desactivadas o con un estado desconocido).
+ * @param {object} props
+ * @param {string} props.status - Estado de la cuenta.
+ */
 function AccountStatusPage({ status }) {
   const { title, text } = MESSAGES[status] ?? DEFAULT_MESSAGE
 

@@ -5,7 +5,7 @@ import { getHomePath } from '@/utils/roles'
 import logo from '@/assets/logo.png'
 import styles from './auth/MessagePage.module.css'
 
-// Dirección que no existe en la app: ofrece volver al inicio del rol (o al login)
+/** Página para direcciones inexistentes, con un link al inicio del rol (o al login). */
 function NotFoundPage() {
   const { profile } = useAuth()
 

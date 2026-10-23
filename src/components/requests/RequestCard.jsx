@@ -5,14 +5,22 @@ import { formatDate } from '@/utils/dates'
 import { REQUEST_STATUS, REQUEST_STATUS_LABELS, REQUEST_STATUS_TONES } from '@/utils/requestOptions'
 import styles from './RequestCard.module.css'
 
-// Ícono que acompaña al estado (decorativo: el texto es lo que informa)
+// Ícono de cada estado (complementa al texto, no lo reemplaza)
 const STATUS_ICONS = {
   [REQUEST_STATUS.ACCEPTED]: '✓',
   [REQUEST_STATUS.REJECTED]: '✕',
 }
 
-// highlightPending: borde amarillo en las pendientes (para el refugio, que tiene que revisarlas).
-// highlightNew: borde de color y "Nueva respuesta" si el adoptante todavía no vio la respuesta.
+/**
+ * Tarjeta de una solicitud de adopción, con los datos de la mascota al momento de pedirla.
+ * @param {object} props
+ * @param {object} props.request - Solicitud a mostrar.
+ * @param {string} props.subtitle - Refugio o adoptante, según quién la vea.
+ * @param {boolean} [props.highlightPending] - Resalta las pendientes (vista del refugio).
+ * @param {boolean} [props.highlightNew] - Resalta las respuestas que el adoptante no vio.
+ * @param {string} [props.statusLabel] - Texto alternativo para el estado.
+ * @param {React.ReactNode} [props.children] - Acciones que agrega cada pantalla.
+ */
 function RequestCard({
   request,
   subtitle,

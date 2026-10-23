@@ -21,7 +21,7 @@
   gap: var(--space-8);
 }
 
-/* Selector Adoptante / Refugio: radios con aspecto de "pastilla" */
+/* Selector Adoptante / Refugio: radios con forma de pastilla */
 .roleSelector {
   display: flex;
   align-self: center;
@@ -65,7 +65,7 @@
   outline-offset: 2px;
 }
 
-/* Campos: una columna en celular, dos en pantallas anchas */
+/* Una columna en celular, dos en pantallas anchas */
 .grid {
   display: grid;
   grid-template-columns: 1fr;

@@ -10,6 +10,7 @@ import { getHomePath } from '@/utils/roles'
 import logo from '@/assets/logo.png'
 import styles from './AuthPage.module.css'
 
+/** Inicio de sesión. Al llegar el perfil, redirige al inicio de cada rol. */
 function LoginPage() {
   const { user, profile, isLoading } = useAuth()
   const [values, setValues] = useState({ email: '', password: '' })
@@ -18,7 +19,7 @@ function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
 
-  // Cuenta sin perfil en Firestore (por ejemplo, si el perfil se borró)
+  // Cuenta sin perfil en Firestore
   const hasMissingProfile = user && !isLoading && !profile
 
   function handleChange(event) {
@@ -41,7 +42,7 @@ function LoginPage() {
 
     setIsSubmitting(true)
     try {
-      // No navegamos acá: cuando llega el perfil, se redirige según el rol
+      // La redirección se hace al recibir el perfil
       await loginUser(values.email, values.password, rememberMe)
     } catch (error) {
       setSubmitError(getAuthErrorMessage(error))
@@ -49,7 +50,6 @@ function LoginPage() {
     }
   }
 
-  // Con sesión iniciada, cada rol va a su área
   if (profile) {
     return <Navigate to={getHomePath(profile.role)} replace />
   }

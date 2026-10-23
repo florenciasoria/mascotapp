@@ -1,6 +1,6 @@
 import styles from './LoadingScreen.module.css'
 
-// Se muestra mientras se verifica la sesión
+/** Pantalla de carga mientras se verifica la sesión. */
 function LoadingScreen() {
   return (
     <main className={styles.loading}>

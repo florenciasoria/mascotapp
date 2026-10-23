@@ -2,10 +2,13 @@ import { useId } from 'react'
 import { Cell, Label, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import styles from './Charts.module.css'
 
-// Gráfico de dona: partes de un total (por ejemplo, solicitudes por estado).
-// data: [{ label: 'Pendiente', value: 3, color: '#d39a12' }, ...]
-// El dibujo es una ayuda visual; la leyenda (HTML) tiene los nombres y valores en texto,
-// que es lo que lee el lector de pantalla.
+/**
+ * Gráfico de dona para mostrar partes de un total.
+ * El dibujo se oculta a los lectores de pantalla; la leyenda contiene los valores en texto.
+ * @param {object} props
+ * @param {string} props.title - Título del gráfico.
+ * @param {{label: string, value: number, color: string}[]} props.data - Segmentos del gráfico.
+ */
 function DonutChart({ title, data }) {
   const titleId = useId()
   const total = data.reduce((sum, item) => sum + item.value, 0)

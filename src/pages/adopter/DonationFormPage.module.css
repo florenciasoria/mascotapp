@@ -1,4 +1,4 @@
-/* Aviso de donación simulada: visible, antes del formulario */
+/* Aviso de donación simulada */
 .simulated {
   max-width: 32rem;
   margin: 0 0 var(--space-6);
@@ -15,7 +15,7 @@
   max-width: 32rem;
 }
 
-/* Vencimiento y CVV, uno al lado del otro */
+/* Vencimiento y CVV en la misma fila */
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;

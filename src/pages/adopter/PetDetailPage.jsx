@@ -10,6 +10,7 @@ import { hasActiveRequestForPet } from '@/services/adoptionService'
 import { formatAge, PET_STATUS } from '@/utils/petOptions'
 import styles from './PetDetailPage.module.css'
 
+/** Detalle de una mascota disponible (CU002): datos, refugio, mapa y calificaciones. */
 function PetDetailPage() {
   const { petId } = useParams()
   const { user } = useAuth()
@@ -17,7 +18,6 @@ function PetDetailPage() {
   const [alreadyRequested, setAlreadyRequested] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
-  // La mascota y si ya la pidió se buscan a la vez
   useEffect(() => {
     let isActive = true
 
@@ -39,7 +39,7 @@ function PetDetailPage() {
     return <p role="status">Cargando mascota…</p>
   }
 
-  // Si ya no está disponible (adoptada o desactivada), las reglas no dejan leerla
+  // Las reglas no permiten leer mascotas adoptadas o desactivadas
   if (!pet || pet.status !== PET_STATUS.AVAILABLE) {
     return (
       <>
@@ -50,8 +50,7 @@ function PetDetailPage() {
     )
   }
 
-  // El mapa usa la dirección (no el barrio, que es para filtrar): si el barrio
-  // estuviera mal cargado, el mapa igual marca la dirección real.
+  // El mapa se ubica por la dirección del refugio; el barrio se usa para filtrar
   const region = pet.neighborhood.startsWith('GBA')
     ? 'Provincia de Buenos Aires'
     : 'Ciudad Autónoma de Buenos Aires'
@@ -131,7 +130,6 @@ function PetDetailPage() {
         <ButtonLink to="/adoptante/buscar" variant="secondary">
           Volver
         </ButtonLink>
-        {/* Si ya la pidió, la acción principal pasa a ser ver sus solicitudes */}
         {alreadyRequested ? (
           <ButtonLink to="/adoptante/solicitudes">Ver mis solicitudes</ButtonLink>
         ) : (

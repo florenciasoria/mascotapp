@@ -2,7 +2,7 @@ import { formatDate } from '@/utils/dates'
 import { REQUEST_STATUS, REQUEST_STATUS_TONES } from '@/utils/requestOptions'
 import styles from './RequestResultBanner.module.css'
 
-// Título y texto del cartel según el estado y quién lo mira ('shelter' o 'adopter')
+// Título y texto del cartel según el estado y quién lo mira
 function getContent(request, viewer) {
   const date = formatDate(request.resolvedAt)
   const petName = request.pet.name
@@ -46,8 +46,12 @@ function getContent(request, viewer) {
   }
 }
 
-// Cartel con el resultado de la solicitud (como en el Figma). Va arriba del detalle:
-// es lo primero que se quiere saber, y el lector de pantalla lo lee primero.
+/**
+ * Cartel con el resultado de una solicitud resuelta. No muestra nada si está pendiente.
+ * @param {object} props
+ * @param {object} props.request - Solicitud.
+ * @param {'shelter'|'adopter'} props.viewer - Quién la mira (cambia la redacción).
+ */
 function RequestResultBanner({ request, viewer }) {
   const content = getContent(request, viewer)
   if (!content) return null

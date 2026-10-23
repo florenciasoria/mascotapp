@@ -3,8 +3,16 @@ import styles from './Stars.module.css'
 
 const SCORES = ['1', '2', '3', '4', '5']
 
-// Elegir de 1 a 5 estrellas. Son radios nativos (como ToggleGroup): se usan con las flechas
-// y el lector de pantalla anuncia "4 de 5 estrellas". Se llenan las estrellas hasta la elegida.
+/**
+ * Selector de 1 a 5 estrellas. Usa radios nativos: se maneja con las flechas del teclado
+ * y el lector de pantalla anuncia "N de 5 estrellas".
+ * @param {object} props
+ * @param {string} props.label - Pregunta.
+ * @param {string} props.name - Nombre del campo.
+ * @param {string} props.value - Puntaje elegido ("1" a "5") o "".
+ * @param {(event: Event) => void} props.onChange - Cambio de puntaje.
+ * @param {string} [props.error] - Mensaje de error.
+ */
 function StarRating({ label, name, value, onChange, error }) {
   const errorId = `${useId()}-error`
   const selected = Number(value) || 0

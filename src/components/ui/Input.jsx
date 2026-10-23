@@ -1,9 +1,15 @@
 import { useId, useState } from 'react'
 import styles from './Input.module.css'
 
-// Campo de formulario con label, texto de ayuda y mensaje de error accesibles.
-// - type="password" agrega un botón para mostrar u ocultar la contraseña.
-// - multiline muestra un área de texto de varias líneas.
+/**
+ * Campo de formulario con label, ayuda y error asociados al campo (aria-describedby).
+ * @param {object} props
+ * @param {string} props.label - Etiqueta.
+ * @param {string} [props.hint] - Texto de ayuda.
+ * @param {string} [props.error] - Mensaje de error.
+ * @param {string} [props.type] - Tipo; "password" agrega el botón para mostrar la contraseña.
+ * @param {boolean} [props.multiline] - Área de texto de varias líneas.
+ */
 function Input({ label, hint, error, id, type = 'text', multiline = false, ...props }) {
   const generatedId = useId()
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
@@ -13,7 +19,6 @@ function Input({ label, hint, error, id, type = 'text', multiline = false, ...pr
   const errorId = `${inputId}-error`
   const isPassword = type === 'password'
 
-  // El lector de pantalla lee la ayuda y el error al entrar al campo
   const describedBy = [hint && hintId, error && errorId].filter(Boolean).join(' ')
 
   const fieldProps = {

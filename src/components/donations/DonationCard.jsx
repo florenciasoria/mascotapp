@@ -8,8 +8,14 @@ import {
 } from '@/utils/donationOptions'
 import styles from './DonationCard.module.css'
 
-// Tarjeta de una donación. La usan el adoptante (title = refugio) y el refugio (title = adoptante).
-// showCard: muestra los últimos 4 números de la tarjeta (solo para quien donó).
+/**
+ * Tarjeta de una donación.
+ * @param {object} props
+ * @param {object} props.donation - Donación a mostrar.
+ * @param {string} props.title - Título: el refugio o el adoptante, según quién la vea.
+ * @param {string} [props.subtitle] - Ubicación del refugio.
+ * @param {boolean} [props.showCard] - Muestra los últimos 4 dígitos de la tarjeta (solo para quien donó).
+ */
 function DonationCard({ donation, title, subtitle, showCard = false }) {
   const titleId = `donation-${donation.id}`
 

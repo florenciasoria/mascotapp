@@ -19,14 +19,20 @@ function UploadIcon() {
   )
 }
 
-// Selector de foto con vista previa. El input real queda oculto a la vista,
-// pero sigue funcionando con teclado y lector de pantalla.
+/**
+ * Selector de la foto de una mascota, con vista previa.
+ * El input de archivo queda oculto a la vista pero accesible con teclado y lector de pantalla.
+ * @param {object} props
+ * @param {File|null} props.file - Foto nueva elegida.
+ * @param {string} [props.currentUrl] - Foto actual (al editar).
+ * @param {(file: File|null) => void} props.onFileChange - Se llama al elegir una foto.
+ * @param {string} [props.error] - Mensaje de error.
+ */
 function ImageUpload({ file, currentUrl, onFileChange, error }) {
   const inputId = useId()
   const hintId = `${inputId}-hint`
   const errorId = `${inputId}-error`
 
-  // Vista previa de la foto elegida (URL temporal del navegador)
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file])
   useEffect(() => {
     return () => {

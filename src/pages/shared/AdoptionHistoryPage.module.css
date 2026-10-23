@@ -11,7 +11,7 @@
   color: var(--color-error);
 }
 
-/* "Tu calificación": ocupa todo el ancho del pie, arriba de los botones */
+/* Calificación propia, a todo el ancho del pie */
 .myRating {
   display: flex;
   flex-basis: 100%;

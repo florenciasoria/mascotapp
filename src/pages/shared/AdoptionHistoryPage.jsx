@@ -10,7 +10,7 @@ import { getAdopterRatings } from '@/services/ratingService'
 import { ROLES } from '@/utils/roles'
 import styles from './AdoptionHistoryPage.module.css'
 
-// Lo que cambia según quién mira el historial
+// Configuración del historial según el rol
 const HISTORY_BY_ROLE = {
   [ROLES.ADOPTER]: {
     subtitle: 'Las adopciones que los refugios aceptaron.',
@@ -32,6 +32,7 @@ const HISTORY_BY_ROLE = {
   },
 }
 
+/** Historial de adopciones aceptadas (CU009), para el adoptante y el refugio. */
 function AdoptionHistoryPage() {
   const { user, profile } = useAuth()
   const config = HISTORY_BY_ROLE[profile.role]
@@ -99,7 +100,6 @@ function AdoptionHistoryPage() {
                     </p>
                   </div>
                 )}
-                {/* Si todavía puede calificar, Calificar es la acción principal (a la derecha) */}
                 <ButtonLink
                   to={`${config.detailPath}/${request.id}`}
                   state={{ backTo: location.pathname }}

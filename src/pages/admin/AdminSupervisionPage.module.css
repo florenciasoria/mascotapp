@@ -4,7 +4,7 @@
   color: var(--color-text-muted);
 }
 
-/* Tarjetas de totales: se acomodan solas según el ancho */
+/* Tarjetas de totales */
 .totals {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
@@ -33,7 +33,7 @@
   font-weight: var(--font-weight-bold);
 }
 
-/* Gráficos: dos o tres por fila en pantallas anchas, uno en celular */
+/* Gráficos: varios por fila en pantallas anchas, uno en celular */
 .charts {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
@@ -41,12 +41,12 @@
   max-width: 64rem;
 }
 
-/* Donaciones por mes: ocupa todo el ancho */
+/* Gráfico a todo el ancho */
 .wide {
   grid-column: 1 / -1;
 }
 
-/* Actividad reciente: una fila por movimiento, con la fecha a la derecha */
+/* Actividad reciente */
 .activity {
   display: flex;
   flex-direction: column;

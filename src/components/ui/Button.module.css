@@ -3,13 +3,13 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 2.75rem; /* 44px: tamaño táctil mínimo recomendado */
+  min-height: 2.75rem;
   padding: var(--space-2) var(--space-6);
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: filter 0.15s ease;
-  text-decoration: none; /* para cuando se usa en un link (ButtonLink) */
+  text-decoration: none;
 }
 
 .button:hover:not(:disabled) {
@@ -21,21 +21,19 @@
   cursor: not-allowed;
 }
 
-/* Botón principal (a la derecha): verde salvia. Secundario (a la izquierda): rosa.
-   Se usan los colores directos y no --color-primary/--color-secondary, porque esos tokens
-   también marcan estados (verde = aceptada/éxito, rosa = rechazada) y esos no cambian.
+/* Principal: verde. Secundario: rosa.
    Texto blanco de 19px en negrita: ambos superan 3:1 (WCAG, texto grande). */
 .primary {
   background-color: var(--color-sage-deep);
   color: var(--color-white);
-  font-size: 1.1875rem; /* 19px en negrita = "texto grande" según WCAG */
+  font-size: 1.1875rem;
   font-weight: var(--font-weight-bold);
 }
 
 .secondary {
   background-color: var(--color-pink-deep);
   color: var(--color-white);
-  font-size: 1.1875rem; /* 19px en negrita = "texto grande" según WCAG */
+  font-size: 1.1875rem;
   font-weight: var(--font-weight-bold);
 }
 
@@ -46,12 +44,12 @@
   text-decoration: underline;
 }
 
-/* Tamaño chico (por ejemplo, en tarjetas): menos relleno, mismo texto */
+/* Tamaño chico: menos relleno, mismo texto */
 .sm {
   padding: var(--space-2) var(--space-4);
 }
 
-/* Link de navegación "← Volver": verde oscuro, sin fondo */
+/* Link "← Volver" */
 .back {
   padding-inline: 0;
   background-color: transparent;

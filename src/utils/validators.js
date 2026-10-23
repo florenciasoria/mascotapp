@@ -3,7 +3,7 @@ import { NEIGHBORHOODS } from './neighborhoods'
 import { AGE_UNITS, COLORS, SEXES, SIZES, SPECIES } from './petOptions'
 import { EXPERIENCE_RANGES, HOURS_ALONE, HOUSING_TYPES } from './requestOptions'
 
-// Límites compartidos con las reglas de Firestore (firestore.rules).
+// Límites de los campos, iguales a los de las reglas de Firestore
 export const LIMITS = {
   name: { min: 2, max: 80 },
   phone: { min: 6, max: 20 },
@@ -24,12 +24,18 @@ export const LIMITS = {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_REGEX = /^\+?[\d\s-]+$/
 
+/** Indica si un texto (sin espacios en los extremos) tiene un largo dentro de los límites. */
 function hasLength(value, { min, max }) {
   const length = value.trim().length
   return length >= min && length <= max
 }
 
-// Datos de perfil: se validan igual en el registro y al editar el perfil
+/**
+ * Valida los datos de perfil (registro y edición).
+ * @param {object} values
+ * @param {string} role
+ * @returns {Object<string, string>} Errores por campo (vacío si es válido).
+ */
 export function validateProfileForm(values, role) {
   const errors = {}
 
@@ -57,7 +63,12 @@ export function validateProfileForm(values, role) {
   return errors
 }
 
-// Registro = datos de perfil + email y contraseña
+/**
+ * Valida el registro: datos de perfil, email y contraseña.
+ * @param {object} values
+ * @param {string} role
+ * @returns {Object<string, string>} Errores por campo.
+ */
 export function validateRegisterForm(values, role) {
   const errors = validateProfileForm(values, role)
 
@@ -73,6 +84,11 @@ export function validateRegisterForm(values, role) {
   return errors
 }
 
+/**
+ * Valida el inicio de sesión.
+ * @param {{email: string, password: string}} values
+ * @returns {Object<string, string>} Errores por campo.
+ */
 export function validateLoginForm(values) {
   const errors = {}
 
@@ -86,6 +102,11 @@ export function validateLoginForm(values) {
   return errors
 }
 
+/**
+ * Valida el pedido de recuperación de contraseña.
+ * @param {{email: string}} values
+ * @returns {Object<string, string>} Errores por campo.
+ */
 export function validateForgotPasswordForm(values) {
   const errors = {}
 
@@ -99,7 +120,13 @@ export function validateForgotPasswordForm(values) {
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_IMAGE_MB = 15
 
-// imageFile: foto nueva elegida (o null). hasCurrentImage: al editar, si ya tiene foto.
+/**
+ * Valida el formulario de mascota.
+ * @param {object} values
+ * @param {File|null} imageFile - Foto nueva elegida.
+ * @param {boolean} hasCurrentImage - Si la mascota ya tiene foto (al editar).
+ * @returns {Object<string, string>} Errores por campo.
+ */
 export function validatePetForm(values, imageFile, hasCurrentImage) {
   const errors = {}
 
@@ -136,7 +163,7 @@ export function validatePetForm(values, imageFile, hasCurrentImage) {
     errors.color = 'Elegí el color'
   }
 
-  // La foto original puede pesar hasta 15 MB: antes de subirla se achica a ~200 KB
+  // Se acepta hasta 15 MB: antes de subirla, la foto se achica
   if (imageFile) {
     if (!IMAGE_TYPES.includes(imageFile.type)) {
       errors.image = 'La foto tiene que ser JPG, PNG o WEBP'
@@ -154,7 +181,11 @@ export function validatePetForm(values, imageFile, hasCurrentImage) {
   return errors
 }
 
-// Formulario de solicitud de adopción
+/**
+ * Valida la solicitud de adopción (las preguntas de seguimiento, solo si se respondió "Sí").
+ * @param {object} values
+ * @returns {Object<string, string>} Errores por campo.
+ */
 export function validateRequestForm(values) {
   const errors = {}
   const chooseOption = 'Elegí una opción'
@@ -196,7 +227,11 @@ export function validateRequestForm(values) {
   return errors
 }
 
-// Formulario de calificación: los dos puntajes son obligatorios; el comentario, opcional
+/**
+ * Valida la calificación: los dos puntajes son obligatorios; el comentario, opcional.
+ * @param {object} values
+ * @returns {Object<string, string>} Errores por campo.
+ */
 export function validateRatingForm(values) {
   const errors = {}
   const isValidScore = (value) => ['1', '2', '3', '4', '5'].includes(value)
@@ -214,7 +249,7 @@ export function validateRatingForm(values) {
   return errors
 }
 
-// Vencimiento MM/AA: mes válido y no vencido
+/** Indica si un vencimiento MM/AA es válido y no está vencido. */
 function isValidExpiry(value) {
   const match = /^(\d{2})\/(\d{2})$/.exec(value.trim())
   if (!match) return false
@@ -225,8 +260,11 @@ function isValidExpiry(value) {
   return year > now.getFullYear() || (year === now.getFullYear() && month >= now.getMonth() + 1)
 }
 
-// Formulario de donación simulada. Los datos de la tarjeta se validan para que el formulario
-// sea realista, pero solo se guardan los últimos 4 dígitos.
+/**
+ * Valida la donación simulada: importe y datos de la tarjeta (de la que solo se guardan 4 dígitos).
+ * @param {object} values
+ * @returns {Object<string, string>} Errores por campo.
+ */
 export function validateDonationForm(values) {
   const errors = {}
   const amount = Number(values.amount)

@@ -1,23 +1,23 @@
-/* Design System de MascotApp: valores tomados de Figma.
-   Los componentes usan solo las variables "por uso", nunca colores fijos. */
+/* Variables de diseño de MascotApp, tomadas del diseño en Figma.
+   Los componentes usan las variables por uso, no colores fijos. */
 :root {
   /* ===== Paleta base (Figma) ===== */
   --color-pink: #c98f9d;
   --color-sage: #a8bfa8;
-  --color-sage-deep: #7e9a7e; /* botón secundario: blanco en texto grande 3.1:1 */
-  --color-sage-dark: #587358; /* link "Volver": 4.8:1 sobre crema */
+  --color-sage-deep: #7e9a7e; /* texto blanco grande: 3.1:1 */
+  --color-sage-dark: #587358; /* 4.8:1 sobre crema */
   --color-cream: #f7f4ed;
   --color-brown: #6b625e;
   --color-gray: #d9d9d9;
-  --color-gray-warm: #e6e1d9; /* fondo del selector: gris cálido */
+  --color-gray-warm: #e6e1d9;
   --color-brown-light: #918783;
-  --color-brown-soft: #776d68; /* textos de ayuda: 4.6:1 sobre crema */
+  --color-brown-soft: #776d68; /* 4.6:1 sobre crema */
   --color-white: #ffffff;
 
   /* Ajustes de accesibilidad (contraste WCAG AA) */
-  --color-pink-dark: #9a5a69; /* links: 4.7:1 sobre crema */
-  --color-pink-deep: #c0808f; /* botón: blanco en texto grande 3.1:1 */
-  --color-red: #b3261e; /* errores: provisional, no está en Figma */
+  --color-pink-dark: #9a5a69; /* 4.7:1 sobre crema */
+  --color-pink-deep: #c0808f; /* texto blanco grande: 3.1:1 */
+  --color-red: #b3261e; /* errores */
 
   /* ===== Colores por uso ===== */
   --color-bg: var(--color-cream);
@@ -66,5 +66,5 @@
 
   /* ===== Bordes ===== */
   --radius-md: 0.5rem; /* inputs y botones */
-  --radius-pill: 999px; /* selector Adoptante/Refugio */
+  --radius-pill: 999px; /* pastillas */
 }

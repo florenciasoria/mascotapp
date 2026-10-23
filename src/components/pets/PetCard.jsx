@@ -2,9 +2,13 @@ import Card from '@/components/ui/Card'
 import { formatAge } from '@/utils/petOptions'
 import styles from './PetCard.module.css'
 
-// Tarjeta de mascota reutilizable. Lo que va abajo (estado, botones)
-// lo decide cada pantalla y se pasa como children.
-// muted: se ve "apagada" (por ejemplo, mascota desactivada o adoptada).
+/**
+ * Tarjeta de una mascota.
+ * @param {object} props
+ * @param {object} props.pet - Mascota a mostrar.
+ * @param {boolean} [props.muted] - Muestra la foto en escala de grises (mascota no disponible).
+ * @param {React.ReactNode} [props.children] - Estado y acciones que agrega cada pantalla.
+ */
 function PetCard({ pet, muted = false, children }) {
   const titleId = `pet-${pet.id}`
 

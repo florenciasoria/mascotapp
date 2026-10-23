@@ -13,7 +13,7 @@ import { formatDate } from '@/utils/dates'
 import { ROLE_LABELS, ROLES, STATUS, STATUS_LABELS, STATUS_TONES } from '@/utils/roles'
 import styles from './AdminUserDetailPage.module.css'
 
-// Acciones que puede hacer el admin. "confirm" = pide confirmación antes.
+// Acciones del administrador sobre una cuenta. "confirm" indica que piden confirmación.
 const ACTIONS = {
   approve: {
     label: 'Aprobar refugio',
@@ -52,7 +52,7 @@ const ACTIONS = {
   },
 }
 
-// Qué acciones corresponden a cada estado
+// Acciones disponibles según el estado de la cuenta
 const ACTIONS_BY_STATUS = {
   [STATUS.PENDING]: ['reject', 'approve'],
   [STATUS.APPROVED]: ['deactivate'],
@@ -60,6 +60,7 @@ const ACTIONS_BY_STATUS = {
   [STATUS.REJECTED]: ['approve'],
 }
 
+/** Detalle de una cuenta para el administrador (CU007): aprobar, rechazar, desactivar o reactivar. */
 function AdminUserDetailPage() {
   const { userId } = useParams()
   const { user } = useAuth()
@@ -117,7 +118,7 @@ function AdminUserDetailPage() {
     return <p role="status">Cargando usuario…</p>
   }
 
-  // El admin no se gestiona a sí mismo
+  // El administrador no gestiona su propia cuenta
   if (!account || account.id === user.uid) {
     return (
       <>
@@ -132,7 +133,7 @@ function AdminUserDetailPage() {
   const actions = ACTIONS_BY_STATUS[account.status] ?? []
   const confirmAction = actionToConfirm ? ACTIONS[actionToConfirm] : null
 
-  // No se puede aprobar ni reactivar (pasar a "aprobado") una cuenta sin el email verificado
+  // Aprobar o reactivar requiere el email verificado
   const isBlockedAction = (key) =>
     ACTIONS[key].newStatus === STATUS.APPROVED && !account.emailVerified
   const isApproveBlocked = actions.some(isBlockedAction)
@@ -202,8 +203,6 @@ function AdminUserDetailPage() {
         </dl>
       </Card>
 
-      {/* En la solicitud (dos decisiones), Volver es un link aparte a la izquierda.
-          En los demás casos, botón verde como en el resto de la app. */}
       {isApproveBlocked && (
         <p id="approve-blocked-note" className={styles.note}>
           Esta cuenta todavía no verificó su email, por eso no se puede aprobar ni reactivar.

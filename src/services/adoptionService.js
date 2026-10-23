@@ -1,4 +1,4 @@
-// Servicio de solicitudes de adopción: el único lugar que usa la colección "adoptionRequests"
+// Solicitudes de adopción (colección "adoptionRequests").
 import {
   collection,
   doc,
@@ -19,20 +19,28 @@ import { REQUEST_STATUS } from '@/utils/requestOptions'
 
 const requestsCollection = collection(db, 'adoptionRequests')
 
-// Pasa un documento de Firestore a un objeto con su id
+/** Convierte un documento de Firestore en un objeto con su id. */
 function toRequest(snapshot) {
   return { id: snapshot.id, ...snapshot.data() }
 }
 
-// Una sola solicitud por adoptante y mascota: el ID combina los dos
+/**
+ * ID de una solicitud: combina mascota y adoptante, para que no haya solicitudes duplicadas.
+ * @param {string} petId
+ * @param {string} adopterId
+ * @returns {string}
+ */
 function getRequestId(petId, adopterId) {
   return `${petId}_${adopterId}`
 }
 
-// ¿El adoptante tiene una solicitud vigente (no cancelada) para esta mascota?
-// Si la canceló, puede volver a solicitarla: la nueva reemplaza a la cancelada.
-// (Se consulta con where y no leyendo el documento por ID: las reglas no dejan leer
-// un documento que todavía no existe, pero una consulta vacía sí es válida.)
+/**
+ * Indica si el adoptante tiene una solicitud vigente (no cancelada) para la mascota.
+ * Usa una consulta y no una lectura por ID, porque las reglas no permiten leer un documento inexistente.
+ * @param {string} petId
+ * @param {string} adopterId
+ * @returns {Promise<boolean>}
+ */
 export async function hasActiveRequestForPet(petId, adopterId) {
   const snapshot = await getDocs(
     query(requestsCollection, where('adopterId', '==', adopterId), where('petId', '==', petId)),
@@ -40,8 +48,14 @@ export async function hasActiveRequestForPet(petId, adopterId) {
   return snapshot.docs.some((requestDoc) => requestDoc.data().status !== REQUEST_STATUS.CANCELLED)
 }
 
-// El adoptante envía (o vuelve a enviar, si había cancelado) una solicitud.
-// El ID combina mascota y adoptante: setDoc reemplaza una cancelada y las reglas impiden duplicadas.
+/**
+ * Crea (o, si estaba cancelada, reemplaza) la solicitud de adopción de una mascota.
+ * Guarda los datos de la mascota al momento de pedirla y los datos de contacto del adoptante.
+ * @param {object} pet - Mascota solicitada.
+ * @param {{uid: string, name: string, email: string, phone: string}} adopter - Adoptante.
+ * @param {object} answers - Respuestas del formulario.
+ * @returns {Promise<void>}
+ */
 export function createAdoptionRequest(pet, adopter, answers) {
   return setDoc(doc(db, 'adoptionRequests', getRequestId(pet.id, adopter.uid)), {
     petId: pet.id,
@@ -49,12 +63,12 @@ export function createAdoptionRequest(pet, adopter, answers) {
     shelterName: pet.shelterName,
     adopterId: adopter.uid,
     adopterName: adopter.name,
-    // Para que el refugio pueda contactarlo (se le avisa al adoptante antes de enviar)
+    // Contacto para el refugio (el formulario lo informa antes de enviar)
     adopterContact: {
       email: adopter.email,
       phone: adopter.phone,
     },
-    // Foto de la mascota al momento de pedirla (sigue visible aunque después se adopte)
+    // Datos de la mascota al momento de pedirla
     pet: {
       name: pet.name,
       species: pet.species,
@@ -70,7 +84,7 @@ export function createAdoptionRequest(pet, adopter, answers) {
       hasYard: answers.hasYard === 'si',
       hasOtherPets: answers.hasOtherPets === 'si',
       hasExperience: answers.hasExperience === 'si',
-      // Las preguntas de seguimiento solo se guardan si respondió "Sí"
+      // Las preguntas de seguimiento se guardan solo si la respuesta fue "Sí"
       ...(answers.hasYard === 'si' && { hasSafetyNet: answers.hasSafetyNet === 'si' }),
       ...(answers.hasOtherPets === 'si' && { otherPetsDetail: answers.otherPetsDetail.trim() }),
       ...(answers.hasExperience === 'si' && { experienceYears: answers.experienceYears }),
@@ -82,20 +96,31 @@ export function createAdoptionRequest(pet, adopter, answers) {
   })
 }
 
-// Solicitudes que envió un adoptante, de la más nueva a la más vieja
+/**
+ * Solicitudes enviadas por un adoptante, de la más nueva a la más vieja.
+ * @param {string} adopterId
+ * @returns {Promise<object[]>}
+ */
 export async function getAdopterRequests(adopterId) {
   const snapshot = await getDocs(query(requestsCollection, where('adopterId', '==', adopterId)))
   return sortByNewest(snapshot.docs.map(toRequest))
 }
 
-// Solicitudes que recibió un refugio, de la más nueva a la más vieja
+/**
+ * Solicitudes recibidas por un refugio, de la más nueva a la más vieja.
+ * @param {string} shelterId
+ * @returns {Promise<object[]>}
+ */
 export async function getShelterRequests(shelterId) {
   const snapshot = await getDocs(query(requestsCollection, where('shelterId', '==', shelterId)))
   return sortByNewest(snapshot.docs.map(toRequest))
 }
 
-// El adoptante cancela una solicitud pendiente. No se borra: queda guardada como
-// "cancelada" (igual que la baja lógica de usuarios), así el refugio sabe que desistió.
+/**
+ * Cancela una solicitud pendiente. No se borra: queda registrada como cancelada (baja lógica).
+ * @param {string} requestId
+ * @returns {Promise<void>}
+ */
 export function cancelAdoptionRequest(requestId) {
   return updateDoc(doc(db, 'adoptionRequests', requestId), {
     status: REQUEST_STATUS.CANCELLED,
@@ -103,18 +128,27 @@ export function cancelAdoptionRequest(requestId) {
   })
 }
 
-// Una solicitud por su ID. Si no existe o no es del usuario, las reglas no dejan leerla.
+/**
+ * Una solicitud por su ID.
+ * @param {string} requestId
+ * @returns {Promise<object|null>} La solicitud, o null si no existe.
+ */
 export async function getRequest(requestId) {
   const snapshot = await getDoc(doc(db, 'adoptionRequests', requestId))
   return snapshot.exists() ? toRequest(snapshot) : null
 }
 
-// El refugio acepta una solicitud. Todo junto o nada (transacción):
-// la solicitud queda aceptada, la mascota adoptada y las otras pendientes de esa
-// mascota se rechazan solas, con el motivo (autoRejected). Cada adoptante lo ve como novedad.
+/**
+ * Acepta una solicitud en una transacción: la solicitud queda aceptada, la mascota adoptada
+ * y las demás solicitudes pendientes de esa mascota se rechazan automáticamente.
+ * Si alguna escritura falla, no se aplica ninguna.
+ * @param {object} request - Solicitud a aceptar.
+ * @returns {Promise<void>}
+ * @throws {Error} Si la solicitud ya no está pendiente.
+ */
 export async function acceptAdoptionRequest(request) {
-  // Las otras pendientes se buscan antes: dentro de una transacción no se pueden hacer consultas.
-  // (El filtro por shelterId es el que permite la regla de lectura.)
+  // Las demás pendientes se buscan antes: una transacción no admite consultas.
+  // El filtro por shelterId es el que habilitan las reglas de lectura.
   const pendingSnapshot = await getDocs(
     query(
       requestsCollection,
@@ -131,7 +165,7 @@ export async function acceptAdoptionRequest(request) {
   const petRef = doc(db, 'pets', request.petId)
 
   await runTransaction(db, async (transaction) => {
-    // Firestore exige hacer todas las lecturas antes de las escrituras
+    // En una transacción, todas las lecturas van antes que las escrituras
     const requestSnapshot = await transaction.get(requestRef)
     const otherSnapshots = await Promise.all(otherRefs.map((ref) => transaction.get(ref)))
 
@@ -159,7 +193,11 @@ export async function acceptAdoptionRequest(request) {
   })
 }
 
-// El refugio rechaza una solicitud. La mascota sigue disponible para otros adoptantes.
+/**
+ * Rechaza una solicitud. La mascota sigue disponible para otros adoptantes.
+ * @param {string} requestId
+ * @returns {Promise<void>}
+ */
 export function rejectAdoptionRequest(requestId) {
   return updateDoc(doc(db, 'adoptionRequests', requestId), {
     status: REQUEST_STATUS.REJECTED,
@@ -168,13 +206,20 @@ export function rejectAdoptionRequest(requestId) {
   })
 }
 
-// El adoptante abrió una solicitud que el refugio ya respondió: deja de ser novedad
+/**
+ * Marca como vista la respuesta del refugio (deja de mostrarse como novedad).
+ * @param {string} requestId
+ * @returns {Promise<void>}
+ */
 export function markRequestSeen(requestId) {
   return updateDoc(doc(db, 'adoptionRequests', requestId), { seenByAdopter: true })
 }
 
-// Cuántas respuestas del refugio el adoptante todavía no vio.
-// getCountFromServer trae solo el número, no los documentos.
+/**
+ * Cantidad de respuestas que el adoptante todavía no vio (se cuenta en el servidor).
+ * @param {string} adopterId
+ * @returns {Promise<number>}
+ */
 export async function countUnseenResponses(adopterId) {
   const snapshot = await getCountFromServer(
     query(
@@ -186,7 +231,11 @@ export async function countUnseenResponses(adopterId) {
   return snapshot.data().count
 }
 
-// Cuántas solicitudes pendientes tiene un refugio para revisar
+/**
+ * Cantidad de solicitudes pendientes de un refugio (se cuenta en el servidor).
+ * @param {string} shelterId
+ * @returns {Promise<number>}
+ */
 export async function countPendingRequests(shelterId) {
   const snapshot = await getCountFromServer(
     query(
@@ -198,8 +247,12 @@ export async function countPendingRequests(shelterId) {
   return snapshot.data().count
 }
 
-// Adopciones (solicitudes aceptadas), de la más reciente a la más vieja.
-// field: 'adopterId' o 'shelterId' (las reglas solo dejan leer las propias).
+/**
+ * Solicitudes aceptadas de un adoptante o de un refugio, de la más reciente a la más vieja.
+ * @param {'adopterId'|'shelterId'} field - Campo por el que se filtra.
+ * @param {string} uid
+ * @returns {Promise<object[]>}
+ */
 async function getAdoptions(field, uid) {
   const snapshot = await getDocs(
     query(
@@ -211,10 +264,20 @@ async function getAdoptions(field, uid) {
   return sortByNewest(snapshot.docs.map(toRequest), 'resolvedAt')
 }
 
+/**
+ * Adopciones aceptadas de un adoptante.
+ * @param {string} adopterId
+ * @returns {Promise<object[]>}
+ */
 export function getAdopterAdoptions(adopterId) {
   return getAdoptions('adopterId', adopterId)
 }
 
+/**
+ * Adopciones aceptadas de un refugio.
+ * @param {string} shelterId
+ * @returns {Promise<object[]>}
+ */
 export function getShelterAdoptions(shelterId) {
   return getAdoptions('shelterId', shelterId)
 }

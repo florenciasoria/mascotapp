@@ -4,7 +4,7 @@
   color: var(--color-text-muted);
 }
 
-/* Lista numerada (ol) sin números: el orden importa, los puntos lo dibujan */
+/* Lista ordenada: los puntos y la línea reemplazan a los números */
 .timeline {
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
   list-style: none;
 }
 
-/* Punto - texto - fecha. La línea vertical une los puntos */
+/* Punto, texto y fecha; la línea vertical une los puntos */
 .step {
   position: relative;
   display: grid;
@@ -55,7 +55,7 @@
   background-color: var(--color-primary);
 }
 
-/* Pendiente: punto vacío (el paso todavía no ocurrió) */
+/* Paso pendiente: punto vacío */
 .warning,
 .pending {
   border-color: #d9b44a;

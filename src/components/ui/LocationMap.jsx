@@ -2,7 +2,12 @@ import styles from './LocationMap.module.css'
 
 const MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
-// Mapa interactivo de Google (Maps Embed API) centrado en una dirección
+/**
+ * Mapa de Google (Maps Embed API) centrado en una dirección.
+ * @param {object} props
+ * @param {string} props.address - Dirección a mostrar.
+ * @param {string} props.title - Título accesible del mapa.
+ */
 function LocationMap({ address, title }) {
   const params = new URLSearchParams({
     key: MAPS_API_KEY,

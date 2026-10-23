@@ -8,6 +8,7 @@ import { validateForgotPasswordForm } from '@/utils/validators'
 import logo from '@/assets/logo.png'
 import styles from './AuthPage.module.css'
 
+/** Recuperación de contraseña: envía un email para crear una nueva. */
 function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')

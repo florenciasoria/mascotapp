@@ -1,7 +1,10 @@
 import styles from './AuthLayout.module.css'
 
-// Estructura de las pantallas de autenticación (login y registro):
-// contenido centrado; "wide" para formularios de dos columnas.
+/**
+ * Estructura de las pantallas de acceso (login, registro, verificación): contenido centrado.
+ * @param {object} props
+ * @param {boolean} [props.wide] - Ancho mayor, para formularios de dos columnas.
+ */
 function AuthLayout({ children, wide = false }) {
   return (
     <main className={styles.layout}>

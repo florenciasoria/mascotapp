@@ -40,13 +40,13 @@
   font-style: italic;
 }
 
-/* Área de texto: se puede agrandar hacia abajo */
+/* Área de texto redimensionable en vertical */
 .textarea {
   min-height: 6rem;
   resize: vertical;
 }
 
-/* Contraseña: espacio para el botón del ojo */
+/* Contraseña: espacio para el botón de mostrar */
 .inputWrapper {
   position: relative;
 }
@@ -72,7 +72,7 @@
   transform: translateY(-50%);
 }
 
-/* Campos de solo lectura (email, tipo de usuario) */
+/* Campos de solo lectura */
 .input[readonly] {
   background-color: var(--color-bg);
   cursor: default;

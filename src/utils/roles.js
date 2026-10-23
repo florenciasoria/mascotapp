@@ -1,5 +1,4 @@
-// Roles y estados de usuario. Se usan en toda la app para no escribir
-// los textos a mano (un error de tipeo sería un bug difícil de encontrar).
+// Roles y estados de las cuentas, con sus textos y colores.
 export const ROLES = {
   ADOPTER: 'adoptante',
   SHELTER: 'refugio',
@@ -13,26 +12,28 @@ export const STATUS = {
   INACTIVE: 'inactivo',
 }
 
-// Pantalla de inicio de cada rol
+// Inicio de cada rol
 const HOME_PATHS = {
   [ROLES.ADOPTER]: '/adoptante',
   [ROLES.SHELTER]: '/refugio',
   [ROLES.ADMIN]: '/admin',
 }
 
-// Si el rol no es válido, devuelve una ruta inexistente (muestra la página 404)
+/**
+ * Ruta de inicio de un rol.
+ * @param {string} role
+ * @returns {string} La ruta, o una inexistente (página 404) si el rol no es válido.
+ */
 export function getHomePath(role) {
   return HOME_PATHS[role] ?? '/no-encontrado'
 }
 
-// Nombre de cada rol para mostrar en pantalla
 export const ROLE_LABELS = {
   [ROLES.ADOPTER]: 'Adoptante',
   [ROLES.SHELTER]: 'Refugio',
   [ROLES.ADMIN]: 'Administrador',
 }
 
-// Cómo se muestra cada estado en pantalla
 export const STATUS_LABELS = {
   [STATUS.PENDING]: 'Pendiente de aprobación',
   [STATUS.APPROVED]: 'Activo',
@@ -40,7 +41,7 @@ export const STATUS_LABELS = {
   [STATUS.INACTIVE]: 'Desactivado',
 }
 
-// Color de la pastilla de estado (StatusBadge) para cada estado de usuario
+// Color de la pastilla de cada estado
 export const STATUS_TONES = {
   [STATUS.PENDING]: 'warning',
   [STATUS.APPROVED]: 'success',

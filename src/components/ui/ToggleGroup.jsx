@@ -6,9 +6,18 @@ const YES_NO = [
   { value: 'no', label: 'No' },
 ]
 
-// Pregunta con opciones tipo "pastilla" (por defecto Sí / No).
-// Son radios nativos dentro de un fieldset: se usan con teclado (flechas)
-// y el lector de pantalla lee la pregunta (legend) junto con cada opción.
+/**
+ * Pregunta con opciones tipo pastilla (por defecto Sí / No).
+ * Usa radios nativos dentro de un fieldset: se maneja con el teclado y el lector de pantalla
+ * lee la pregunta junto con cada opción.
+ * @param {object} props
+ * @param {string} props.label - Pregunta.
+ * @param {string} props.name - Nombre del campo.
+ * @param {string} props.value - Opción elegida.
+ * @param {(event: Event) => void} props.onChange - Cambio de opción.
+ * @param {string} [props.error] - Mensaje de error.
+ * @param {{value: string, label: string}[]} [props.options] - Opciones.
+ */
 function ToggleGroup({ label, name, value, onChange, error, options = YES_NO }) {
   const errorId = `${useId()}-error`
 

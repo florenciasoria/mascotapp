@@ -1,4 +1,4 @@
-/* Misma presentación que el detalle de usuario del admin: etiqueta arriba, valor abajo */
+/* Etiqueta arriba, valor abajo */
 .answers {
   display: grid;
   grid-template-columns: 1fr;
@@ -27,7 +27,7 @@
   overflow-wrap: anywhere;
 }
 
-/* Respeta los saltos de línea que escribió el adoptante */
+/* Respeta los saltos de línea del texto */
 .longText {
   white-space: pre-line;
 }

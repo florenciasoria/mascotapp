@@ -8,8 +8,7 @@ import { ROLES } from '@/utils/roles'
 import logo from '@/assets/logo.png'
 import styles from './MessagePage.module.css'
 
-// Se muestra hasta que el usuario verifica su email.
-// También funciona como confirmación del registro.
+/** Pantalla de verificación del email, que se muestra hasta que el usuario lo verifica. */
 function VerifyEmailPage() {
   const { user, profile, refreshEmailVerification } = useAuth()
   const [message, setMessage] = useState('')
@@ -58,7 +57,6 @@ function VerifyEmailPage() {
           ¡Tu cuenta fue creada! Te enviamos un enlace de verificación a{' '}
           <strong>{user?.email}</strong>. Abrilo para activar tu cuenta.
         </p>
-        {/* El refugio tiene un paso más: después de verificar, lo aprueba un administrador */}
         {profile?.role === ROLES.SHELTER && (
           <p className={styles.text}>
             Después de verificarlo, un administrador va a revisar los datos de tu refugio antes de

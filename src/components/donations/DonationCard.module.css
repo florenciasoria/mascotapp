@@ -15,7 +15,6 @@
   font-size: var(--font-size-sm);
 }
 
-/* Etiqueta y valor en la misma línea: "Importe   $ 15.000" */
 .facts {
   display: flex;
   flex-direction: column;

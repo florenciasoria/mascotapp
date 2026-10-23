@@ -6,10 +6,11 @@ import Notice from '@/components/ui/Notice'
 import { countPendingShelters } from '@/services/userService'
 import styles from '@/pages/shared/HomeCards.module.css'
 
+/** Inicio del administrador, con el aviso de refugios pendientes de aprobación. */
 function AdminHomePage() {
   const [pendingCount, setPendingCount] = useState(0)
 
-  // El aviso es secundario: si falla el conteo, simplemente no se muestra
+  // El aviso es secundario: si falla el conteo, no se muestra
   useEffect(() => {
     let isActive = true
     countPendingShelters()

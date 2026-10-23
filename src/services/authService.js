@@ -1,5 +1,4 @@
-// Servicio de autenticación: el único lugar de la app que usa
-// Firebase Auth y que escribe perfiles de usuario en Firestore.
+// Autenticación (Firebase Authentication) y alta de perfiles.
 import {
   browserLocalPersistence,
   browserSessionPersistence,
@@ -15,9 +14,16 @@ import {
 import { doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore'
 import { auth, db } from './firebase'
 import { ROLES, STATUS } from '@/utils/roles'
-// Después de hacer clic en el enlace del email, Firebase ofrece volver al login
+// Después de usar el enlace del email, Firebase ofrece volver al login
 const actionCodeSettings = { url: `${window.location.origin}/login` }
 
+/**
+ * Registra un usuario: crea la cuenta, guarda su perfil y envía el email de verificación.
+ * Si no se puede guardar el perfil, borra la cuenta creada para no dejarla incompleta.
+ * Los refugios quedan pendientes de aprobación; los adoptantes, aprobados.
+ * @param {object} data - Datos del formulario de registro.
+ * @returns {Promise<object>} El perfil guardado.
+ */
 export async function registerUser({
   role,
   name,
@@ -32,7 +38,7 @@ export async function registerUser({
 
   const profile = {
     role,
-    // Los refugios esperan aprobación de un admin; los adoptantes entran directo
+    // Los refugios esperan la aprobación de un administrador
     status: role === ROLES.SHELTER ? STATUS.PENDING : STATUS.APPROVED,
     name: name.trim(),
     email: user.email,
@@ -48,59 +54,86 @@ export async function registerUser({
   try {
     await setDoc(doc(db, 'users', user.uid), profile)
   } catch (error) {
-    // Si no se pudo guardar el perfil, borramos la cuenta recién creada
-    // para no dejar un usuario "a medias" sin rol.
+    // Si falla el perfil, se borra la cuenta recién creada
     await deleteUser(user)
     throw error
   }
 
-  // Si falla el envío no cancelamos el registro: se puede reenviar desde la app
+  // Un error al enviar el email no cancela el registro: se puede reenviar
   try {
     await sendEmailVerification(user, actionCodeSettings)
   } catch {
-    // El usuario puede pedir el reenvío desde la pantalla de verificación
+    // Se puede reenviar desde la pantalla de verificación
   }
 
   return profile
 }
 
-// rememberMe: true = la sesión queda abierta aunque se cierre el navegador.
-// false = se cierra al cerrar la pestaña (más seguro en una computadora compartida).
+/**
+ * Inicia sesión.
+ * @param {string} email
+ * @param {string} password
+ * @param {boolean} [rememberMe] - true: la sesión persiste al cerrar el navegador;
+ * false: dura lo que la pestaña (más seguro en computadoras compartidas).
+ * @returns {Promise<object>}
+ */
 export async function loginUser(email, password, rememberMe = false) {
   await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
   return signInWithEmailAndPassword(auth, email.trim(), password)
 }
 
+/**
+ * Cierra la sesión.
+ * @returns {Promise<void>}
+ */
 export function logoutUser() {
   return signOut(auth)
 }
 
+/**
+ * Reenvía el email de verificación al usuario actual.
+ * @returns {Promise<void>}
+ */
 export function resendVerificationEmail() {
   return sendEmailVerification(auth.currentUser, actionCodeSettings)
 }
 
-// Firebase envía un email con un enlace para crear una contraseña nueva.
-// Por seguridad, no avisa si el email no está registrado.
+/**
+ * Envía el email para crear una contraseña nueva.
+ * Por seguridad, Firebase no informa si el email no está registrado.
+ * @param {string} email
+ * @returns {Promise<void>}
+ */
 export function sendPasswordReset(email) {
   return sendPasswordResetEmail(auth, email.trim(), actionCodeSettings)
 }
 
-// Vuelve a consultar a Firebase si el usuario ya verificó su email
+/**
+ * Vuelve a consultar si el usuario verificó su email y renueva el token
+ * para que las reglas de Firestore reciban el dato actualizado.
+ * @returns {Promise<boolean>}
+ */
 export async function checkEmailVerified() {
   await auth.currentUser.reload()
-  // Renovamos el token para que las reglas de Firestore también lo sepan
   await auth.currentUser.getIdToken(true)
   return auth.currentUser.emailVerified
 }
 
-// Avisa cada vez que cambia la sesión (login, logout o al recargar la página).
-// Devuelve una función para dejar de escuchar.
+/**
+ * Escucha los cambios de sesión (inicio, cierre o recarga de la página).
+ * @param {(user: object|null) => void} callback
+ * @returns {() => void} Función para dejar de escuchar.
+ */
 export function subscribeToAuthChanges(callback) {
   return onAuthStateChanged(auth, callback)
 }
 
-// Escucha en tiempo real el perfil del usuario (rol, estado, datos).
-// Devuelve null si el perfil no existe o no se puede leer.
+/**
+ * Escucha en tiempo real el perfil de un usuario.
+ * @param {string} uid
+ * @param {(profile: object|null) => void} callback - Recibe null si el perfil no existe o no se puede leer.
+ * @returns {() => void} Función para dejar de escuchar.
+ */
 export function subscribeToUserProfile(uid, callback) {
   return onSnapshot(
     doc(db, 'users', uid),
@@ -109,7 +142,11 @@ export function subscribeToUserProfile(uid, callback) {
   )
 }
 
-// Traduce los códigos de error de Firebase a mensajes para el usuario.
+/**
+ * Traduce un error de Firebase Authentication a un mensaje para el usuario.
+ * @param {{code: string}} error
+ * @returns {string}
+ */
 export function getAuthErrorMessage(error) {
   switch (error.code) {
     case 'auth/email-already-in-use':

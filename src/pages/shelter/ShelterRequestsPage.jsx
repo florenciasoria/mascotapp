@@ -12,6 +12,7 @@ import {
 } from '@/utils/requestFilters'
 import styles from './ShelterRequestsPage.module.css'
 
+/** Solicitudes recibidas por el refugio, con filtro por estado y las pendientes primero (CU003). */
 function ShelterRequestsPage() {
   const { user } = useAuth()
   const [requests, setRequests] = useState([])
@@ -19,7 +20,6 @@ function ShelterRequestsPage() {
   const [loadError, setLoadError] = useState(false)
   const [statusFilter, setStatusFilter] = useState('')
 
-  // Carga las solicitudes del refugio al entrar a la pantalla
   useEffect(() => {
     let isActive = true
 
@@ -33,7 +33,6 @@ function ShelterRequestsPage() {
     }
   }, [user.uid])
 
-  // Pendientes primero: son las que el refugio tiene que revisar
   const visibleRequests = sortRequestsPendingFirst(filterRequestsByStatus(requests, statusFilter))
 
   return (

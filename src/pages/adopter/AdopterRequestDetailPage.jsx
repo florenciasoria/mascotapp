@@ -14,10 +14,10 @@ import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './AdopterRequestDetailPage.module.css'
 import RequestTimeline from '@/components/requests/RequestTimeline'
 
-
+/** Detalle de una solicitud para el adoptante (CU003): resultado, respuestas, historial y cancelación. */
 function AdopterRequestDetailPage() {
   const { requestId } = useParams()
-  // Volver a la pantalla de la que vino (Historial o Mis solicitudes); por defecto, Mis solicitudes
+  // Vuelve a la pantalla de origen (Historial o Mis solicitudes)
   const location = useLocation()
   const backTo = location.state?.backTo ?? '/adoptante/solicitudes'
   const [request, setRequest] = useState(null)
@@ -26,7 +26,7 @@ function AdopterRequestDetailPage() {
   const [isCancelling, setIsCancelling] = useState(false)
   const [dialog, setDialog] = useState(null)
 
-  // Si la solicitud no existe o es de otro usuario, las reglas no dejan leerla
+  // Las reglas no permiten leer solicitudes ajenas
   useEffect(() => {
     let isActive = true
 
@@ -34,8 +34,7 @@ function AdopterRequestDetailPage() {
       .then((result) => {
         if (!isActive) return
         setRequest(result)
-        // Al abrirla, la respuesta deja de ser novedad.
-        // Si falla no pasa nada: sigue marcada y se vuelve a intentar la próxima vez.
+        // Al abrirla, la respuesta deja de ser novedad (si falla, se reintenta en la próxima visita)
         if (result?.seenByAdopter === false) {
           markRequestSeen(result.id).catch(() => {})
         }
@@ -110,7 +109,6 @@ function AdopterRequestDetailPage() {
 
         <RequestTimeline request={request} />
 
-        {/* Volver (secundario) a la izquierda; la acción principal a la derecha */}
         <div className={styles.actions}>
           <ButtonLink to={backTo} variant="secondary">
             Volver

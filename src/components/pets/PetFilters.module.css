@@ -10,7 +10,7 @@
   gap: var(--space-4);
 }
 
-/* Tablet: 2 columnas. Pantalla grande: 3 columnas (2 filas de 3) */
+/* Dos columnas en tablet y tres en pantallas grandes */
 @media (min-width: 36rem) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
@@ -23,7 +23,7 @@
   }
 }
 
-/* Edad desde y hasta, lado a lado en una sola celda */
+/* Edad desde y hasta en una misma celda */
 .ageGroup {
   display: grid;
   grid-template-columns: 1fr 1fr;
