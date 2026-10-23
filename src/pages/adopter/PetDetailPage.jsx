@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router'
 import Card from '@/components/ui/Card'
 import ButtonLink from '@/components/ui/ButtonLink'
 import LocationMap from '@/components/ui/LocationMap'
+import ShelterRatings from '@/components/ratings/ShelterRatings'
 import { useAuth } from '@/hooks/useAuth'
 import { getPet } from '@/services/petService'
 import { hasActiveRequestForPet } from '@/services/adoptionService'
@@ -116,6 +117,7 @@ function PetDetailPage() {
           {pet.shelterAddress ? `${pet.shelterAddress}, ${pet.neighborhood}` : pet.neighborhood}
         </p>
         <LocationMap address={mapAddress} title={`Mapa de la ubicación de ${pet.shelterName}`} />
+        <ShelterRatings shelterId={pet.shelterId} />
       </section>
 
       {alreadyRequested && (

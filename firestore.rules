@@ -330,12 +330,10 @@ service cloud.firestore {
 
     // Calificaciones. ID = ID de la solicitud aceptada (una sola por adopción)
     match /ratings/{ratingId} {
-      // Adoptante: las suyas. Refugio: las que recibió. Admin: todas.
-      allow read: if isSignedIn() && isVerified() && (
-        resource.data.adopterId == request.auth.uid
-        || resource.data.shelterId == request.auth.uid
-        || isAdmin()
-      );
+      // Las calificaciones son públicas para los usuarios verificados (como las reseñas):
+      // sirven para que otros adoptantes conozcan a cada refugio.
+      allow read: if isSignedIn() && isVerified();
+
 
       // Alta: solo el adoptante de una adopción aceptada
       allow create: if isApprovedRole('adoptante') && isValidNewRating(ratingId);
