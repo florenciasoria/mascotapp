@@ -12,6 +12,8 @@ import RequestResultBanner from '@/components/requests/RequestResultBanner'
 import { cancelAdoptionRequest, getRequest, markRequestSeen } from '@/services/adoptionService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './AdopterRequestDetailPage.module.css'
+import RequestTimeline from '@/components/requests/RequestTimeline'
+
 
 function AdopterRequestDetailPage() {
   const { requestId } = useParams()
@@ -105,6 +107,8 @@ function AdopterRequestDetailPage() {
           </h2>
           <RequestAnswers answers={request.answers} />
         </Card>
+
+        <RequestTimeline request={request} />
 
         {/* Volver (secundario) a la izquierda; la acción principal a la derecha */}
         <div className={styles.actions}>

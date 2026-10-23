@@ -16,6 +16,7 @@ import {
 } from '@/services/adoptionService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './ShelterRequestDetailPage.module.css'
+import RequestTimeline from '@/components/requests/RequestTimeline'
 
 function ShelterRequestDetailPage() {
   const { requestId } = useParams()
@@ -142,6 +143,9 @@ function ShelterRequestDetailPage() {
             </dl>
           </Card>
         )}
+
+        <RequestTimeline request={request} />
+
         {/* Pendiente: Volver como link a la izquierda y las decisiones a la derecha
             (como la solicitud de registro del admin). Resuelta: solo Volver. */}
         {isPending ? (
@@ -160,7 +164,11 @@ function ShelterRequestDetailPage() {
               <Button onClick={() => setActionToConfirm('accept')} disabled={isSaving}>
                 Aceptar
               </Button>
+
+              
             </div>
+
+            
           </div>
         ) : (
           <div className={styles.actions}>
@@ -170,6 +178,8 @@ function ShelterRequestDetailPage() {
           </div>
         )}
       </div>
+
+
 
       <ConfirmDialog
         isOpen={actionToConfirm !== null}
