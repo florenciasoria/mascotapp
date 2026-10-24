@@ -9,3 +9,16 @@ export function focusFirstInvalidField(form, errors) {
   firstInvalid?.focus()
   return Object.keys(errors).length > 0
 }
+
+/**
+ * Errores sin el del campo indicado, para borrarlo mientras el usuario lo corrige.
+ * @param {Object<string, string>} errors
+ * @param {string} name
+ * @returns {Object<string, string>} Los mismos errores si el campo no tenía (evita re-renderizar).
+ */
+export function withoutError(errors, name) {
+  if (!errors[name]) return errors
+  const next = { ...errors }
+  delete next[name]
+  return next
+}

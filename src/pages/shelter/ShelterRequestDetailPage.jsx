@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -14,6 +14,7 @@ import {
   getRequest,
   rejectAdoptionRequest,
 } from '@/services/adoptionService'
+import { adoptedWord } from '@/utils/petOptions'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import styles from './ShelterRequestDetailPage.module.css'
 import RequestTimeline from '@/components/requests/RequestTimeline'
@@ -21,6 +22,7 @@ import RequestTimeline from '@/components/requests/RequestTimeline'
 /** Detalle de una solicitud para el refugio (CU003): respuestas, contacto, historial y decisión. */
 function ShelterRequestDetailPage() {
   const { requestId } = useParams()
+  const navigate = useNavigate()
   // Vuelve a la pantalla de origen (Historial o Solicitudes)
   const location = useLocation()
   const backTo = location.state?.backTo ?? '/refugio/solicitudes'
@@ -59,7 +61,7 @@ function ShelterRequestDetailPage() {
           ? {
               type: 'success',
               title: '¡Solicitud aceptada!',
-              message: `${request.pet.name} ya figura como adoptada. Las demás solicitudes pendientes se rechazaron automáticamente.`,
+              message: `${request.pet.name} ya figura como ${adoptedWord(request.pet.sex)}. Las demás solicitudes pendientes se rechazaron automáticamente.`,
             }
           : {
               type: 'success',
@@ -76,6 +78,15 @@ function ShelterRequestDetailPage() {
     } finally {
       setIsSaving(false)
       setActionToConfirm(null)
+    }
+  }
+
+  // Tras aceptar o rechazar, se vuelve a la lista de solicitudes
+  function handleDialogClose() {
+    const wasSuccess = dialog?.type === 'success'
+    setDialog(null)
+    if (wasSuccess) {
+      navigate('/refugio/solicitudes')
     }
   }
 
@@ -185,7 +196,7 @@ function ShelterRequestDetailPage() {
         }
         message={
           actionToConfirm === 'accept'
-            ? `${request.pet.name} va a quedar como adoptada y las demás solicitudes pendientes para ${request.pet.name} se van a rechazar automáticamente. Esta acción no se puede deshacer.`
+            ? `${request.pet.name} va a quedar como ${adoptedWord(request.pet.sex)} y las demás solicitudes pendientes para ${request.pet.name} se van a rechazar automáticamente. Esta acción no se puede deshacer.`
             : 'El adoptante va a ver que su solicitud fue rechazada. Esta acción no se puede deshacer.'
         }
         confirmLabel={actionToConfirm === 'accept' ? 'Aceptar' : 'Rechazar'}
@@ -195,7 +206,7 @@ function ShelterRequestDetailPage() {
 
       <ResultDialog
         isOpen={dialog !== null}
-        onClose={() => setDialog(null)}
+        onClose={handleDialogClose}
         type={dialog?.type}
         title={dialog?.title ?? ''}
         message={dialog?.message}

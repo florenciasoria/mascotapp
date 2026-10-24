@@ -1,4 +1,5 @@
 import { formatDate } from '@/utils/dates'
+import { adoptedWord } from '@/utils/petOptions'
 import { REQUEST_STATUS, REQUEST_STATUS_TONES } from '@/utils/requestOptions'
 import styles from './RequestResultBanner.module.css'
 
@@ -6,6 +7,7 @@ import styles from './RequestResultBanner.module.css'
 function getContent(request, viewer) {
   const date = formatDate(request.resolvedAt)
   const petName = request.pet.name
+  const adopted = adoptedWord(request.pet.sex)
   const isShelter = viewer === 'shelter'
 
   switch (request.status) {
@@ -14,7 +16,7 @@ function getContent(request, viewer) {
         icon: '✓',
         title: isShelter ? 'Solicitud aceptada' : '¡Tu solicitud fue aceptada!',
         text: isShelter
-          ? `Aceptaste esta solicitud el ${date}. ${petName} ya figura como adoptada.`
+          ? `Aceptaste esta solicitud el ${date}. ${petName} ya figura como ${adopted}.`
           : `${request.shelterName} aceptó tu solicitud para adoptar a ${petName} el ${date}. El refugio se va a comunicar con vos.`,
       }
     case REQUEST_STATUS.REJECTED:
@@ -23,8 +25,8 @@ function getContent(request, viewer) {
           icon: '✕',
           title: 'Solicitud rechazada',
           text: isShelter
-            ? `Se rechazó automáticamente el ${date} porque ${petName} fue adoptada por otra persona.`
-            : `${petName} fue adoptada por otra persona, por eso tu solicitud se rechazó el ${date}.`,
+            ? `Se rechazó automáticamente el ${date} porque ${petName} fue ${adopted} por otra persona.`
+            : `${petName} fue ${adopted} por otra persona, por eso tu solicitud se rechazó el ${date}.`,
         }
       }
       return {

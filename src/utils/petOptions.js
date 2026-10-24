@@ -31,6 +31,29 @@ export const PET_STATUS_LABELS = {
 }
 
 /**
+ * "adoptado" o "adoptada" según el sexo de la mascota.
+ * Las solicitudes anteriores a este cambio no guardan el sexo: usan "adoptada".
+ * @param {string} [sex]
+ * @returns {string}
+ */
+export function adoptedWord(sex) {
+  return sex === 'Macho' ? 'adoptado' : 'adoptada'
+}
+
+/**
+ * Texto del estado de una mascota, concordando "Adoptado/a" con su sexo.
+ * @param {object} pet
+ * @returns {string}
+ */
+export function getPetStatusLabel(pet) {
+  if (pet.status === PET_STATUS.ADOPTED) {
+    const word = adoptedWord(pet.sex)
+    return word[0].toUpperCase() + word.slice(1)
+  }
+  return PET_STATUS_LABELS[pet.status]
+}
+
+/**
  * Edad en meses, unidad común para comparar y filtrar.
  * @param {number} value
  * @param {'meses'|'años'} unit

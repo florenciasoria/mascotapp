@@ -9,7 +9,7 @@ import { getAuthErrorMessage, sendPasswordReset } from '@/services/authService'
 import { updateUserProfile } from '@/services/userService'
 import { syncShelterInfoInPets } from '@/services/petService'
 import { syncShelterPublicProfile } from '@/services/shelterService'
-import { focusFirstInvalidField } from '@/utils/forms'
+import { focusFirstInvalidField, withoutError } from '@/utils/forms'
 import { NEIGHBORHOODS } from '@/utils/neighborhoods'
 import { ROLE_LABELS, ROLES } from '@/utils/roles'
 import { LIMITS, validateProfileForm } from '@/utils/validators'
@@ -59,6 +59,7 @@ function ProfilePage() {
   function handleChange(event) {
     const { name, value } = event.target
     setValues((previous) => ({ ...previous, [name]: value }))
+    setErrors((previous) => withoutError(previous, name))
   }
 
   function handleCancel() {

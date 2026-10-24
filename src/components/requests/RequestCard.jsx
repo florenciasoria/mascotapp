@@ -1,6 +1,6 @@
 import Card from '@/components/ui/Card'
 import StatusBadge from '@/components/ui/StatusBadge'
-import { formatAge } from '@/utils/petOptions'
+import { formatAge, adoptedWord } from '@/utils/petOptions'
 import { formatDate } from '@/utils/dates'
 import { REQUEST_STATUS, REQUEST_STATUS_LABELS, REQUEST_STATUS_TONES } from '@/utils/requestOptions'
 import styles from './RequestCard.module.css'
@@ -73,7 +73,9 @@ function RequestCard({
           {statusLabel ?? REQUEST_STATUS_LABELS[request.status]}
         </StatusBadge>
         {request.autoRejected && (
-          <p className={styles.reason}>{pet.name} fue adoptada por otra persona.</p>
+          <p className={styles.reason}>
+            {pet.name} fue {adoptedWord(pet.sex)} por otra persona.
+          </p>
         )}
       </div>
       {children && <div className={styles.footer}>{children}</div>}

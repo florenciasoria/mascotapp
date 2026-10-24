@@ -249,7 +249,10 @@ export function validateRatingForm(values) {
   return errors
 }
 
-/** Indica si un vencimiento MM/AA es válido y no está vencido. */
+// Ninguna tarjeta vence a más de 20 años de su emisión
+const MAX_EXPIRY_YEARS = 20
+
+/** Indica si un vencimiento MM/AA es válido, no está vencido ni es demasiado lejano. */
 function isValidExpiry(value) {
   const match = /^(\d{2})\/(\d{2})$/.exec(value.trim())
   if (!match) return false
@@ -257,6 +260,7 @@ function isValidExpiry(value) {
   const year = 2000 + Number(match[2])
   if (month < 1 || month > 12) return false
   const now = new Date()
+  if (year > now.getFullYear() + MAX_EXPIRY_YEARS) return false
   return year > now.getFullYear() || (year === now.getFullYear() && month >= now.getMonth() + 1)
 }
 

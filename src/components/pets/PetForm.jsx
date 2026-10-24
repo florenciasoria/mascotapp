@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
-import { focusFirstInvalidField } from '@/utils/forms'
+import { focusFirstInvalidField, withoutError } from '@/utils/forms'
 import { AGE_UNITS, COLORS, SEXES, SIZES, SPECIES } from '@/utils/petOptions'
 import { LIMITS, validatePetForm } from '@/utils/validators'
 import ImageUpload from './ImageUpload'
@@ -39,6 +39,12 @@ function PetForm({
   function handleChange(event) {
     const { name, value } = event.target
     setValues((previous) => ({ ...previous, [name]: value }))
+    setErrors((previous) => withoutError(previous, name))
+  }
+
+  function handleFileChange(file) {
+    setImageFile(file)
+    setErrors((previous) => withoutError(previous, 'image'))
   }
 
   async function handleSubmit(event) {
@@ -148,7 +154,7 @@ function PetForm({
       <ImageUpload
         file={imageFile}
         currentUrl={currentImageUrl}
-        onFileChange={setImageFile}
+        onFileChange={handleFileChange}
         error={errors.image}
       />
 

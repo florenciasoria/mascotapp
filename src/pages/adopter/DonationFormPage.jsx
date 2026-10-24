@@ -10,7 +10,7 @@ import { getPublicShelter } from '@/services/shelterService'
 import { createDonation } from '@/services/donationService'
 import { DONATION_PRESETS, formatCurrency } from '@/utils/donationOptions'
 import { validateDonationForm } from '@/utils/validators'
-import { focusFirstInvalidField } from '@/utils/forms'
+import { focusFirstInvalidField, withoutError } from '@/utils/forms'
 import styles from './DonationFormPage.module.css'
 
 const EMPTY_DONATION = { amount: '', cardNumber: '', cardHolder: '', expiry: '', cvv: '' }
@@ -50,6 +50,7 @@ function DonationFormPage() {
   function handleChange(event) {
     const { name, value } = event.target
     setValues((previous) => ({ ...previous, [name]: value }))
+    setErrors((previous) => withoutError(previous, name))
   }
 
   async function handleSubmit(event) {

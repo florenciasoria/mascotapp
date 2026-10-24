@@ -9,7 +9,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import PetCard from '@/components/pets/PetCard'
 import { useAuth } from '@/hooks/useAuth'
 import { getShelterPets, setPetStatus } from '@/services/petService'
-import { PET_STATUS, PET_STATUS_LABELS } from '@/utils/petOptions'
+import { getPetStatusLabel, PET_STATUS } from '@/utils/petOptions'
 import styles from './ShelterPetsPage.module.css'
 
 const STATUS_TONES = {
@@ -105,7 +105,7 @@ function ShelterPetsPage() {
               <li key={pet.id}>
                 <PetCard pet={pet} muted={pet.status === PET_STATUS.UNAVAILABLE}>
                   <StatusBadge tone={STATUS_TONES[pet.status]}>
-                    {PET_STATUS_LABELS[pet.status]}
+                    {getPetStatusLabel(pet)}
                   </StatusBadge>
 
                   {pet.status !== PET_STATUS.ADOPTED && (
