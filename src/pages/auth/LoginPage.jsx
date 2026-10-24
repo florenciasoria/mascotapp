@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { getAuthErrorMessage, loginUser } from '@/services/authService'
 import { validateLoginForm } from '@/utils/validators'
 import { getHomePath } from '@/utils/roles'
+import { withoutError } from '@/utils/forms'
 import logo from '@/assets/logo.png'
 import styles from './AuthPage.module.css'
 
@@ -25,6 +26,7 @@ function LoginPage() {
   function handleChange(event) {
     const { name, value } = event.target
     setValues((previous) => ({ ...previous, [name]: value }))
+    setErrors((previous) => withoutError(previous, name))
   }
 
   async function handleSubmit(event) {

@@ -12,7 +12,7 @@ import { createAdoptionRequest, hasActiveRequestForPet } from '@/services/adopti
 import { PET_STATUS } from '@/utils/petOptions'
 import { EXPERIENCE_RANGES, HOURS_ALONE, HOUSING_TYPES } from '@/utils/requestOptions'
 import { LIMITS, validateRequestForm } from '@/utils/validators'
-import { focusFirstInvalidField } from '@/utils/forms'
+import { focusFirstInvalidField, withoutError } from '@/utils/forms'
 import styles from './RequestAdoptionPage.module.css'
 
 // Las preguntas Sí/No no tienen valor inicial: el adoptante elige cada respuesta
@@ -76,6 +76,10 @@ function RequestAdoptionPage() {
         next[FOLLOW_UPS[name]] = ''
       }
       return next
+    })
+    setErrors((previous) => {
+      const next = withoutError(previous, name)
+      return FOLLOW_UPS[name] && value === 'no' ? withoutError(next, FOLLOW_UPS[name]) : next
     })
   }
 

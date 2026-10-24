@@ -9,7 +9,7 @@ import { getAuthErrorMessage, registerUser } from '@/services/authService'
 import { LIMITS, validateRegisterForm } from '@/utils/validators'
 import { getHomePath, ROLES } from '@/utils/roles'
 import { NEIGHBORHOODS } from '@/utils/neighborhoods'
-import { focusFirstInvalidField } from '@/utils/forms'
+import { focusFirstInvalidField, withoutError } from '@/utils/forms'
 import styles from './RegisterPage.module.css'
 
 const INITIAL_VALUES = {
@@ -42,6 +42,7 @@ function RegisterPage() {
   function handleChange(event) {
     const { name, value } = event.target
     setValues((previous) => ({ ...previous, [name]: value }))
+    setErrors((previous) => withoutError(previous, name))
   }
 
   async function handleSubmit(event) {

@@ -73,6 +73,7 @@ export function createAdoptionRequest(pet, adopter, answers) {
       name: pet.name,
       species: pet.species,
       breed: pet.breed,
+      sex: pet.sex,
       ageValue: pet.ageValue,
       ageUnit: pet.ageUnit,
       imageUrl: pet.imageUrl,

@@ -10,7 +10,7 @@ import { getRequest } from '@/services/adoptionService'
 import { createRating, getAdopterRatings } from '@/services/ratingService'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import { LIMITS, validateRatingForm } from '@/utils/validators'
-import { focusFirstInvalidField } from '@/utils/forms'
+import { focusFirstInvalidField, withoutError } from '@/utils/forms'
 import styles from './RateAdoptionPage.module.css'
 
 // Sin puntajes iniciales: el adoptante elige cada uno
@@ -49,6 +49,7 @@ function RateAdoptionPage() {
   function handleChange(event) {
     const { name, value } = event.target
     setValues((previous) => ({ ...previous, [name]: value }))
+    setErrors((previous) => withoutError(previous, name))
   }
 
   async function handleSubmit(event) {

@@ -58,7 +58,10 @@ function ForgotPasswordPage() {
             type="email"
             name="email"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) => {
+              setEmail(event.target.value)
+              setError('')
+            }}
             error={error}
             autoComplete="email"
             required

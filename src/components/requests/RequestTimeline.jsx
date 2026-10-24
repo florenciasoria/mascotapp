@@ -1,4 +1,5 @@
 import { formatDate } from '@/utils/dates'
+import { adoptedWord } from '@/utils/petOptions'
 import { REQUEST_STATUS, REQUEST_STATUS_TONES } from '@/utils/requestOptions'
 import styles from './RequestTimeline.module.css'
 
@@ -10,7 +11,7 @@ function getResolution(request) {
     case REQUEST_STATUS.REJECTED:
       return {
         text: request.autoRejected
-          ? `Rechazada automáticamente: ${request.pet.name} fue adoptada por otra persona`
+          ? `Rechazada automáticamente: ${request.pet.name} fue ${adoptedWord(request.pet.sex)} por otra persona`
           : `Rechazada por ${request.shelterName}`,
         date: request.resolvedAt,
       }
