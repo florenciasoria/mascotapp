@@ -47,6 +47,11 @@ const ACTIONS = {
   reactivate: {
     label: 'Reactivar cuenta',
     newStatus: STATUS.APPROVED,
+    confirm: {
+      title: '¿Reactivar esta cuenta?',
+      message:
+        'La cuenta va a poder volver a usar MascotApp. Si es un refugio, sus mascotas siguen pausadas hasta que las vuelva a publicar.',
+    },
     successTitle: '¡Cuenta reactivada!',
     successMessage: 'La cuenta puede volver a usar MascotApp.',
   },
