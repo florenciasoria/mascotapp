@@ -22,6 +22,26 @@ import styles from './AdminUsersPage.module.css'
 const toOptions = (labels) => Object.entries(labels).map(([value, label]) => ({ value, label }))
 const ROLE_OPTIONS = [{ value: '', label: 'Todos' }, ...toOptions(ROLE_LABELS)]
 
+// Confirmación y resultado de cada cambio de estado (mismos textos que el detalle de la cuenta)
+const STATUS_CHANGES = {
+  [STATUS.INACTIVE]: {
+    label: 'Desactivar',
+    title: (name) => `¿Desactivar a ${name}?`,
+    message:
+      'Mientras esté desactivada, la cuenta no va a poder usar MascotApp. Podés reactivarla cuando quieras.',
+    successTitle: 'Cuenta desactivada',
+    successMessage: 'La cuenta ya no puede usar MascotApp.',
+  },
+  [STATUS.APPROVED]: {
+    label: 'Reactivar',
+    title: (name) => `¿Reactivar a ${name}?`,
+    message:
+      'La cuenta va a poder volver a usar MascotApp. Si es un refugio, sus mascotas siguen pausadas hasta que las vuelva a publicar.',
+    successTitle: '¡Cuenta reactivada!',
+    successMessage: 'La cuenta puede volver a usar MascotApp.',
+  },
+}
+
 /** Gestión de usuarios (CU007): listado con filtros, aviso de pendientes y cambio de estado. */
 function AdminUsersPage() {
   const { user } = useAuth()
@@ -31,8 +51,8 @@ function AdminUsersPage() {
   const [draftFilters, setDraftFilters] = useState(EMPTY_USER_FILTERS)
   const [appliedFilters, setAppliedFilters] = useState(EMPTY_USER_FILTERS)
   const [updatingId, setUpdatingId] = useState(null)
-  const [userToDeactivate, setUserToDeactivate] = useState(null)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [statusChange, setStatusChange] = useState(null) // { account, newStatus }
+  const [dialog, setDialog] = useState(null)
 
   useEffect(() => {
     let isActive = true
@@ -102,17 +122,25 @@ function AdminUsersPage() {
       setUsers((current) =>
         current.map((item) => (item.id === account.id ? { ...item, status: newStatus } : item)),
       )
+      const { successTitle, successMessage } = STATUS_CHANGES[newStatus]
+      setDialog({ type: 'success', title: successTitle, message: successMessage })
     } catch {
-      setErrorMessage(`No pudimos actualizar el estado de ${account.name}. Intentá nuevamente.`)
+      setDialog({
+        type: 'error',
+        title: '¡Error!',
+        message: `No pudimos actualizar el estado de ${account.name}. Intentá nuevamente.`,
+      })
     } finally {
       setUpdatingId(null)
     }
   }
 
-  async function handleConfirmDeactivate() {
-    await changeStatus(userToDeactivate, STATUS.INACTIVE)
-    setUserToDeactivate(null)
+  async function handleConfirmStatusChange() {
+    await changeStatus(statusChange.account, statusChange.newStatus)
+    setStatusChange(null)
   }
+
+  const pendingChange = statusChange && STATUS_CHANGES[statusChange.newStatus]
 
   return (
     <>
@@ -209,8 +237,12 @@ function AdminUsersPage() {
               <li key={item.id}>
                 <UserCard
                   user={item}
-                  onDeactivate={setUserToDeactivate}
-                  onReactivate={(account) => changeStatus(account, STATUS.APPROVED)}
+                  onDeactivate={(account) =>
+                    setStatusChange({ account, newStatus: STATUS.INACTIVE })
+                  }
+                  onReactivate={(account) =>
+                    setStatusChange({ account, newStatus: STATUS.APPROVED })
+                  }
                   isUpdating={updatingId === item.id}
                 />
               </li>
@@ -220,21 +252,21 @@ function AdminUsersPage() {
       </section>
 
       <ConfirmDialog
-        isOpen={userToDeactivate !== null}
-        onClose={() => setUserToDeactivate(null)}
-        onConfirm={handleConfirmDeactivate}
-        title={`¿Desactivar a ${userToDeactivate?.name ?? ''}?`}
-        message="Mientras esté desactivada, la cuenta no va a poder usar MascotApp. Podés reactivarla cuando quieras."
-        confirmLabel="Desactivar"
-        isLoading={userToDeactivate !== null && updatingId === userToDeactivate.id}
+        isOpen={statusChange !== null}
+        onClose={() => setStatusChange(null)}
+        onConfirm={handleConfirmStatusChange}
+        title={pendingChange?.title(statusChange.account.name) ?? ''}
+        message={pendingChange?.message}
+        confirmLabel={pendingChange?.label}
+        isLoading={statusChange !== null && updatingId === statusChange.account.id}
       />
 
       <ResultDialog
-        isOpen={errorMessage !== ''}
-        onClose={() => setErrorMessage('')}
-        type="error"
-        title="¡Error!"
-        message={errorMessage}
+        isOpen={dialog !== null}
+        onClose={() => setDialog(null)}
+        type={dialog?.type}
+        title={dialog?.title ?? ''}
+        message={dialog?.message}
       />
     </>
   )
