@@ -1,21 +1,46 @@
 // Montos rápidos del formulario de donación
 export const DONATION_PRESETS = [5000, 10000, 15000]
 
-// Las donaciones son simuladas: quedan registradas y se pagan con tarjeta
+// Estado de la donación según el pago en Mercado Pago (lo actualiza el webhook)
 export const DONATION_STATUS = {
-  REGISTERED: 'registrada',
+  PENDING: 'pendiente',
+  APPROVED: 'aprobada',
+  REJECTED: 'rechazada',
 }
 
 export const DONATION_STATUS_LABELS = {
-  [DONATION_STATUS.REGISTERED]: 'Registrada',
+  [DONATION_STATUS.PENDING]: 'Pendiente de pago',
+  [DONATION_STATUS.APPROVED]: 'Aprobada',
+  [DONATION_STATUS.REJECTED]: 'Rechazada',
 }
 
-export const PAYMENT_METHODS = {
-  CARD: 'tarjeta',
+// Color de la pastilla de cada estado
+export const DONATION_STATUS_TONES = {
+  [DONATION_STATUS.PENDING]: 'warning',
+  [DONATION_STATUS.APPROVED]: 'success',
+  [DONATION_STATUS.REJECTED]: 'danger',
 }
 
-export const PAYMENT_METHOD_LABELS = {
-  [PAYMENT_METHODS.CARD]: 'Tarjeta',
+// Tipos de medio de pago que informa Mercado Pago
+const PAYMENT_TYPE_LABELS = {
+  credit_card: 'Tarjeta de crédito',
+  debit_card: 'Tarjeta de débito',
+  prepaid_card: 'Tarjeta prepaga',
+  account_money: 'Dinero en cuenta de Mercado Pago',
+  ticket: 'Efectivo (Pago Fácil / Rapipago)',
+}
+
+/**
+ * Medio de pago de una donación según su comprobante: "Tarjeta de crédito (visa)".
+ * @param {object} [receipt] - Comprobante guardado por el webhook.
+ * @returns {string} "Mercado Pago" si todavía no hay comprobante.
+ */
+export function formatPaymentMethod(receipt) {
+  if (!receipt?.paymentType) return 'Mercado Pago'
+  const type = PAYMENT_TYPE_LABELS[receipt.paymentType] ?? receipt.paymentType
+  // La marca solo suma en las tarjetas (en los demás tipos repite el tipo)
+  const isCard = receipt.paymentType.endsWith('_card')
+  return isCard && receipt.paymentMethod ? `${type} (${receipt.paymentMethod})` : type
 }
 
 /**

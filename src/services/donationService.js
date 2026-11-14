@@ -2,8 +2,10 @@
 import {
   collection,
   count,
+  doc,
   getAggregateFromServer,
   getDocs,
+  onSnapshot,
   query,
   sum,
   where,
@@ -30,6 +32,20 @@ export async function startDonationPayment(shelterId, amount) {
   const createDonationOrder = httpsCallable(functions, 'createDonationOrder')
   const result = await createDonationOrder({ shelterId, amount })
   return result.data.checkoutUrl
+}
+
+/**
+ * Escucha en tiempo real una donación, para mostrar la confirmación del pago apenas llega.
+ * @param {string} donationId
+ * @param {(donation: object|null) => void} callback - Recibe null si no existe o no se puede leer.
+ * @returns {() => void} Función para dejar de escuchar.
+ */
+export function subscribeToDonation(donationId, callback) {
+  return onSnapshot(
+    doc(db, 'donations', donationId),
+    (snapshot) => callback(snapshot.exists() ? toDonation(snapshot) : null),
+    () => callback(null),
+  )
 }
 
 /**

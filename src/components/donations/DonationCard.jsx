@@ -3,8 +3,9 @@ import StatusBadge from '@/components/ui/StatusBadge'
 import { formatDate } from '@/utils/dates'
 import {
   DONATION_STATUS_LABELS,
+  DONATION_STATUS_TONES,
   formatCurrency,
-  PAYMENT_METHOD_LABELS,
+  formatPaymentMethod,
 } from '@/utils/donationOptions'
 import styles from './DonationCard.module.css'
 
@@ -14,9 +15,8 @@ import styles from './DonationCard.module.css'
  * @param {object} props.donation - Donación a mostrar.
  * @param {string} props.title - Título: el refugio o el adoptante, según quién la vea.
  * @param {string} [props.subtitle] - Ubicación del refugio.
- * @param {boolean} [props.showCard] - Muestra los últimos 4 dígitos de la tarjeta (solo para quien donó).
  */
-function DonationCard({ donation, title, subtitle, showCard = false }) {
+function DonationCard({ donation, title, subtitle }) {
   const titleId = `donation-${donation.id}`
 
   return (
@@ -40,13 +40,12 @@ function DonationCard({ donation, title, subtitle, showCard = false }) {
         </div>
         <div>
           <dt>Medio de pago</dt>
-          <dd>
-            {PAYMENT_METHOD_LABELS[donation.paymentMethod]}
-            {showCard && ` terminada en ${donation.cardLast4}`}
-          </dd>
+          <dd>{formatPaymentMethod(donation.receipt)}</dd>
         </div>
       </dl>
-      <StatusBadge tone="success">{DONATION_STATUS_LABELS[donation.status]}</StatusBadge>
+      <StatusBadge tone={DONATION_STATUS_TONES[donation.status]}>
+        {DONATION_STATUS_LABELS[donation.status]}
+      </StatusBadge>
     </Card>
   )
 }

@@ -1,0 +1,42 @@
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 32rem;
+  border-top: 6px solid var(--color-border);
+  text-align: center;
+}
+
+.success {
+  border-top-color: var(--color-sage-deep);
+}
+
+.warning {
+  border-top-color: #d9b44a;
+}
+
+.danger {
+  border-top-color: var(--color-pink-deep);
+}
+
+.icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+}
+
+.text {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
