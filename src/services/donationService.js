@@ -1,18 +1,16 @@
-// Donaciones simuladas (colección "donations"). No se procesan pagos reales.
+// Donaciones (colección "donations"). El pago se procesa con Mercado Pago desde Cloud Functions.
 import {
-  addDoc,
   collection,
   count,
   getAggregateFromServer,
   getDocs,
   query,
-  serverTimestamp,
   sum,
   where,
 } from 'firebase/firestore'
-import { db } from './firebase'
+import { httpsCallable } from 'firebase/functions'
+import { db, functions } from './firebase'
 import { sortByNewest } from '@/utils/dates'
-import { DONATION_STATUS, PAYMENT_METHODS } from '@/utils/donationOptions'
 
 const donationsCollection = collection(db, 'donations')
 
@@ -22,27 +20,16 @@ function toDonation(snapshot) {
 }
 
 /**
- * Registra una donación simulada. De la tarjeta se guardan solo los últimos 4 dígitos;
- * el número completo y el código de seguridad no se envían.
- * @param {{uid: string, name: string}} adopter - Quien dona.
- * @param {{id: string, name: string, neighborhood: string}} shelter - Refugio destinatario.
- * @param {{amount: string|number, cardNumber: string}} payment - Importe y número de tarjeta.
- * @returns {Promise<object>}
+ * Inicia el pago de una donación. La función del servidor valida los datos, crea la donación
+ * pendiente y la orden en Mercado Pago, y devuelve la página de pago.
+ * @param {string} shelterId - Refugio destinatario.
+ * @param {number} amount - Importe entero en pesos.
+ * @returns {Promise<string>} URL de la página de pago de Mercado Pago.
  */
-export function createDonation(adopter, shelter, { amount, cardNumber }) {
-  const digits = cardNumber.replace(/\D/g, '')
-  return addDoc(donationsCollection, {
-    adopterId: adopter.uid,
-    adopterName: adopter.name,
-    shelterId: shelter.id,
-    shelterName: shelter.name,
-    neighborhood: shelter.neighborhood,
-    amount: Number(amount),
-    paymentMethod: PAYMENT_METHODS.CARD,
-    cardLast4: digits.slice(-4),
-    status: DONATION_STATUS.REGISTERED,
-    createdAt: serverTimestamp(),
-  })
+export async function startDonationPayment(shelterId, amount) {
+  const createDonationOrder = httpsCallable(functions, 'createDonationOrder')
+  const result = await createDonationOrder({ shelterId, amount })
+  return result.data.checkoutUrl
 }
 
 /**

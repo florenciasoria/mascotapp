@@ -5,15 +5,14 @@ import Input from '@/components/ui/Input'
 import ToggleGroup from '@/components/ui/ToggleGroup'
 import Button from '@/components/ui/Button'
 import ResultDialog from '@/components/ui/ResultDialog'
-import { useAuth } from '@/hooks/useAuth'
 import { getPublicShelter } from '@/services/shelterService'
-import { createDonation } from '@/services/donationService'
+import { startDonationPayment } from '@/services/donationService'
 import { DONATION_PRESETS, formatCurrency } from '@/utils/donationOptions'
 import { validateDonationForm } from '@/utils/validators'
 import { focusFirstInvalidField, withoutError } from '@/utils/forms'
 import styles from './DonationFormPage.module.css'
 
-const EMPTY_DONATION = { amount: '', cardNumber: '', cardHolder: '', expiry: '', cvv: '' }
+const EMPTY_DONATION = { amount: '' }
 
 // Montos rápidos como opciones: { value: "5000", label: "$ 5.000" }
 const PRESET_OPTIONS = DONATION_PRESETS.map((amount) => ({
@@ -21,10 +20,9 @@ const PRESET_OPTIONS = DONATION_PRESETS.map((amount) => ({
   label: formatCurrency(amount),
 }))
 
-/** Formulario de donación simulada a un refugio (CU005). Solo se guardan los últimos 4 dígitos de la tarjeta. */
+/** Formulario de donación a un refugio (CU005): se elige el importe y el pago se completa en Mercado Pago. */
 function DonationFormPage() {
   const { shelterId } = useParams()
-  const { user, profile } = useAuth()
   const navigate = useNavigate()
   const [shelter, setShelter] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -64,28 +62,21 @@ function DonationFormPage() {
 
     setIsSubmitting(true)
     try {
-      await createDonation({ uid: user.uid, name: profile.name }, shelter, values)
-      setDialog({
-        type: 'success',
-        title: '¡Donación registrada!',
-        message: `Tu donación de ${formatCurrency(Number(values.amount))} a ${shelter.name} fue registrada correctamente.`,
-      })
-    } catch {
+      const checkoutUrl = await startDonationPayment(shelter.id, Number(values.amount))
+      // Sale de la app: el pago se completa en Mercado Pago (el botón sigue cargando hasta irse)
+      window.location.assign(checkoutUrl)
+    } catch (error) {
+      // Los rechazos del servidor traen un mensaje en español; los demás errores, uno genérico
+      const hasServerMessage =
+        error.code?.startsWith('functions/') && error.code !== 'functions/internal'
       setDialog({
         type: 'error',
         title: '¡Error!',
-        message: 'No pudimos registrar la donación. Intentá nuevamente.',
+        message: hasServerMessage
+          ? error.message
+          : 'No pudimos iniciar el pago. Intentá nuevamente.',
       })
-    } finally {
       setIsSubmitting(false)
-    }
-  }
-
-  function handleDialogClose() {
-    const wasSuccess = dialog?.type === 'success'
-    setDialog(null)
-    if (wasSuccess) {
-      navigate('/adoptante/donaciones')
     }
   }
 
@@ -106,9 +97,8 @@ function DonationFormPage() {
     <>
       <PageHeader title={`Donación a ${shelter.name}`} />
 
-      <p className={styles.simulated}>
-        Donación simulada: no se realiza ningún cobro y solo se guardan los últimos 4 números de la
-        tarjeta.
+      <p className={styles.notice}>
+        Vas a completar el pago en Mercado Pago. MascotApp no ve ni guarda los datos de tu tarjeta.
       </p>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -132,47 +122,6 @@ function DonationFormPage() {
           hint="En pesos, sin centavos"
         />
 
-        <Input
-          label="Número de tarjeta"
-          name="cardNumber"
-          inputMode="numeric"
-          maxLength={19}
-          autoComplete="off"
-          value={values.cardNumber}
-          onChange={handleChange}
-          error={errors.cardNumber}
-        />
-        <Input
-          label="Nombre del titular"
-          name="cardHolder"
-          autoComplete="off"
-          value={values.cardHolder}
-          onChange={handleChange}
-          error={errors.cardHolder}
-        />
-        <div className={styles.row}>
-          <Input
-            label="Vencimiento"
-            name="expiry"
-            placeholder="MM/AA"
-            maxLength={5}
-            autoComplete="off"
-            value={values.expiry}
-            onChange={handleChange}
-            error={errors.expiry}
-          />
-          <Input
-            label="CVV"
-            name="cvv"
-            inputMode="numeric"
-            maxLength={4}
-            autoComplete="off"
-            value={values.cvv}
-            onChange={handleChange}
-            error={errors.cvv}
-          />
-        </div>
-
         <div className={styles.actions}>
           <Button
             variant="secondary"
@@ -182,14 +131,14 @@ function DonationFormPage() {
             Cancelar
           </Button>
           <Button type="submit" isLoading={isSubmitting}>
-            Donar
+            Continuar a Mercado Pago
           </Button>
         </div>
       </form>
 
       <ResultDialog
         isOpen={dialog !== null}
-        onClose={handleDialogClose}
+        onClose={() => setDialog(null)}
         type={dialog?.type}
         title={dialog?.title ?? ''}
         message={dialog?.message}
