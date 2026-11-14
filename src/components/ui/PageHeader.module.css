@@ -1,5 +1,15 @@
 .header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: 64rem;
   margin-bottom: var(--space-8);
+}
+
+.text {
+  flex: 1 1 20rem;
 }
 
 .title {

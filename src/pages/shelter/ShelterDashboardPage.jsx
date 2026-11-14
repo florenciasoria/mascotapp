@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
+import DownloadReportButton from '@/components/ui/DownloadReportButton'
 import DonutChart from '@/components/charts/DonutChart'
 import MonthlyChart from '@/components/charts/MonthlyChart'
 import ToggleGroup from '@/components/ui/ToggleGroup'
@@ -9,19 +10,29 @@ import { getShelterAdoptions } from '@/services/adoptionService'
 import { getShelterDonations } from '@/services/donationService'
 import { getShelterPets } from '@/services/petService'
 import { CHART_COLORS } from '@/utils/chartColors'
-import { groupByMonth, PERIOD_OPTIONS } from '@/utils/dates'
+import { formatDate, groupByMonth, PERIOD_OPTIONS } from '@/utils/dates'
 import { formatCurrency } from '@/utils/donationOptions'
 import { PET_STATUS, PET_STATUS_LABELS } from '@/utils/petOptions'
 import styles from '@/pages/shared/Dashboard.module.css'
 
 /** Panel de actividad del refugio: donaciones recibidas, mascotas y adopciones. */
 function ShelterDashboardPage() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [activity, setActivity] = useState(null) // { donations, pets, adoptions }
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [donationMonths, setDonationMonths] = useState(6)
   const [adoptionMonths, setAdoptionMonths] = useState(6)
+  const chartsRef = useRef(null)
+
+  // El botón del reporte se agrega recién cuando los datos están cargados
+  const renderHeader = (actions) => (
+    <PageHeader
+      title="Panel de actividad"
+      subtitle="Seguí las donaciones que recibís, el estado de tus mascotas y las adopciones."
+      actions={actions}
+    />
+  )
 
   useEffect(() => {
     let isActive = true
@@ -42,17 +53,10 @@ function ShelterDashboardPage() {
     }
   }, [user.uid])
 
-  const header = (
-    <PageHeader
-      title="Panel de actividad"
-      subtitle="Seguí las donaciones que recibís, el estado de tus mascotas y las adopciones."
-    />
-  )
-
   if (isLoading) {
     return (
       <>
-        {header}
+        {renderHeader()}
         <p role="status">Cargando panel…</p>
       </>
     )
@@ -61,7 +65,7 @@ function ShelterDashboardPage() {
   if (loadError) {
     return (
       <>
-        {header}
+        {renderHeader()}
         <p className={styles.error} role="alert">
           No pudimos cargar el panel. Recargá la página para intentar de nuevo.
         </p>
@@ -89,6 +93,36 @@ function ShelterDashboardPage() {
     dateField: 'resolvedAt',
   })
 
+  function getReport() {
+    return {
+      title: 'Panel de actividad',
+      subtitle: `Refugio: ${profile.name}`,
+      totals,
+      chartsContainer: chartsRef.current,
+      tables: [
+        {
+          title: 'Donaciones recibidas',
+          columns: ['Fecha', 'Donante', 'Importe'],
+          rows: donations.map((donation) => [
+            formatDate(donation.createdAt),
+            donation.adopterName,
+            formatCurrency(donation.amount),
+          ]),
+        },
+        {
+          title: 'Adopciones concretadas',
+          columns: ['Fecha', 'Mascota', 'Adoptante'],
+          rows: adoptions.map((adoption) => [
+            formatDate(adoption.resolvedAt),
+            adoption.pet.name,
+            adoption.adopterName,
+          ]),
+        },
+      ],
+      fileName: `panel ${profile.name}`,
+    }
+  }
+
   const totals = [
     {
       label: 'Total recibido',
@@ -101,7 +135,7 @@ function ShelterDashboardPage() {
 
   return (
     <>
-      {header}
+      {renderHeader(<DownloadReportButton getReport={getReport} />)}
 
       <section aria-labelledby="totals-title">
         <h2 id="totals-title" className={styles.sectionTitle}>
@@ -123,7 +157,7 @@ function ShelterDashboardPage() {
         <h2 id="evolution-title" className={styles.sectionTitle}>
           Gráficos
         </h2>
-        <div className={styles.charts}>
+        <div className={styles.charts} ref={chartsRef}>
           <div className={styles.wide}>
             <MonthlyChart
               title="Recibido por mes"
