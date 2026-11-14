@@ -1,8 +1,9 @@
 // Cloud Functions de MascotApp: pagos de donaciones con Mercado Pago (Checkout Pro, API de Orders).
+import { createHmac, timingSafeEqual } from 'node:crypto'
 import { initializeApp } from 'firebase-admin/app'
-import { FieldValue, getFirestore } from 'firebase-admin/firestore'
+import { FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore'
 import { setGlobalOptions } from 'firebase-functions'
-import { HttpsError, onCall } from 'firebase-functions/https'
+import { HttpsError, onCall, onRequest } from 'firebase-functions/https'
 import * as logger from 'firebase-functions/logger'
 import { defineSecret } from 'firebase-functions/params'
 
@@ -14,6 +15,9 @@ setGlobalOptions({ region: 'southamerica-west1', maxInstances: 10 })
 
 // Access Token de Mercado Pago: se guarda en Secret Manager, nunca en el código
 const MP_ACCESS_TOKEN = defineSecret('MP_ACCESS_TOKEN')
+
+// Firma secreta del webhook: permite comprobar que los avisos vienen de Mercado Pago
+const MP_WEBHOOK_SECRET = defineSecret('MP_WEBHOOK_SECRET')
 
 const MP_API_URL = 'https://api.mercadopago.com'
 const APP_URL = 'https://mascotapp-ac2c8.web.app'
@@ -125,3 +129,130 @@ export const createDonationOrder = onCall({ secrets: [MP_ACCESS_TOKEN] }, async 
   await donationRef.update({ orderId: order.id })
   return { checkoutUrl: order.checkout_url }
 })
+
+
+// Estados finales: una vez aprobada o rechazada, un aviso repetido no cambia la donación
+const FINAL_STATUSES = ['aprobada', 'rechazada']
+
+/**
+ * Estado de la donación según el estado de la orden en Mercado Pago.
+ * @param {string} orderStatus
+ * @returns {'aprobada'|'rechazada'|'pendiente'}
+ */
+function toDonationStatus(orderStatus) {
+  if (orderStatus === 'processed') return 'aprobada'
+  if (['failed', 'canceled', 'expired'].includes(orderStatus)) return 'rechazada'
+  return 'pendiente'
+}
+
+/**
+ * Comprueba que el aviso lo firmó Mercado Pago con la firma secreta de la aplicación.
+ * Firma = HMAC SHA-256 de "id:<data.id>;request-id:<x-request-id>;ts:<ts>;".
+ * @param {object} req - Pedido HTTP recibido.
+ * @param {string} dataId - Id de la orden informado en el aviso.
+ * @returns {boolean}
+ */
+function isValidSignature(req, dataId) {
+  const parts = Object.fromEntries(
+    (req.get('x-signature') ?? '').split(',').map((part) => part.trim().split('=')),
+  )
+  const requestId = req.get('x-request-id') ?? ''
+  if (!parts.ts || !parts.v1) return false
+
+  // Mercado Pago pide el id en minúsculas si es alfanumérico; se aceptan ambas formas
+  return [dataId.toLowerCase(), dataId].some((id) => {
+    const manifest = `id:${id};request-id:${requestId};ts:${parts.ts};`
+    const expected = createHmac('sha256', MP_WEBHOOK_SECRET.value()).update(manifest).digest('hex')
+    // Comparación en tiempo constante, para no dar pistas sobre la firma
+    return (
+      expected.length === parts.v1.length &&
+      timingSafeEqual(Buffer.from(expected), Buffer.from(parts.v1))
+    )
+  })
+}
+
+/**
+ * Webhook de Mercado Pago: recibe los avisos de órdenes, consulta la orden a la API
+ * (no confía en el aviso) y guarda en la donación su estado y el comprobante del pago.
+ * Responde 200 para que Mercado Pago no reintente, salvo error temporal (500).
+ */
+export const mercadoPagoWebhook = onRequest(
+  { secrets: [MP_ACCESS_TOKEN, MP_WEBHOOK_SECRET] },
+  async (req, res) => {
+    const orderId = req.query['data.id'] ?? req.body?.data?.id
+    const type = req.query.type ?? req.body?.type
+
+    if (req.method !== 'POST' || type !== 'order' || typeof orderId !== 'string') {
+      res.status(200).send('Ignorado')
+      return
+    }
+    if (!isValidSignature(req, orderId)) {
+      logger.warn('Aviso con firma inválida', { orderId })
+      res.status(401).send('Firma inválida')
+      return
+    }
+
+    const response = await fetch(`${MP_API_URL}/v1/orders/${encodeURIComponent(orderId)}`, {
+      headers: { Authorization: `Bearer ${MP_ACCESS_TOKEN.value()}` },
+    })
+    // 400 o 404: el id no corresponde a una orden (por ejemplo, una notificación simulada)
+    if (response.status === 400 || response.status === 404) {
+      logger.warn('La orden del aviso no existe', { orderId, status: response.status })
+      res.status(200).send('Orden inexistente')
+      return
+    }
+    if (!response.ok) {
+      // Error temporal: con 500, Mercado Pago vuelve a intentar más tarde
+      logger.error('No se pudo consultar la orden', { orderId, status: response.status })
+      res.status(500).send('Error al consultar la orden')
+      return
+    }
+    const order = await response.json()
+
+    const donationId = order.external_reference
+    if (typeof donationId !== 'string' || !/^[A-Za-z0-9]+$/.test(donationId)) {
+      logger.error('La orden no tiene una donación asociada válida', { orderId })
+      res.status(200).send('Sin donación')
+      return
+    }
+
+    const donationRef = db.doc(`donations/${donationId}`)
+    await db.runTransaction(async (transaction) => {
+      const snapshot = await transaction.get(donationRef)
+      if (!snapshot.exists) {
+        logger.error('No existe la donación de la orden', { orderId, donationId })
+        return
+      }
+      const donation = snapshot.data()
+      if (donation.orderId !== order.id || order.total_amount !== donation.amount.toFixed(2)) {
+        logger.error('La orden no coincide con la donación', { orderId, donationId })
+        return
+      }
+      if (FINAL_STATUSES.includes(donation.status)) return
+
+      const status = toDonationStatus(order.status)
+      const payment = order.transactions?.payments?.[0]
+      transaction.update(donationRef, {
+        status,
+        // Comprobante: los datos del pago tal como los informa Mercado Pago
+        receipt: {
+          orderId: order.id,
+          paymentId: payment?.id ?? null,
+          mpStatus: order.status,
+          statusDetail: payment?.status_detail ?? order.status_detail ?? null,
+          paymentMethod: payment?.payment_method?.id ?? null,
+          paymentType: payment?.payment_method?.type ?? null,
+          installments: payment?.payment_method?.installments ?? null,
+          paidAmount: Number(payment?.paid_amount ?? order.total_paid_amount ?? 0),
+          // Cupón de Mercado Pago para pagos en efectivo (Pago Fácil, Rapipago), si lo hay
+          ticketUrl: payment?.payment_method?.ticket_url ?? null,
+          approvedAt:
+            status === 'aprobada' ? Timestamp.fromDate(new Date(order.last_updated_date)) : null,
+        },
+        updatedAt: FieldValue.serverTimestamp(),
+      })
+    })
+
+    res.status(200).send('OK')
+  },
+)
