@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
+import DownloadReportButton from '@/components/ui/DownloadReportButton'
 import DonutChart from '@/components/charts/DonutChart'
 import MonthlyChart from '@/components/charts/MonthlyChart'
 import ToggleGroup from '@/components/ui/ToggleGroup'
+import { useAuth } from '@/hooks/useAuth'
 import { getDonationsByMonth, getPlatformStats, getRecentActivity } from '@/services/statsService'
 import { CHART_COLORS } from '@/utils/chartColors'
 import { formatDate, PERIOD_OPTIONS } from '@/utils/dates'
@@ -20,12 +22,14 @@ function sumValues(counts) {
 
 /** Supervisión de la plataforma (CU008): totales, gráficos y actividad reciente. */
 function AdminSupervisionPage() {
+  const { profile } = useAuth()
   const [stats, setStats] = useState(null)
   const [donationsByMonth, setDonationsByMonth] = useState([])
   const [activity, setActivity] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [donationMonths, setDonationMonths] = useState(6)
+  const chartsRef = useRef(null)
 
   useEffect(() => {
     let isActive = true
@@ -45,17 +49,19 @@ function AdminSupervisionPage() {
     }
   }, [])
 
-  const header = (
+  // El botón del reporte se agrega recién cuando los datos están cargados
+  const renderHeader = (actions) => (
     <PageHeader
       title="Supervisión de MascotApp"
       subtitle="Consultá la información general y la actividad de la plataforma."
+      actions={actions}
     />
   )
 
   if (isLoading) {
     return (
       <>
-        {header}
+        {renderHeader()}
         <p role="status">Cargando información…</p>
       </>
     )
@@ -64,7 +70,7 @@ function AdminSupervisionPage() {
   if (loadError) {
     return (
       <>
-        {header}
+        {renderHeader()}
         <p className={styles.error} role="alert">
           No pudimos cargar la información. Recargá la página para intentar de nuevo.
         </p>
@@ -113,9 +119,26 @@ function AdminSupervisionPage() {
     color,
   }))
 
+  function getReport() {
+    return {
+      title: 'Supervisión de MascotApp',
+      subtitle: `Administrador: ${profile.name}`,
+      totals,
+      chartsContainer: chartsRef.current,
+      tables: [
+        {
+          title: 'Actividad reciente',
+          columns: ['Fecha', 'Movimiento'],
+          rows: activity.map((event) => [formatDate(event.date), event.text]),
+        },
+      ],
+      fileName: 'supervision',
+    }
+  }
+
   return (
     <>
-      {header}
+      {renderHeader(<DownloadReportButton getReport={getReport} />)}
 
       <section aria-labelledby="totals-title">
         <h2 id="totals-title" className={styles.sectionTitle}>
@@ -137,7 +160,7 @@ function AdminSupervisionPage() {
         <h2 id="charts-title" className={styles.sectionTitle}>
           Gráficos
         </h2>
-        <div className={styles.charts}>
+        <div className={styles.charts} ref={chartsRef}>
           <DonutChart title="Solicitudes por estado" data={requestsData} />
           <DonutChart title="Mascotas por estado" data={petsData} />
           <DonutChart title="Usuarios por rol" data={usersData} />

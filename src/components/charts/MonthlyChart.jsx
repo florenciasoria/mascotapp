@@ -64,7 +64,7 @@ function MonthlyChart({
         <span id={titleId} className={styles.title}>
           {title}
         </span>
-        {actions}
+        {actions && <div data-pdf-ignore>{actions}</div>}
       </figcaption>
 
       <div aria-hidden="true">

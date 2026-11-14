@@ -15,12 +15,12 @@ export const MENUS = {
   [ROLES.SHELTER]: {
     main: [
       { to: '/refugio', label: 'Inicio', end: true },
-      { to: '/refugio/panel', label: 'Panel de actividad' },
       { to: '/refugio/mascotas', label: 'Mis mascotas' },
       { to: '/refugio/solicitudes', label: 'Solicitudes de adopción' },
       { to: '/refugio/historial', label: 'Historial de adopciones' },
       { to: '/refugio/calificaciones', label: 'Calificaciones' },
       { to: '/refugio/donaciones', label: 'Donaciones' },
+      { to: '/refugio/panel', label: 'Panel de actividad' },
     ],
     profile: { to: '/refugio/perfil', label: 'Mi refugio' },
   },

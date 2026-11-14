@@ -3,7 +3,8 @@ import styles from './Button.module.css'
 /**
  * Botón de acción.
  * @param {object} props
- * @param {'primary'|'secondary'|'link'|'back'} [props.variant] - Estilo del botón.
+ * @param {'primary'|'secondary'|'outline'|'link'|'back'} [props.variant] - Estilo del botón
+ *   (outline: con borde y sin relleno, para acciones que no deben competir con la principal).
  * @param {'md'|'sm'} [props.size] - Tamaño.
  * @param {boolean} [props.isLoading] - Muestra la carga y lo deshabilita (evita el doble envío).
  */

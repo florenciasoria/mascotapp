@@ -5,12 +5,16 @@ import styles from './PageHeader.module.css'
  * @param {object} props
  * @param {React.ReactNode} props.title - Título.
  * @param {string} [props.subtitle] - Subtítulo.
+ * @param {React.ReactNode} [props.actions] - Acciones a la derecha del título (por ejemplo, descargar un reporte).
  */
-function PageHeader({ title, subtitle }) {
+function PageHeader({ title, subtitle, actions }) {
   return (
     <header className={styles.header}>
-      <h1 className={styles.title}>{title}</h1>
-      {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+      <div className={styles.text}>
+        <h1 className={styles.title}>{title}</h1>
+        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+      </div>
+      {actions}
     </header>
   )
 }

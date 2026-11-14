@@ -1,25 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import ButtonLink from '@/components/ui/ButtonLink'
+import DownloadReportButton from '@/components/ui/DownloadReportButton'
 import MonthlyChart from '@/components/charts/MonthlyChart'
 import BarListChart from '@/components/charts/BarListChart'
 import ToggleGroup from '@/components/ui/ToggleGroup'
 import DonationCard from '@/components/donations/DonationCard'
 import { useAuth } from '@/hooks/useAuth'
 import { getAdopterDonations } from '@/services/donationService'
-import { groupByMonth, PERIOD_OPTIONS } from '@/utils/dates'
+import { formatDate, groupByMonth, PERIOD_OPTIONS } from '@/utils/dates'
 import { formatCurrency, sumByShelter } from '@/utils/donationOptions'
 import dashboardStyles from '@/pages/shared/Dashboard.module.css'
 import styles from './MyDonationsPage.module.css'
 
 /** Donaciones realizadas por el adoptante. */
 function MyDonationsPage() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [donations, setDonations] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [donationMonths, setDonationMonths] = useState(6)
+  const chartsRef = useRef(null)
 
   useEffect(() => {
     let isActive = true
@@ -57,11 +59,34 @@ function MyDonationsPage() {
     detail: `${formatCurrency(shelter.amount)} · ${shelter.count === 1 ? '1 donación' : `${shelter.count} donaciones`}`,
   }))
 
+  function getReport() {
+    return {
+      title: 'Mis donaciones',
+      subtitle: `Adoptante: ${profile.name}`,
+      totals,
+      chartsContainer: chartsRef.current,
+      tables: [
+        {
+          title: 'Donaciones realizadas',
+          columns: ['Fecha', 'Refugio', 'Barrio', 'Importe'],
+          rows: donations.map((donation) => [
+            formatDate(donation.createdAt),
+            donation.shelterName,
+            donation.neighborhood,
+            formatCurrency(donation.amount),
+          ]),
+        },
+      ],
+      fileName: `donaciones ${profile.name}`,
+    }
+  }
+
   return (
     <>
       <PageHeader
         title="Mis donaciones"
         subtitle="Consultá tus donaciones y colaborá con un refugio."
+        actions={donations.length > 0 && <DownloadReportButton getReport={getReport} />}
       />
 
       <Card as="section" className={styles.cta} aria-labelledby="donate-title">
@@ -96,7 +121,7 @@ function MyDonationsPage() {
             <h2 id="charts-title" className={dashboardStyles.sectionTitle}>
               Gráficos
             </h2>
-            <div className={dashboardStyles.charts}>
+            <div className={dashboardStyles.charts} ref={chartsRef}>
               <div className={dashboardStyles.wide}>
                 <MonthlyChart
                   title="Donado por mes"

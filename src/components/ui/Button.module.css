@@ -37,6 +37,23 @@
   font-weight: var(--font-weight-bold);
 }
 
+/* Contorno: acción complementaria que no compite con la principal.
+   Texto y borde en sage-dark: el sage-deep sobre el fondo crema no llega a 3:1. */
+.outline {
+  border: 2px solid var(--color-sage-dark);
+  background-color: transparent;
+  color: var(--color-sage-dark);
+  font-size: 1.1875rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.outline:hover:not(:disabled) {
+  border-color: var(--color-sage-deep);
+  background-color: var(--color-sage-deep);
+  color: var(--color-white);
+  filter: none;
+}
+
 .link {
   background-color: transparent;
   color: var(--color-link);
