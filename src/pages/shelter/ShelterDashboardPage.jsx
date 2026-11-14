@@ -9,15 +9,10 @@ import { getShelterAdoptions } from '@/services/adoptionService'
 import { getShelterDonations } from '@/services/donationService'
 import { getShelterPets } from '@/services/petService'
 import { CHART_COLORS } from '@/utils/chartColors'
-import { groupByMonth } from '@/utils/dates'
+import { groupByMonth, PERIOD_OPTIONS } from '@/utils/dates'
 import { formatCurrency } from '@/utils/donationOptions'
 import { PET_STATUS, PET_STATUS_LABELS } from '@/utils/petOptions'
-import styles from './ShelterDashboardPage.module.css'
-
-const PERIOD_OPTIONS = [
-  { value: '6', label: '6 meses' },
-  { value: '12', label: '12 meses' },
-]
+import styles from '@/pages/shared/Dashboard.module.css'
 
 /** Panel de actividad del refugio: donaciones recibidas, mascotas y adopciones. */
 function ShelterDashboardPage() {

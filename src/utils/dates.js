@@ -18,6 +18,11 @@ export function sortByNewest(items, field = 'createdAt') {
   return [...items].sort((a, b) => (b[field]?.toMillis() ?? 0) - (a[field]?.toMillis() ?? 0))
 }
 
+// Períodos para elegir en los gráficos mensuales (valor = cantidad de meses)
+export const PERIOD_OPTIONS = [
+  { value: '6', label: '6 meses' },
+  { value: '12', label: '12 meses' },
+]
 
 /** Clave de un mes ("2026-10"), para saber si dos fechas caen en el mismo mes. */
 function monthKey(date) {
@@ -55,4 +60,3 @@ export function groupByMonth(items, { months, dateField = 'createdAt', getValue 
 
   return buckets.map(({ label, fullLabel, value }) => ({ label, fullLabel, value }))
 }
-
