@@ -33,15 +33,26 @@
   font-weight: var(--font-weight-bold);
 }
 
+/* Gráficos en filas que se acomodan solas: si no entran lado a lado, pasan abajo */
 .charts {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-6);
   max-width: 64rem;
 }
 
+.charts > * {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
 .wide {
-  grid-column: 1 / -1;
+  flex-basis: 100%;
+}
+
+/* Gráfico que ocupa más espacio que el de al lado */
+.charts > .main {
+  flex: 2 1 26rem;
 }
 
 .error {

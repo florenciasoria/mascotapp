@@ -45,7 +45,7 @@ export function groupByMonth(items, { months, dateField = 'createdAt', getValue 
     const month = new Date(now.getFullYear(), now.getMonth() - (months - 1) + index, 1)
     return {
       key: monthKey(month),
-      label: month.toLocaleDateString('es-AR', { month: 'short', year: 'numeric' }),
+      label: month.toLocaleDateString('es-AR', { month: 'short', year: '2-digit' }),
       fullLabel: month.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' }),
       value: 0,
     }

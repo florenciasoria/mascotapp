@@ -30,3 +30,24 @@ export function formatCurrency(amount) {
     maximumFractionDigits: 0,
   }).format(amount)
 }
+
+/**
+ * Total y cantidad de donaciones por refugio, del que más recibió al que menos.
+ * @param {object[]} donations
+ * @returns {{shelterId: string, shelterName: string, amount: number, count: number}[]}
+ */
+export function sumByShelter(donations) {
+  const byShelter = new Map()
+  donations.forEach((donation) => {
+    const shelter = byShelter.get(donation.shelterId) ?? {
+      shelterId: donation.shelterId,
+      shelterName: donation.shelterName,
+      amount: 0,
+      count: 0,
+    }
+    shelter.amount += donation.amount
+    shelter.count += 1
+    byShelter.set(donation.shelterId, shelter)
+  })
+  return [...byShelter.values()].sort((a, b) => b.amount - a.amount)
+}

@@ -119,7 +119,6 @@ function ShelterDashboardPage() {
         </ul>
       </section>
 
-
       <section aria-labelledby="evolution-title">
         <h2 id="evolution-title" className={styles.sectionTitle}>
           Gráficos
@@ -144,20 +143,22 @@ function ShelterDashboardPage() {
             />
           </div>
           <DonutChart title="Mascotas por estado" data={petsData} />
-          <MonthlyChart
-            title="Adopciones por mes"
-            data={adoptionsByMonth}
-            valueLabel="Adopciones"
-            actions={
-              <ToggleGroup
-                label="Período"
-                name="adoptionPeriod"
-                value={String(adoptionMonths)}
-                onChange={(event) => setAdoptionMonths(Number(event.target.value))}
-                options={PERIOD_OPTIONS}
-              />
-            }
-          />
+          <div className={styles.main}>
+            <MonthlyChart
+              title="Adopciones por mes"
+              data={adoptionsByMonth}
+              valueLabel="Adopciones"
+              actions={
+                <ToggleGroup
+                  label="Período"
+                  name="adoptionPeriod"
+                  value={String(adoptionMonths)}
+                  onChange={(event) => setAdoptionMonths(Number(event.target.value))}
+                  options={PERIOD_OPTIONS}
+                />
+              }
+            />
+          </div>
         </div>
       </section>
     </>
