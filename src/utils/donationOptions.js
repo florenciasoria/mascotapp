@@ -43,6 +43,21 @@ export function formatPaymentMethod(receipt) {
   return isCard && receipt.paymentMethod ? `${type} (${receipt.paymentMethod})` : type
 }
 
+
+// Detalle del pago que informa Mercado Pago (los que no están en la lista se muestran tal cual)
+const STATUS_DETAIL_LABELS = {
+  accredited: 'Acreditado',
+}
+
+/**
+ * Detalle del pago para mostrar: "accredited" → "Acreditado".
+ * @param {string|null} [detail]
+ * @returns {string}
+ */
+export function formatStatusDetail(detail) {
+  return STATUS_DETAIL_LABELS[detail] ?? detail ?? '—'
+}
+
 /**
  * Importe en pesos argentinos: 15000 → "$ 15.000".
  * @param {number} amount

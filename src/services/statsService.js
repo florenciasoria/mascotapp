@@ -13,7 +13,7 @@ import {
 } from 'firebase/firestore'
 import { db } from './firebase'
 import { groupByMonth, sortByNewest } from '@/utils/dates'
-import { formatCurrency } from '@/utils/donationOptions'
+import { DONATION_STATUS, formatCurrency } from '@/utils/donationOptions'
 import { PET_STATUS } from '@/utils/petOptions'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
 import { ROLE_LABELS, ROLES } from '@/utils/roles'
@@ -53,7 +53,10 @@ export async function getPlatformStats() {
     countByValues('users', 'role', [ROLES.ADOPTER, ROLES.SHELTER]),
     countByValues('pets', 'status', Object.values(PET_STATUS)),
     countByValues('adoptionRequests', 'status', Object.values(REQUEST_STATUS)),
-    getAggregateFromServer(collection(db, 'donations'), { total: count(), amount: sum('amount') }),
+    getAggregateFromServer(
+      query(collection(db, 'donations'), where('status', '==', DONATION_STATUS.APPROVED)),
+      { total: count(), amount: sum('amount') },
+    ),
   ])
 
   return { usersByRole, petsByStatus, requestsByStatus, donations: donations.data() }
@@ -71,10 +74,11 @@ export async function getDonationsByMonth(months = 12) {
   const snapshot = await getDocs(
     query(collection(db, 'donations'), where('createdAt', '>=', since)),
   )
-  return groupByMonth(
-    snapshot.docs.map((donation) => donation.data()),
-    { months, getValue: (donation) => donation.amount },
-  )
+  // Solo las aprobadas (se filtra acá para no sumar otro índice compuesto)
+  const approved = snapshot.docs
+    .map((donation) => donation.data())
+    .filter((donation) => donation.status === DONATION_STATUS.APPROVED)
+  return groupByMonth(approved, { months, getValue: (donation) => donation.amount })
 }
 
 /**
@@ -124,9 +128,10 @@ export async function getRecentActivity(maxItems = 8) {
       })),
     ...donations.docs
       .map((item) => item.data())
+      .filter((donation) => donation.status === DONATION_STATUS.APPROVED)
       .map((donation) => ({
-        date: donation.createdAt,
-        text: `Donación registrada: ${formatCurrency(donation.amount)} a ${donation.shelterName}`,
+        date: donation.receipt?.approvedAt ?? donation.createdAt,
+        text: `Donación aprobada: ${formatCurrency(donation.amount)} a ${donation.shelterName}`,
       })),
   ]
 

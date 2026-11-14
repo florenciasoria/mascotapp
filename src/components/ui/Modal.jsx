@@ -8,8 +8,9 @@ import styles from './Modal.module.css'
  * @param {boolean} props.isOpen - Si está abierta.
  * @param {() => void} props.onClose - Cierra la ventana.
  * @param {string} props.title - Título.
+ * @param {boolean} [props.wide] - Más ancha, para contenido con datos (por ejemplo, un comprobante).
  */
-function Modal({ isOpen, onClose, title, children }) {
+function Modal({ isOpen, onClose, title, wide = false, children }) {
   const dialogRef = useRef(null)
   const titleId = useId()
 
@@ -33,7 +34,7 @@ function Modal({ isOpen, onClose, title, children }) {
   return (
     <dialog
       ref={dialogRef}
-      className={styles.modal}
+      className={`${styles.modal} ${wide ? styles.wide : ''}`}
       onClose={onClose}
       onClick={handleClick}
       aria-labelledby={titleId}

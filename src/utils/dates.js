@@ -8,6 +8,17 @@ export function formatDate(timestamp) {
 }
 
 /**
+ * Fecha y hora de Firestore en formato argentino (14/11/2026, 15:53).
+ * @param {object|null} timestamp
+ * @returns {string}
+ */
+export function formatDateTime(timestamp) {
+  return timestamp
+    ? timestamp.toDate().toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })
+    : '—'
+}
+
+/**
  * Ordena de lo más nuevo a lo más viejo según un campo de fecha.
  * Se ordena en el navegador para no requerir índices compuestos.
  * @param {object[]} items

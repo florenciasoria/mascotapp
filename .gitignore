@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Caché de Firebase Hosting (se genera al publicar)
+.firebase/

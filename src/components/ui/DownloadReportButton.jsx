@@ -6,10 +6,17 @@ import { downloadReport } from '@/utils/pdfReport'
 /**
  * Botón que genera y descarga un reporte en PDF. Mientras genera, queda deshabilitado.
  * @param {object} props
- * @param {() => object} props.getReport - Devuelve los datos del reporte en el momento del clic
+ * @param {() => object} props.getReport - Devuelve los datos del reporte en el momento del click
  *   (los que recibe downloadReport en utils/pdfReport).
+ * @param {string} [props.label] - Texto del botón.
+ * @param {'outline'|'primary'} [props.variant] - Estilo: con borde (por defecto, para no competir
+ *   con la acción principal de la página) o relleno cuando es la acción principal.
  */
-function DownloadReportButton({ getReport }) {
+function DownloadReportButton({
+  getReport,
+  label = 'Descargar reporte (PDF)',
+  variant = 'outline',
+}) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [hasError, setHasError] = useState(false)
 
@@ -27,12 +34,12 @@ function DownloadReportButton({ getReport }) {
   return (
     <>
       <Button
-        variant="outline"
+        variant={variant}
         onClick={handleClick}
         disabled={isGenerating}
         aria-busy={isGenerating || undefined}
       >
-        {isGenerating ? 'Generando…' : 'Descargar reporte (PDF)'}
+        {isGenerating ? 'Generando…' : label}
       </Button>
 
       <ResultDialog

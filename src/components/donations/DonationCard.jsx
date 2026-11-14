@@ -1,7 +1,11 @@
+import { useState } from 'react'
 import Card from '@/components/ui/Card'
 import StatusBadge from '@/components/ui/StatusBadge'
+import Button from '@/components/ui/Button'
+import DonationReceiptDialog from './DonationReceiptDialog'
 import { formatDate } from '@/utils/dates'
 import {
+  DONATION_STATUS,
   DONATION_STATUS_LABELS,
   DONATION_STATUS_TONES,
   formatCurrency,
@@ -18,6 +22,9 @@ import styles from './DonationCard.module.css'
  */
 function DonationCard({ donation, title, subtitle }) {
   const titleId = `donation-${donation.id}`
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false)
+  // Solo las donaciones aprobadas tienen comprobante
+  const hasReceipt = donation.status === DONATION_STATUS.APPROVED && Boolean(donation.receipt)
 
   return (
     <Card as="article" className={styles.card} aria-labelledby={titleId}>
@@ -43,9 +50,24 @@ function DonationCard({ donation, title, subtitle }) {
           <dd>{formatPaymentMethod(donation.receipt)}</dd>
         </div>
       </dl>
-      <StatusBadge tone={DONATION_STATUS_TONES[donation.status]}>
-        {DONATION_STATUS_LABELS[donation.status]}
-      </StatusBadge>
+      <div className={styles.footer}>
+        <StatusBadge tone={DONATION_STATUS_TONES[donation.status]}>
+          {DONATION_STATUS_LABELS[donation.status]}
+        </StatusBadge>
+        {hasReceipt && (
+          <Button variant="link" size="sm" onClick={() => setIsReceiptOpen(true)}>
+            Ver comprobante
+          </Button>
+        )}
+      </div>
+
+      {hasReceipt && (
+        <DonationReceiptDialog
+          donation={donation}
+          isOpen={isReceiptOpen}
+          onClose={() => setIsReceiptOpen(false)}
+        />
+      )}
     </Card>
   )
 }

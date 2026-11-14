@@ -13,6 +13,7 @@ import {
 import { httpsCallable } from 'firebase/functions'
 import { db, functions } from './firebase'
 import { sortByNewest } from '@/utils/dates'
+import { DONATION_STATUS } from '@/utils/donationOptions'
 
 const donationsCollection = collection(db, 'donations')
 
@@ -49,33 +50,49 @@ export function subscribeToDonation(donationId, callback) {
 }
 
 /**
- * Donaciones realizadas por un adoptante, de la más nueva a la más vieja.
+ * Donaciones aprobadas de un adoptante, de la más nueva a la más vieja.
  * @param {string} adopterId
  * @returns {Promise<object[]>}
  */
 export async function getAdopterDonations(adopterId) {
-  const snapshot = await getDocs(query(donationsCollection, where('adopterId', '==', adopterId)))
+  const snapshot = await getDocs(
+    query(
+      donationsCollection,
+      where('adopterId', '==', adopterId),
+      where('status', '==', DONATION_STATUS.APPROVED),
+    ),
+  )
   return sortByNewest(snapshot.docs.map(toDonation))
 }
 
 /**
- * Donaciones recibidas por un refugio, de la más nueva a la más vieja.
+ * Donaciones aprobadas recibidas por un refugio, de la más nueva a la más vieja.
  * @param {string} shelterId
  * @returns {Promise<object[]>}
  */
 export async function getShelterDonations(shelterId) {
-  const snapshot = await getDocs(query(donationsCollection, where('shelterId', '==', shelterId)))
+  const snapshot = await getDocs(
+    query(
+      donationsCollection,
+      where('shelterId', '==', shelterId),
+      where('status', '==', DONATION_STATUS.APPROVED),
+    ),
+  )
   return sortByNewest(snapshot.docs.map(toDonation))
 }
 
 /**
- * Total recibido y cantidad de donaciones de un refugio, calculados en el servidor.
+ * Total recibido y cantidad de donaciones aprobadas de un refugio, calculados en el servidor.
  * @param {string} shelterId
  * @returns {Promise<{total: number, amount: number|null}>}
  */
 export async function getShelterDonationSummary(shelterId) {
   const snapshot = await getAggregateFromServer(
-    query(donationsCollection, where('shelterId', '==', shelterId)),
+    query(
+      donationsCollection,
+      where('shelterId', '==', shelterId),
+      where('status', '==', DONATION_STATUS.APPROVED),
+    ),
     { total: count(), amount: sum('amount') },
   )
   return snapshot.data()
