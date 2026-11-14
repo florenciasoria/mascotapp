@@ -10,6 +10,14 @@
   background-color: var(--color-surface);
 }
 
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
 .title {
   font-size: 1.25rem;
   color: var(--color-text);
