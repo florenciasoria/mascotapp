@@ -31,7 +31,9 @@
 /* Dona y leyenda lado a lado; en pantallas angostas, apiladas */
 .donutLayout {
   display: grid;
+  flex: 1;
   grid-template-columns: 1fr;
+  align-content: center;
   align-items: center;
   gap: var(--space-4);
 }
