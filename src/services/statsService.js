@@ -12,7 +12,7 @@ import {
   where,
 } from 'firebase/firestore'
 import { db } from './firebase'
-import { sortByNewest } from '@/utils/dates'
+import { groupByMonth, sortByNewest } from '@/utils/dates'
 import { formatCurrency } from '@/utils/donationOptions'
 import { PET_STATUS } from '@/utils/petOptions'
 import { REQUEST_STATUS } from '@/utils/requestOptions'
@@ -62,33 +62,19 @@ export async function getPlatformStats() {
 /**
  * Importe donado en cada uno de los últimos meses (se agrupa por mes en el navegador).
  * @param {number} [months] - Cantidad de meses.
- * @returns {Promise<{label: string, value: number}[]>}
+ * @returns {Promise<{label: string, fullLabel: string, value: number}[]>} Del mes más viejo al actual.
  */
-export async function getDonationsByMonth(months = 6) {
+export async function getDonationsByMonth(months = 12) {
   const now = new Date()
   const since = new Date(now.getFullYear(), now.getMonth() - (months - 1), 1)
-
-  const buckets = Array.from({ length: months }, (_, index) => {
-    const month = new Date(since.getFullYear(), since.getMonth() + index, 1)
-    return {
-      key: `${month.getFullYear()}-${month.getMonth()}`,
-      label: month.toLocaleDateString('es-AR', { month: 'short', year: 'numeric' }),
-      value: 0,
-    }
-  })
 
   const snapshot = await getDocs(
     query(collection(db, 'donations'), where('createdAt', '>=', since)),
   )
-  snapshot.docs.forEach((donation) => {
-    const { amount, createdAt } = donation.data()
-    const date = createdAt?.toDate()
-    if (!date) return
-    const bucket = buckets.find((item) => item.key === `${date.getFullYear()}-${date.getMonth()}`)
-    if (bucket) bucket.value += amount
-  })
-
-  return buckets.map(({ label, value }) => ({ label, value }))
+  return groupByMonth(
+    snapshot.docs.map((donation) => donation.data()),
+    { months, getValue: (donation) => donation.amount },
+  )
 }
 
 /**

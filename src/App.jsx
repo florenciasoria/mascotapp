@@ -27,6 +27,7 @@ import ShelterRequestsPage from '@/pages/shelter/ShelterRequestsPage'
 import ShelterRequestDetailPage from '@/pages/shelter/ShelterRequestDetailPage'
 import ShelterRatingsPage from '@/pages/shelter/ShelterRatingsPage'
 import ShelterDonationsPage from '@/pages/shelter/ShelterDonationsPage'
+import ShelterDashboardPage from '@/pages/shelter/ShelterDashboardPage'
 import AdminHomePage from '@/pages/admin/AdminHomePage'
 import AdminUsersPage from '@/pages/admin/AdminUsersPage'
 import AdminUserDetailPage from '@/pages/admin/AdminUserDetailPage'
@@ -77,6 +78,7 @@ function App() {
             }
           >
             <Route index element={<ShelterHomePage />} />
+            <Route path="panel" element={<ShelterDashboardPage />} />
             <Route path="perfil" element={<ProfilePage />} />
             <Route path="mascotas" element={<ShelterPetsPage />} />
             <Route path="mascotas/nueva" element={<RegisterPetPage />} />

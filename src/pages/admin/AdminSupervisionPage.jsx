@@ -3,9 +3,10 @@ import PageHeader from '@/components/ui/PageHeader'
 import Card from '@/components/ui/Card'
 import DonutChart from '@/components/charts/DonutChart'
 import MonthlyChart from '@/components/charts/MonthlyChart'
+import ToggleGroup from '@/components/ui/ToggleGroup'
 import { getDonationsByMonth, getPlatformStats, getRecentActivity } from '@/services/statsService'
 import { CHART_COLORS } from '@/utils/chartColors'
-import { formatDate } from '@/utils/dates'
+import { formatDate, PERIOD_OPTIONS } from '@/utils/dates'
 import { formatCurrency } from '@/utils/donationOptions'
 import { PET_STATUS, PET_STATUS_LABELS } from '@/utils/petOptions'
 import { REQUEST_STATUS, REQUEST_STATUS_LABELS } from '@/utils/requestOptions'
@@ -24,6 +25,7 @@ function AdminSupervisionPage() {
   const [activity, setActivity] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  const [donationMonths, setDonationMonths] = useState(6)
 
   useEffect(() => {
     let isActive = true
@@ -142,9 +144,19 @@ function AdminSupervisionPage() {
           <div className={styles.wide}>
             <MonthlyChart
               title="Donaciones por mes"
-              data={donationsByMonth}
+              variant="line"
+              data={donationsByMonth.slice(-donationMonths)}
               valueLabel="Donado"
               formatValue={formatCurrency}
+              actions={
+                <ToggleGroup
+                  label="Período"
+                  name="donationPeriod"
+                  value={String(donationMonths)}
+                  onChange={(event) => setDonationMonths(Number(event.target.value))}
+                  options={PERIOD_OPTIONS}
+                />
+              }
             />
           </div>
         </div>
