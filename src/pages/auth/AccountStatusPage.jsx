@@ -15,7 +15,6 @@ const MESSAGES = {
   },
 }
 
-// Mensaje para cualquier otro estado
 const DEFAULT_MESSAGE = {
   title: 'Tu cuenta no está habilitada',
   text: 'Por el momento no podés usar las funcionalidades de MascotApp.',

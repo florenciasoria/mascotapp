@@ -40,7 +40,6 @@ export function AuthProvider({ children }) {
       })
     })
 
-    // Cancela las suscripciones al desmontar
     return () => {
       unsubscribeProfile()
       unsubscribeAuth()
