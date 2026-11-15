@@ -130,18 +130,32 @@ export const createDonationOrder = onCall({ secrets: [MP_ACCESS_TOKEN] }, async 
   return { checkoutUrl: order.checkout_url }
 })
 
-
-// Estados finales: una vez aprobada o rechazada, un aviso repetido no cambia la donación
-const FINAL_STATUSES = ['aprobada', 'rechazada']
+// Estados de un pago o una orden de Mercado Pago que significan que no se cobró
+const FAILED_STATUSES = ['failed', 'rejected', 'canceled', 'cancelled', 'expired']
 
 /**
- * Estado de la donación según el estado de la orden en Mercado Pago.
- * @param {string} orderStatus
+ * Pago que representa a la orden: el aprobado si hay uno; si no, el último intento.
+ * En Checkout Pro el comprador puede reintentar con otra tarjeta dentro de la misma orden.
+ * @param {object} order - Orden de Mercado Pago.
+ * @returns {object|undefined}
+ */
+function getMainPayment(order) {
+  const payments = order.transactions?.payments ?? []
+  return payments.find((payment) => payment.status === 'processed') ?? payments.at(-1)
+}
+
+/**
+ * Estado de la donación según la orden y su pago. Un rechazo de tarjeta no cierra la orden
+ * (se puede reintentar), por eso también se mira el estado del pago.
+ * @param {object} order
+ * @param {object|undefined} payment - El de getMainPayment.
  * @returns {'aprobada'|'rechazada'|'pendiente'}
  */
-function toDonationStatus(orderStatus) {
-  if (orderStatus === 'processed') return 'aprobada'
-  if (['failed', 'canceled', 'expired'].includes(orderStatus)) return 'rechazada'
+function toDonationStatus(order, payment) {
+  if (order.status === 'processed' || payment?.status === 'processed') return 'aprobada'
+  if (FAILED_STATUSES.includes(order.status) || FAILED_STATUSES.includes(payment?.status)) {
+    return 'rechazada'
+  }
   return 'pendiente'
 }
 
@@ -228,16 +242,20 @@ export const mercadoPagoWebhook = onRequest(
         logger.error('La orden no coincide con la donación', { orderId, donationId })
         return
       }
-      if (FINAL_STATUSES.includes(donation.status)) return
+      // Una aprobada ya no cambia (avisos repetidos). Una rechazada sí puede pasar a aprobada
+      // si el comprador reintentó con otra tarjeta en la misma orden.
+      if (donation.status === 'aprobada') return
 
-      const status = toDonationStatus(order.status)
-      const payment = order.transactions?.payments?.[0]
+      const payment = getMainPayment(order)
+      const status = toDonationStatus(order, payment)
       transaction.update(donationRef, {
         status,
         // Comprobante: los datos del pago tal como los informa Mercado Pago
         receipt: {
           orderId: order.id,
           paymentId: payment?.id ?? null,
+          // Número de operación que Mercado Pago le muestra al comprador
+          operationNumber: payment?.reference?.id ? String(payment.reference.id) : null,
           mpStatus: order.status,
           statusDetail: payment?.status_detail ?? order.status_detail ?? null,
           paymentMethod: payment?.payment_method?.id ?? null,

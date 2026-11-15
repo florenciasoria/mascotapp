@@ -8,14 +8,24 @@ export function formatDate(timestamp) {
 }
 
 /**
- * Fecha y hora de Firestore en formato argentino (14/11/2026, 15:53).
+ * Fecha y hora de Firestore en formato argentino (14/11/2026 15:53).
  * @param {object|null} timestamp
  * @returns {string}
  */
 export function formatDateTime(timestamp) {
-  return timestamp
-    ? timestamp.toDate().toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })
-    : '—'
+  if (!timestamp) return '—'
+  const date = timestamp.toDate()
+  const day = date.toLocaleDateString('es-AR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+  const time = date.toLocaleTimeString('es-AR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+  return `${day} ${time}`
 }
 
 /**

@@ -30,8 +30,25 @@ const PAYMENT_TYPE_LABELS = {
   ticket: 'Efectivo (Pago Fácil / Rapipago)',
 }
 
+// Marcas de tarjeta según el código que informa Mercado Pago
+const CARD_BRAND_LABELS = {
+  visa: 'Visa',
+  debvisa: 'Visa Débito',
+  master: 'Mastercard',
+  debmaster: 'Mastercard Débito',
+  amex: 'American Express',
+  naranja: 'Naranja',
+  cabal: 'Cabal',
+  debcabal: 'Cabal Débito',
+  maestro: 'Maestro',
+  argencard: 'Argencard',
+  cencosud: 'Cencosud',
+  diners: 'Diners Club',
+  tarshop: 'Tarjeta Shopping',
+}
+
 /**
- * Medio de pago de una donación según su comprobante: "Tarjeta de crédito (visa)".
+ * Medio de pago de una donación según su comprobante: "Tarjeta de crédito (Mastercard)".
  * @param {object} [receipt] - Comprobante guardado por el webhook.
  * @returns {string} "Mercado Pago" si todavía no hay comprobante.
  */
@@ -40,9 +57,10 @@ export function formatPaymentMethod(receipt) {
   const type = PAYMENT_TYPE_LABELS[receipt.paymentType] ?? receipt.paymentType
   // La marca solo suma en las tarjetas (en los demás tipos repite el tipo)
   const isCard = receipt.paymentType.endsWith('_card')
-  return isCard && receipt.paymentMethod ? `${type} (${receipt.paymentMethod})` : type
+  if (!isCard || !receipt.paymentMethod) return type
+  const brand = CARD_BRAND_LABELS[receipt.paymentMethod] ?? receipt.paymentMethod
+  return `${type} (${brand})`
 }
-
 
 // Detalle del pago que informa Mercado Pago (los que no están en la lista se muestran tal cual)
 const STATUS_DETAIL_LABELS = {

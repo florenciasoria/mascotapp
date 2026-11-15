@@ -2,7 +2,7 @@ import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import StatusBadge from '@/components/ui/StatusBadge'
 import DownloadReportButton from '@/components/ui/DownloadReportButton'
-import { formatDate, formatDateTime } from '@/utils/dates'
+import { formatDateTime } from '@/utils/dates'
 import {
   DONATION_STATUS_LABELS,
   DONATION_STATUS_TONES,
@@ -26,11 +26,13 @@ function getReceiptRows(donation) {
     ['Refugio', donation.shelterName],
     ['Donante', donation.adopterName],
     ['Importe pagado', formatCurrency(receipt.paidAmount)],
-    ['Fecha de la donación', formatDate(donation.createdAt)],
+    ['Fecha de la donación', formatDateTime(donation.createdAt)],
     ['Fecha de aprobación', formatDateTime(receipt.approvedAt)],
     ['Medio de pago', `${formatPaymentMethod(receipt)}${installments}`],
     ['Detalle', formatStatusDetail(receipt.statusDetail)],
-    ['N° de operación', receipt.paymentId ?? '—'],
+    // Número que Mercado Pago le muestra al comprador; las donaciones anteriores no lo tienen
+    ...(receipt.operationNumber ? [['N° de operación', receipt.operationNumber]] : []),
+    ['ID de pago', receipt.paymentId ?? '—'],
     ['N° de orden', receipt.orderId],
   ]
 }
