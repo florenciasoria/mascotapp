@@ -85,7 +85,7 @@ function ShelterHomePage() {
               </>
             ) : (
               <>
-                <p className={styles.statValue}>$0</p>
+                <p className={styles.statValue}>{formatCurrency(0)}</p>
                 <p className={styles.statDetail}>Todavía no recibiste donaciones</p>
               </>
             )}

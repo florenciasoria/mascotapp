@@ -93,3 +93,39 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Barras horizontales: nombre y detalle arriba de cada barra */
+.barList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barLabel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  margin: 0 0 var(--space-1);
+}
+
+.barDetail {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.barTrack {
+  height: 0.75rem;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background-color: #f1ece4;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--color-pink-deep);
+}

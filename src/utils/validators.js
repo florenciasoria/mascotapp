@@ -259,7 +259,7 @@ export function validateDonationForm(values) {
   const amount = Number(values.amount)
 
   if (!Number.isInteger(amount) || amount < LIMITS.donation.min || amount > LIMITS.donation.max) {
-    errors.amount = 'Ingresá un importe entre $100 y $1.000.000, sin centavos'
+    errors.amount = 'Ingresá un importe entre $ 100 y $ 1.000.000, sin centavos'
   }
 
   return errors
