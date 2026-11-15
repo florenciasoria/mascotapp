@@ -22,12 +22,16 @@ function MenuIcon() {
   )
 }
 
-/** Menú lateral según el rol, en un <dialog> que se abre desde el botón de menú. */
+/**
+ * Menú lateral según el rol, en un <dialog> que se abre desde el botón de menú.
+ * Arriba, el usuario (lleva a su perfil); en el medio, las opciones; abajo, cerrar sesión.
+ */
 function Sidebar() {
   const { profile } = useAuth()
   const navigate = useNavigate()
   const dialogRef = useRef(null)
   const menu = MENUS[profile.role]
+  const initial = profile.name.trim().charAt(0).toUpperCase()
 
   function openMenu() {
     dialogRef.current.showModal()
@@ -81,6 +85,22 @@ function Sidebar() {
             <MenuIcon />
           </button>
 
+          <NavLink
+            to={menu.profile.to}
+            className={({ isActive }) =>
+              isActive ? `${styles.profileLink} ${styles.profileActive}` : styles.profileLink
+            }
+            onClick={closeMenu}
+          >
+            <span className={styles.avatar} aria-hidden="true">
+              {initial}
+            </span>
+            <span>
+              <span className={styles.profileName}>{profile.name}</span>
+              <span className={styles.profileHint}>Ver {menu.profile.label.toLowerCase()}</span>
+            </span>
+          </NavLink>
+
           <nav className={styles.nav} aria-label="Menú principal">
             <ul className={styles.list}>
               {menu.main.map((item) => (
@@ -96,20 +116,13 @@ function Sidebar() {
                 </li>
               ))}
             </ul>
-
-            <ul className={styles.list}>
-              <li>
-                <NavLink to={menu.profile.to} className={linkClassName} onClick={closeMenu}>
-                  {menu.profile.label}
-                </NavLink>
-              </li>
-              <li>
-                <button type="button" className={styles.link} onClick={handleLogout}>
-                  Cerrar sesión
-                </button>
-              </li>
-            </ul>
           </nav>
+
+          <div className={styles.footer}>
+            <button type="button" className={styles.link} onClick={handleLogout}>
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </dialog>
     </header>
