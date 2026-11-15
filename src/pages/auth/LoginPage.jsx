@@ -60,7 +60,7 @@ function LoginPage() {
     <AuthLayout>
       <header className={styles.header}>
         <img src={logo} alt="MascotApp" className={styles.logo} />
-        <h1 className={styles.title}>¡Bienvenido/a!</h1>
+        <h1 className={styles.title}>¡Te damos la bienvenida!</h1>
         <p className={styles.subtitle}>Ingresá para continuar</p>
       </header>
 

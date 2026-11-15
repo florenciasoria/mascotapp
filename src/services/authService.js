@@ -150,20 +150,20 @@ export function subscribeToUserProfile(uid, callback) {
 export function getAuthErrorMessage(error) {
   switch (error.code) {
     case 'auth/email-already-in-use':
-      return 'Ya existe una cuenta con ese email'
+      return 'Ya existe una cuenta con ese email.'
     case 'auth/invalid-email':
-      return 'El email no es válido'
+      return 'El email no es válido.'
     case 'auth/weak-password':
-      return 'La contraseña es demasiado débil'
+      return 'La contraseña es demasiado débil.'
     case 'auth/network-request-failed':
-      return 'No hay conexión. Revisá tu internet e intentá de nuevo'
+      return 'No hay conexión. Revisá tu internet e intentá nuevamente.'
     case 'auth/invalid-credential':
-      return 'Email o contraseña incorrectos'
+      return 'Email o contraseña incorrectos.'
     case 'auth/too-many-requests':
-      return 'Demasiados intentos fallidos. Esperá unos minutos e intentá de nuevo'
+      return 'Demasiados intentos fallidos. Esperá unos minutos e intentá nuevamente.'
     case 'auth/user-disabled':
-      return 'Esta cuenta fue deshabilitada'
+      return 'Esta cuenta está desactivada.'
     default:
-      return 'Ocurrió un error inesperado. Intentá de nuevo'
+      return 'Ocurrió un error inesperado. Intentá nuevamente.'
   }
 }
