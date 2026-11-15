@@ -21,6 +21,8 @@ const MP_WEBHOOK_SECRET = defineSecret('MP_WEBHOOK_SECRET')
 
 const MP_API_URL = 'https://api.mercadopago.com'
 const APP_URL = 'https://mascotapp-ac2c8.web.app'
+// Ids de documentos de Firestore: solo letras y números. Así un "/" no puede cambiar la ruta.
+const DOC_ID_PATTERN = /^[A-Za-z0-9]+$/
 const MIN_AMOUNT = 100
 const MAX_AMOUNT = 1000000
 
@@ -52,8 +54,7 @@ export const createDonationOrder = onCall({ secrets: [MP_ACCESS_TOKEN] }, async 
 
   const shelterId = data?.shelterId
   const amount = data?.amount
-  // El id del refugio forma parte de una ruta de Firestore: no puede tener "/"
-  if (typeof shelterId !== 'string' || !/^[A-Za-z0-9]+$/.test(shelterId)) {
+  if (typeof shelterId !== 'string' || !DOC_ID_PATTERN.test(shelterId)) {
     throw new HttpsError('invalid-argument', 'El refugio no es válido.')
   }
   if (!Number.isInteger(amount) || amount < MIN_AMOUNT || amount > MAX_AMOUNT) {
@@ -224,7 +225,7 @@ export const mercadoPagoWebhook = onRequest(
     const order = await response.json()
 
     const donationId = order.external_reference
-    if (typeof donationId !== 'string' || !/^[A-Za-z0-9]+$/.test(donationId)) {
+    if (typeof donationId !== 'string' || !DOC_ID_PATTERN.test(donationId)) {
       logger.error('La orden no tiene una donación asociada válida', { orderId })
       res.status(200).send('Sin donación')
       return

@@ -13,6 +13,7 @@ import { formatCurrency } from '@/utils/donationOptions'
 import { PET_STATUS, PET_STATUS_LABELS } from '@/utils/petOptions'
 import { REQUEST_STATUS, REQUEST_STATUS_LABELS } from '@/utils/requestOptions'
 import { ROLE_LABELS, ROLES } from '@/utils/roles'
+import dashboardStyles from '@/pages/shared/Dashboard.module.css'
 import styles from './AdminSupervisionPage.module.css'
 
 /** Suma los valores de un objeto: { a: 2, b: 3 } → 5 */
@@ -71,7 +72,7 @@ function AdminSupervisionPage() {
     return (
       <>
         {renderHeader()}
-        <p className={styles.error} role="alert">
+        <p className={dashboardStyles.error} role="alert">
           No pudimos cargar la información. Recargá la página para intentar de nuevo.
         </p>
       </>
@@ -141,15 +142,15 @@ function AdminSupervisionPage() {
       {renderHeader(<DownloadReportButton getReport={getReport} />)}
 
       <section aria-labelledby="totals-title">
-        <h2 id="totals-title" className={styles.sectionTitle}>
+        <h2 id="totals-title" className={dashboardStyles.sectionTitle}>
           Resumen
         </h2>
-        <ul className={styles.totals}>
+        <ul className={dashboardStyles.totals}>
           {totals.map((item) => (
             <li key={item.label}>
-              <Card className={styles.total}>
-                <p className={styles.totalLabel}>{item.label}</p>
-                <p className={styles.totalValue}>{item.value}</p>
+              <Card className={dashboardStyles.total}>
+                <p className={dashboardStyles.totalLabel}>{item.label}</p>
+                <p className={dashboardStyles.totalValue}>{item.value}</p>
               </Card>
             </li>
           ))}
@@ -157,7 +158,7 @@ function AdminSupervisionPage() {
       </section>
 
       <section aria-labelledby="charts-title">
-        <h2 id="charts-title" className={styles.sectionTitle}>
+        <h2 id="charts-title" className={dashboardStyles.sectionTitle}>
           Gráficos
         </h2>
         <div className={styles.charts} ref={chartsRef}>
@@ -186,7 +187,7 @@ function AdminSupervisionPage() {
       </section>
 
       <section aria-labelledby="activity-title">
-        <h2 id="activity-title" className={styles.sectionTitle}>
+        <h2 id="activity-title" className={dashboardStyles.sectionTitle}>
           Actividad reciente
         </h2>
         {activity.length === 0 ? (

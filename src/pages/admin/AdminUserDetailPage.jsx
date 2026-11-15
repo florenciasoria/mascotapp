@@ -161,7 +161,7 @@ function AdminUserDetailPage() {
             <dd>{account.name}</dd>
           </div>
           <div>
-            <dt>Correo electrónico</dt>
+            <dt>Email</dt>
             <dd>
               {account.email}
               {!account.emailVerified && (

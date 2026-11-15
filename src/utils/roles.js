@@ -12,7 +12,6 @@ export const STATUS = {
   INACTIVE: 'inactivo',
 }
 
-// Inicio de cada rol
 const HOME_PATHS = {
   [ROLES.ADOPTER]: '/adoptante',
   [ROLES.SHELTER]: '/refugio',

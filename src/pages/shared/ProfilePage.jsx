@@ -143,7 +143,7 @@ function ProfilePage() {
             />
           )}
           <Input
-            label="Correo electrónico"
+            label="Email"
             type="email"
             value={user.email}
             hint="El email no se puede modificar"

@@ -67,7 +67,6 @@ export async function downloadReport({
     }
   }
 
-  // Encabezado
   pdf.setFont('helvetica', 'bold')
   pdf.setFontSize(11)
   pdf.setTextColor(COLORS.brand)

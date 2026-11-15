@@ -141,13 +141,7 @@ function MyDonationsPage() {
                 />
               </div>
               <div className={dashboardStyles.wide}>
-                <BarListChart
-                  title="Donado por refugio"
-                  data={donationsByShelter}
-                  labelHeader="Refugio"
-                  valueLabel="Donado"
-                  formatValue={formatCurrency}
-                />
+                <BarListChart title="Donado por refugio" data={donationsByShelter} />
               </div>
             </div>
           </section>
