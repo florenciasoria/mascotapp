@@ -249,23 +249,8 @@ export function validateRatingForm(values) {
   return errors
 }
 
-// Ninguna tarjeta vence a más de 20 años de su emisión
-const MAX_EXPIRY_YEARS = 20
-
-/** Indica si un vencimiento MM/AA es válido, no está vencido ni es demasiado lejano. */
-function isValidExpiry(value) {
-  const match = /^(\d{2})\/(\d{2})$/.exec(value.trim())
-  if (!match) return false
-  const month = Number(match[1])
-  const year = 2000 + Number(match[2])
-  if (month < 1 || month > 12) return false
-  const now = new Date()
-  if (year > now.getFullYear() + MAX_EXPIRY_YEARS) return false
-  return year > now.getFullYear() || (year === now.getFullYear() && month >= now.getMonth() + 1)
-}
-
 /**
- * Valida la donación simulada: importe y datos de la tarjeta (de la que solo se guardan 4 dígitos).
+ * Valida el importe de la donación (el pago se completa en Mercado Pago).
  * @param {object} values
  * @returns {Object<string, string>} Errores por campo.
  */
@@ -275,18 +260,6 @@ export function validateDonationForm(values) {
 
   if (!Number.isInteger(amount) || amount < LIMITS.donation.min || amount > LIMITS.donation.max) {
     errors.amount = 'Ingresá un importe entre $100 y $1.000.000, sin centavos'
-  }
-  if (!/^\d{16}$/.test(values.cardNumber.replace(/\s/g, ''))) {
-    errors.cardNumber = 'Ingresá los 16 números de la tarjeta'
-  }
-  if (!hasLength(values.cardHolder, LIMITS.name)) {
-    errors.cardHolder = 'Ingresá el nombre como figura en la tarjeta'
-  }
-  if (!isValidExpiry(values.expiry)) {
-    errors.expiry = 'Ingresá un vencimiento válido (MM/AA)'
-  }
-  if (!/^\d{3,4}$/.test(values.cvv.trim())) {
-    errors.cvv = 'Ingresá el código de 3 o 4 números'
   }
 
   return errors

@@ -1,7 +1,8 @@
-// Inicialización de Firebase: exporta auth, db y storage para el resto de los servicios.
+// Inicialización de Firebase: exporta auth, db, storage y functions para el resto de los servicios.
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import { getFunctions } from 'firebase/functions'
 import { getStorage } from 'firebase/storage'
 
 // Configuración leída de las variables de entorno (.env.local)
@@ -34,3 +35,6 @@ auth.languageCode = 'es'
 export const db = getFirestore(app)
 
 export const storage = getStorage(app)
+
+// Cloud Functions en la misma región que la base de datos (Santiago)
+export const functions = getFunctions(app, 'southamerica-west1')

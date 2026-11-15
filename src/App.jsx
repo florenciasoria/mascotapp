@@ -19,6 +19,7 @@ import RateAdoptionPage from '@/pages/adopter/RateAdoptionPage'
 import MyDonationsPage from '@/pages/adopter/MyDonationsPage'
 import DonationSheltersPage from '@/pages/adopter/DonationSheltersPage'
 import DonationFormPage from '@/pages/adopter/DonationFormPage'
+import DonationResultPage from '@/pages/adopter/DonationResultPage'
 import ShelterHomePage from '@/pages/shelter/ShelterHomePage'
 import ShelterPetsPage from '@/pages/shelter/ShelterPetsPage'
 import RegisterPetPage from '@/pages/shelter/RegisterPetPage'
@@ -67,6 +68,7 @@ function App() {
             <Route path="donaciones" element={<MyDonationsPage />} />
             <Route path="donaciones/nueva" element={<DonationSheltersPage />} />
             <Route path="donaciones/nueva/:shelterId" element={<DonationFormPage />} />
+            <Route path="donaciones/resultado" element={<DonationResultPage />} />
           </Route>
 
           <Route

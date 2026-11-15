@@ -179,7 +179,6 @@ function MyDonationsPage() {
                   donation={donation}
                   title={donation.shelterName}
                   subtitle={donation.neighborhood}
-                  showCard
                 />
               </li>
             ))}

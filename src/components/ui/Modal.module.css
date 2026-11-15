@@ -8,6 +8,10 @@
   box-shadow: 0 8px 32px rgb(0 0 0 / 0.2);
 }
 
+.wide {
+  width: min(34rem, calc(100% - 2rem));
+}
+
 .modal::backdrop {
   background-color: rgb(51 44 42 / 0.4);
 }
